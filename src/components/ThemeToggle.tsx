@@ -24,13 +24,21 @@ export function ThemeToggle() {
 
   return (
     <div className="flex items-center gap-2">
-      <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
+      {theme === "light" ? (
+        <Moon className="h-[1.2rem] w-[1.2rem] text-blue-700" />
+      ) : (
+        <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
+      )}
       <Switch
         checked={theme === "dark"}
         onCheckedChange={handleToggle}
         aria-label="Toggle theme"
       />
-      <Moon className="h-[1.2rem] w-[1.2rem] text-blue-700 dark:text-blue-400" />
+      {theme === "light" ? (
+        <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
+      ) : (
+        <Moon className="h-[1.2rem] w-[1.2rem] text-blue-700 dark:text-blue-400" />
+      )}
     </div>
   );
 }
