@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Eye, Copy, Info, AlertCircle } from "lucide-react";
+import { MoreHorizontal, ChevronDown, Copy, Info, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface TradeActionsMenuProps {
@@ -42,8 +42,8 @@ export function TradeActionsMenu({
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => onViewDetails(trade)}>
-          <Eye className="h-4 w-4 mr-2" />
-          View Details
+          <ChevronDown className="h-4 w-4 mr-2" />
+          Toggle Details
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => handleCopyTrade(trade)}>
           <Copy className="h-4 w-4 mr-2" />

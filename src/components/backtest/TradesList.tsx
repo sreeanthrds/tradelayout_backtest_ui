@@ -3,7 +3,6 @@ import { useState } from "react";
 import { TradesSearch } from "./trades/TradesSearch";
 import { TradesTable } from "./trades/TradesTable";
 import { TradesPagination } from "./trades/TradesPagination";
-import { TradeDetailsDialog } from "./trades/TradeDetailsDialog";
 import { TradeAnalysisDialog } from "./trades/TradeAnalysisDialog";
 import { TradeReportDialog } from "./trades/TradeReportDialog";
 import { mockTrades } from "./trades/TradesMockData";
@@ -11,7 +10,6 @@ import { mockTrades } from "./trades/TradesMockData";
 export function TradesList() {
   const [page, setPage] = useState(1);
   const [selectedTrade, setSelectedTrade] = useState<any>(null);
-  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
   const [showAnalysisDialog, setShowAnalysisDialog] = useState(false);
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -20,8 +18,8 @@ export function TradesList() {
   const totalTrades = 47; // This would typically come from your API
 
   const handleViewDetails = (trade: any) => {
-    setSelectedTrade(trade);
-    setShowDetailsDialog(true);
+    // Now handled in the TradesTable component with expandable rows
+    console.log("View details for trade", trade.id);
   };
 
   const handleViewAnalysis = (trade: any) => {
@@ -55,12 +53,6 @@ export function TradesList() {
         totalTrades={totalTrades}
         tradesPerPage={tradesPerPage}
         onPageChange={setPage}
-      />
-
-      <TradeDetailsDialog 
-        trade={selectedTrade} 
-        open={showDetailsDialog} 
-        onOpenChange={setShowDetailsDialog} 
       />
 
       <TradeAnalysisDialog 
