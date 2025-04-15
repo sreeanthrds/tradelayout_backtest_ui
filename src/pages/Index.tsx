@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChartBar, LineChart, CandlestickChart, ArrowRight } from "lucide-react";
+import { ChartBar, LineChart, CandlestickChart, ArrowRight, Play } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const Index = () => {
@@ -15,8 +15,13 @@ const Index = () => {
         <p className="text-xl text-muted-foreground mb-8">Visualize and analyze your options trading strategies with comprehensive backtest results and performance metrics.</p>
         
         <div className="flex flex-wrap justify-center gap-4 mb-12">
-          <Link to="/backtest-results">
+          <Link to="/backtest-settings">
             <Button size="lg" className="gap-2">
+              Run New Backtest <Play className="h-4 w-4" />
+            </Button>
+          </Link>
+          <Link to="/backtest-results">
+            <Button size="lg" variant="outline" className="gap-2">
               View Backtest Results <ArrowRight className="h-4 w-4" />
             </Button>
           </Link>
