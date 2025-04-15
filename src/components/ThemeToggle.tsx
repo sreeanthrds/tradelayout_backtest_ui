@@ -5,21 +5,32 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
-  const { theme, setTheme } = useTheme();
+  // Initialize with a default theme value
+  const [theme, setThemeState] = useState<string>("light");
   const [mounted, setMounted] = useState(false);
-
-  // useEffect only runs on the client, so now we can safely show the UI
+  
+  // Safely access the theme context only after component is mounted
+  const themeContext = typeof window !== 'undefined' ? useTheme() : { theme: "light", setTheme: () => {} };
+  
+  // useEffect only runs on the client, so now we can safely show the UI and use the context
   useEffect(() => {
     setMounted(true);
-  }, []);
+    if (themeContext && themeContext.theme) {
+      setThemeState(themeContext.theme);
+    }
+  }, [themeContext]);
 
   // Handle toggle click
   const handleToggle = () => {
-    setTheme(theme === "dark" ? "light" : "dark");
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setThemeState(newTheme);
+    if (themeContext && themeContext.setTheme) {
+      themeContext.setTheme(newTheme);
+    }
   };
 
   if (!mounted) {
-    return null; // Render nothing during SSR
+    return null; // Render nothing during SSR or before mount
   }
 
   return (
