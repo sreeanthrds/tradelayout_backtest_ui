@@ -32,9 +32,15 @@ import {
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 
 export function TradesList() {
   const [page, setPage] = useState(1);
+  const [selectedTrade, setSelectedTrade] = useState<any>(null);
+  const [showDetailsDialog, setShowDetailsDialog] = useState(false);
+  const [showAnalysisDialog, setShowAnalysisDialog] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
   
   // This is mock data - in a real application, you would fetch this from your API
   const mockTrades = [
@@ -143,6 +149,35 @@ export function TradesList() {
     }
   };
 
+  const handleViewDetails = (trade: any) => {
+    setSelectedTrade(trade);
+    setShowDetailsDialog(true);
+  };
+
+  const handleCopyTrade = (trade: any) => {
+    // In a real application, you would copy the trade to create a new one
+    toast.success("Trade Copied", {
+      description: `${trade.strategy} trade on ${trade.symbol} copied to clipboard`,
+    });
+  };
+
+  const handleViewAnalysis = (trade: any) => {
+    setSelectedTrade(trade);
+    setShowAnalysisDialog(true);
+  };
+
+  const handleReportIssue = (trade: any) => {
+    setSelectedTrade(trade);
+    setShowReportDialog(true);
+  };
+
+  const handleSubmitReport = () => {
+    toast.success("Issue Reported", {
+      description: "Thank you for your feedback. Our team will review this trade.",
+    });
+    setShowReportDialog(false);
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -204,20 +239,23 @@ export function TradesList() {
                     <DropdownMenuContent align="end">
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewDetails(trade)}>
                         <Eye className="h-4 w-4 mr-2" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleCopyTrade(trade)}>
                         <Copy className="h-4 w-4 mr-2" />
                         Copy Trade
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleViewAnalysis(trade)}>
                         <Info className="h-4 w-4 mr-2" />
                         Analysis
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem className="text-red-600">
+                      <DropdownMenuItem 
+                        className="text-red-600"
+                        onClick={() => handleReportIssue(trade)}
+                      >
                         <AlertCircle className="h-4 w-4 mr-2" />
                         Report Issue
                       </DropdownMenuItem>
@@ -259,6 +297,137 @@ export function TradesList() {
           </Button>
         </div>
       </div>
+
+      {/* View Details Dialog */}
+      <Dialog open={showDetailsDialog} onOpenChange={setShowDetailsDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Trade Details</DialogTitle>
+            <DialogDescription>
+              Detailed information for trade {selectedTrade?.id}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTrade && (
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Strategy</h4>
+                  <p>{selectedTrade.strategy}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Symbol</h4>
+                  <p>{selectedTrade.symbol}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Entry Price</h4>
+                  <p>${selectedTrade.entryPrice.toFixed(2)}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Exit Price</h4>
+                  <p>${selectedTrade.exitPrice.toFixed(2)}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">P&L</h4>
+                  <p className={selectedTrade.pnl >= 0 ? "text-emerald-600" : "text-red-600"}>
+                    ${Math.abs(selectedTrade.pnl).toFixed(2)} ({selectedTrade.pnlPercent}%)
+                  </p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Date</h4>
+                  <p>{selectedTrade.date}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Legs</h4>
+                  <p>{selectedTrade.details.legs}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">DTE</h4>
+                  <p>{selectedTrade.details.dte}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">IV</h4>
+                  <p>{selectedTrade.details.iv}</p>
+                </div>
+                <div>
+                  <h4 className="font-medium text-sm text-muted-foreground">Status</h4>
+                  <p>{getStatusBadge(selectedTrade.status)}</p>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Trade Analysis Dialog */}
+      <Dialog open={showAnalysisDialog} onOpenChange={setShowAnalysisDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Trade Analysis</DialogTitle>
+            <DialogDescription>
+              Performance analysis for {selectedTrade?.strategy} trade on {selectedTrade?.symbol}
+            </DialogDescription>
+          </DialogHeader>
+          {selectedTrade && (
+            <div className="space-y-4 py-4">
+              <div className="bg-muted p-4 rounded-md">
+                <h4 className="font-medium mb-2">Performance Metrics</h4>
+                <div className="grid grid-cols-2 gap-y-2 text-sm">
+                  <span className="text-muted-foreground">Win Probability:</span>
+                  <span>62%</span>
+                  <span className="text-muted-foreground">Expected Value:</span>
+                  <span>${selectedTrade.pnl >= 0 ? "+" : "-"}${Math.abs(selectedTrade.pnl * 0.25).toFixed(2)}</span>
+                  <span className="text-muted-foreground">Similar Trades:</span>
+                  <span>12 trades</span>
+                  <span className="text-muted-foreground">Average P&L:</span>
+                  <span>${(selectedTrade.pnl * 0.8).toFixed(2)}</span>
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                This analysis is based on historical performance of similar trades with this strategy.
+              </p>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Report Issue Dialog */}
+      <Dialog open={showReportDialog} onOpenChange={setShowReportDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Report Issue</DialogTitle>
+            <DialogDescription>
+              Submit a report for trade {selectedTrade?.id}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="issue-type" className="text-sm font-medium">Issue Type</label>
+              <select 
+                id="issue-type" 
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <option>Data Inconsistency</option>
+                <option>Incorrect Calculation</option>
+                <option>Missing Information</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="description" className="text-sm font-medium">Description</label>
+              <textarea 
+                id="description" 
+                rows={4}
+                className="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                placeholder="Please describe the issue you found..."
+              ></textarea>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowReportDialog(false)}>Cancel</Button>
+            <Button onClick={handleSubmitReport}>Submit Report</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
