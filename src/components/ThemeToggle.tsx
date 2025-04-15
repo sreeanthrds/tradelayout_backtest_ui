@@ -1,8 +1,8 @@
 
 import { Moon, Sun } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -13,7 +13,7 @@ export function ThemeToggle() {
     setMounted(true);
   }, []);
 
-  // Handle toggle change
+  // Handle toggle click
   const handleToggle = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -23,22 +23,18 @@ export function ThemeToggle() {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      {theme === "light" ? (
+    <Button
+      variant="ghost"
+      size="icon"
+      onClick={handleToggle}
+      aria-label="Toggle theme"
+      className="rounded-full"
+    >
+      {theme === "dark" ? (
+        <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
+      ) : (
         <Moon className="h-[1.2rem] w-[1.2rem] text-blue-700" />
-      ) : (
-        <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
       )}
-      <Switch
-        checked={theme === "dark"}
-        onCheckedChange={handleToggle}
-        aria-label="Toggle theme"
-      />
-      {theme === "light" ? (
-        <Sun className="h-[1.2rem] w-[1.2rem] text-yellow-500" />
-      ) : (
-        <Moon className="h-[1.2rem] w-[1.2rem] text-blue-700 dark:text-blue-400" />
-      )}
-    </div>
+    </Button>
   );
 }
