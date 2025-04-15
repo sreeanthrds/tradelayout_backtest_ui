@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDays, ArrowRight, BarChart2, Clock, DollarSign, FileText } from "lucide-react";
-import { TradeDocumentUploader } from "./TradeDocumentUploader";
+import { CalendarDays, ArrowRight, BarChart2, Clock, DollarSign } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface TradeExpandedDetailsProps {
@@ -12,10 +11,9 @@ interface TradeExpandedDetailsProps {
 
 export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   const [activeTab, setActiveTab] = useState("summary");
-  const [extractedData, setExtractedData] = useState<any>(null);
   
   // Mock transactions data for illustration
-  const transactions = extractedData?.extractedData?.transactions || [
+  const transactions = [
     {
       id: `${trade.id}-1`,
       date: "2023-01-15 09:30:45",
@@ -45,22 +43,12 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
     }
   ];
 
-  const handleProcessComplete = (data: any) => {
-    console.log("PDF processing complete:", data);
-    setExtractedData(data);
-    // If data was successfully extracted, switch to the transactions tab
-    if (data?.extractedData) {
-      setActiveTab("transactions");
-    }
-  };
-
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="summary">Summary</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          <TabsTrigger value="documents">Documents</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary">
@@ -131,11 +119,6 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                 <BarChart2 className="h-4 w-4" />
                 Transactions
               </CardTitle>
-              {extractedData && (
-                <CardDescription>
-                  Data extracted from uploaded document
-                </CardDescription>
-              )}
             </CardHeader>
             <CardContent>
               <Table>
@@ -168,13 +151,6 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
               </Table>
             </CardContent>
           </Card>
-        </TabsContent>
-
-        <TabsContent value="documents">
-          <TradeDocumentUploader 
-            tradeId={trade.id} 
-            onProcessComplete={handleProcessComplete}
-          />
         </TabsContent>
       </Tabs>
     </div>
