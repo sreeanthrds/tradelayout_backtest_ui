@@ -23,9 +23,8 @@ export function useBacktestSubmit() {
       // Log the submitted data (would be sent to an API in a real app)
       console.log("Running backtest with parameters:", data);
       
-      // Show success notification
-      toast({
-        title: "Backtest Completed",
+      // Show success notification - using the correct format for sonner toast
+      toast.success("Backtest Completed", {
         description: `Successfully ran ${data.strategy} backtest on ${data.symbol}`,
       });
 
@@ -34,10 +33,8 @@ export function useBacktestSubmit() {
     } catch (error) {
       // Handle any errors
       console.error("Backtest error:", error);
-      toast({
-        title: "Backtest Failed",
+      toast.error("Backtest Failed", {
         description: "There was an error running your backtest",
-        variant: "destructive",
       });
     } finally {
       // Reset loading state
