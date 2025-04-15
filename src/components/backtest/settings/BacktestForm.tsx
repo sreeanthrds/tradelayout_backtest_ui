@@ -7,13 +7,11 @@ import { CapitalSection } from "./CapitalSection";
 import { TradingRulesSection } from "./TradingRulesSection";
 import { SubmitButton } from "./SubmitButton";
 import { formSchema, FormValues, defaultValues } from "./formSchema";
+import { useBacktestSubmit } from "@/hooks/useBacktestSubmit";
 
-interface BacktestFormProps {
-  isLoading: boolean;
-  onSubmit: (data: FormValues) => void;
-}
-
-export function BacktestForm({ isLoading, onSubmit }: BacktestFormProps) {
+export function BacktestForm() {
+  const { isLoading, submitBacktest } = useBacktestSubmit();
+  
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -21,7 +19,7 @@ export function BacktestForm({ isLoading, onSubmit }: BacktestFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={form.handleSubmit(submitBacktest)} className="space-y-8">
         <StrategySection control={form.control} />
         <CapitalSection control={form.control} />
         <TradingRulesSection control={form.control} />
