@@ -1,1 +1,5 @@
+
 project_id = "nsksiftdqprvijbanaas"
+
+[functions.process-pdf]
+verify_jwt = true
