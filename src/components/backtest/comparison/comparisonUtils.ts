@@ -1,7 +1,8 @@
 
-// Utility functions and constants for comparison components
+import { ComparisonDataPoint, MetricsDataPoint, StrategyColors } from "./types";
 
-export const strategyColors: Record<string, string> = {
+// Strategy color mapping
+export const strategyColors: StrategyColors = {
   "Iron Condor": "#3B82F6",
   "Bull Put Spread": "#10B981",
   "Bear Call Spread": "#EF4444",
@@ -11,8 +12,19 @@ export const strategyColors: Record<string, string> = {
   "QQQ Buy and Hold": "#EC4899",
 };
 
-// Sample data generator functions
-export function generateComparisonData() {
+// Available strategy options
+export const availableStrategies = [
+  "Iron Condor",
+  "Bull Put Spread",
+  "Bear Call Spread",
+  "Short Strangle",
+  "Long Straddle",
+  "SPY Buy and Hold",
+  "QQQ Buy and Hold",
+];
+
+// Generate performance comparison data
+export function generateComparisonData(): ComparisonDataPoint[] {
   return Array.from({ length: 24 }, (_, i) => {
     // Create somewhat realistic comparison data
     const date = new Date(2022, i % 12, 1).toLocaleDateString('en-US', {
@@ -29,7 +41,8 @@ export function generateComparisonData() {
   });
 }
 
-export function generateMetricsComparisonData() {
+// Generate metrics comparison data
+export function generateMetricsComparisonData(): MetricsDataPoint[] {
   return [
     {
       metric: "Total Return",
@@ -63,13 +76,3 @@ export function generateMetricsComparisonData() {
     },
   ];
 }
-
-export const availableStrategies = [
-  "Iron Condor",
-  "Bull Put Spread",
-  "Bear Call Spread",
-  "Short Strangle",
-  "Long Straddle",
-  "SPY Buy and Hold",
-  "QQQ Buy and Hold",
-];

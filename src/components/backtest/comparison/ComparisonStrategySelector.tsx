@@ -11,20 +11,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { strategyColors } from "./comparisonUtils";
-
-interface ComparisonStrategySelectorProps {
-  selectedStrategies: string[];
-  availableStrategies: string[];
-  onAddStrategy: (strategy: string) => void;
-  onRemoveStrategy: (strategy: string) => void;
-}
+import { StrategySelectorProps } from "./types";
 
 export function ComparisonStrategySelector({
   selectedStrategies,
   availableStrategies,
   onAddStrategy,
   onRemoveStrategy,
-}: ComparisonStrategySelectorProps) {
+}: StrategySelectorProps) {
   return (
     <div className="flex items-center justify-between">
       <div className="flex gap-2 flex-wrap">

@@ -11,11 +11,7 @@ import {
 } from "recharts";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { strategyColors } from "./comparisonUtils";
-
-interface PerformanceComparisonChartProps {
-  comparisonData: any[];
-  selectedStrategies: string[];
-}
+import { PerformanceComparisonChartProps } from "./types";
 
 export function PerformanceComparisonChart({
   comparisonData,
