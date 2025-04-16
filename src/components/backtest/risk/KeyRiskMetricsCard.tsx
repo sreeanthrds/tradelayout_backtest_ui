@@ -11,6 +11,7 @@ import { RiskData } from "./types";
 import { RatiosTab } from "./RatiosTab";
 import { ReturnsTab } from "./ReturnsTab";
 import { DrawdownsTab } from "./DrawdownsTab";
+import { MonteCarloTab } from "./MonteCarloTab";
 
 interface KeyRiskMetricsCardProps {
   riskData: RiskData;
@@ -31,6 +32,7 @@ export function KeyRiskMetricsCard({ riskData }: KeyRiskMetricsCardProps) {
             <TabsTrigger value="ratios">Ratios</TabsTrigger>
             <TabsTrigger value="returns">Returns</TabsTrigger>
             <TabsTrigger value="drawdowns">Drawdowns</TabsTrigger>
+            <TabsTrigger value="montecarlo">Monte Carlo</TabsTrigger>
           </TabsList>
           
           <TabsContent value="ratios">
@@ -43,6 +45,16 @@ export function KeyRiskMetricsCard({ riskData }: KeyRiskMetricsCardProps) {
           
           <TabsContent value="drawdowns">
             <DrawdownsTab riskData={riskData} />
+          </TabsContent>
+          
+          <TabsContent value="montecarlo">
+            <MonteCarloTab 
+              initialInvestment={10000} 
+              annualReturn={riskData.sharpeRatio / 10} 
+              annualVolatility={riskData.volatility / 100}
+              simulationYears={3}
+              simulationPaths={1000}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>
