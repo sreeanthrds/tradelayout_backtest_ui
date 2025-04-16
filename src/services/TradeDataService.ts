@@ -1,15 +1,13 @@
 
 import { BacktestResults, Trade } from "@/models/TradeTypes";
-import { sampleTradeData } from "@/data/sampleTradeData";
 
 // This class will handle trade data operations
 export class TradeDataService {
   private static _instance: TradeDataService;
-  private _data: BacktestResults;
+  private _data: BacktestResults = { trades: [] };
 
   private constructor() {
-    // Initialize with sample data from the dedicated data file
-    this._data = sampleTradeData;
+    // Initialize with empty data - will be populated later
   }
 
   public static getInstance(): TradeDataService {
@@ -35,6 +33,17 @@ export class TradeDataService {
   public getSampleData(): BacktestResults {
     return this._data;
   }
+
+  // Method to load sample data
+  public loadSampleData(): void {
+    // This will be called after the service is initialized
+    // to avoid circular dependencies
+    import("@/data/sampleTradeData").then(module => {
+      this.setData(module.sampleTradeData);
+    });
+  }
 }
 
 export const tradeService = TradeDataService.getInstance();
+// Initialize with sample data
+tradeService.loadSampleData();

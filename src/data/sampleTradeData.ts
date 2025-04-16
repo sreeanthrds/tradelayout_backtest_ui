@@ -275,7 +275,7 @@ export const sampleTradeData: BacktestResults = {
             quantity: 750,
             exitPrice: 40.55,
             orderType: "Market",
-            exitReason: "Signal",
+            exitReason: "SL",
             timestamp: "2024-04-18T11:08:00Z",
             profitLoss: -1612.50,
             status: "Executed"
@@ -306,7 +306,7 @@ export const sampleTradeData: BacktestResults = {
             quantity: 750,
             exitPrice: 95.10,
             orderType: "Market",
-            exitReason: "Signal",
+            exitReason: "SL",
             timestamp: "2024-04-18T09:51:00Z",
             profitLoss: -3750.00,
             status: "Executed"
@@ -364,6 +364,4 @@ export const sampleTradeData: BacktestResults = {
   ]
 };
 
-// Update the service with this data
-import { tradeService } from "@/services/TradeDataService";
-tradeService.setData(sampleTradeData);
+// Remove the circular dependency - the service will import this data now, not the other way around
