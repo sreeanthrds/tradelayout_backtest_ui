@@ -1,10 +1,8 @@
 
 import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CalendarDays, ArrowRight, BarChart2, Clock, IndianRupee, ChevronDown, ChevronRight, RefreshCw, AlertOctagon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Trade, TradePair } from "@/models/TradeTypes";
@@ -93,7 +91,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                     <div>
                       <p className="font-medium">{trade.exitDate || 'N/A'} {trade.exitTime || ''} - Exit</p>
                       <p className="text-muted-foreground">
-                        Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
+                        Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of {(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(trade.profitLoss || 0).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -112,7 +110,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Net P&L:</span>
                   <span className={`font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
+                    {(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(trade.profitLoss || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -178,116 +176,97 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                         )}
                       </div>
                       <span className={`font-medium ${(pair.exit?.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                        ₹{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
+                        {(pair.exit?.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
                       </span>
                     </div>
                     
                     {expandedGroups[pair.index] && (
-                      <div className="mt-2">
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Action</TableHead>
-                              <TableHead>Time</TableHead>
-                              <TableHead>Type</TableHead>
-                              <TableHead>Strike</TableHead>
-                              <TableHead>B/S</TableHead>
-                              <TableHead className="text-right">Qty</TableHead>
-                              <TableHead className="text-right">Price</TableHead>
-                              <TableHead>Entry/Re-entry</TableHead>
-                              <TableHead>Exit Reason</TableHead>
-                              <TableHead>Order Type</TableHead>
-                              <TableHead>Node ID</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {pair.entry && (
-                              <TableRow>
-                                <TableCell className="font-medium">Entry</TableCell>
-                                <TableCell>{formatDateTime(pair.entry.timestamp || "").time || 'N/A'}</TableCell>
-                                <TableCell>{pair.entry.type || 'N/A'}</TableCell>
-                                <TableCell>{pair.entry.strike || 'N/A'}</TableCell>
-                                <TableCell>{pair.entry.buySell || 'N/A'}</TableCell>
-                                <TableCell className="text-right">{pair.entry.quantity || 'N/A'}</TableCell>
-                                <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2) || 'N/A'}</TableCell>
-                                <TableCell>
-                                  {pair.entry.entryNumber !== undefined ? (
-                                    <span>
-                                      #{pair.entry.entryNumber}
-                                      {pair.entry.reEntryNumber > 0 && (
-                                        <Badge variant="outline" className="ml-1 bg-purple-50 text-purple-700 border-purple-200">
-                                          Re-entry #{pair.entry.reEntryNumber}
-                                        </Badge>
-                                      )}
-                                    </span>
-                                  ) : 'N/A'}
-                                </TableCell>
-                                <TableCell>-</TableCell>
-                                <TableCell>{pair.entry.orderType || 'N/A'}</TableCell>
-                                <TableCell className="text-xs text-gray-500">{pair.entry.nodeId || 'N/A'}</TableCell>
-                              </TableRow>
-                            )}
-                            {pair.exit && (
-                              <TableRow>
-                                <TableCell className="font-medium">Exit</TableCell>
-                                <TableCell>{formatDateTime(pair.exit.timestamp || "").time || 'N/A'}</TableCell>
-                                <TableCell>{pair.exit.type || 'N/A'}</TableCell>
-                                <TableCell>{pair.exit.strike || 'N/A'}</TableCell>
-                                <TableCell>{pair.exit.buySell || 'N/A'}</TableCell>
-                                <TableCell className="text-right">{pair.exit.quantity || 'N/A'}</TableCell>
-                                <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2) || 'N/A'}</TableCell>
-                                <TableCell>-</TableCell>
-                                <TableCell>{pair.exit.exitReason ? getExitReasonBadge(pair.exit.exitReason) : '-'}</TableCell>
-                                <TableCell>{pair.exit.orderType || 'N/A'}</TableCell>
-                                <TableCell className="text-xs text-gray-500">{pair.exit.nodeId || 'N/A'}</TableCell>
-                              </TableRow>
-                            )}
-                          </TableBody>
-                        </Table>
-                        
-                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
-                          <div className="text-sm border rounded-md p-2">
-                            <h4 className="font-medium mb-1">Entry Details</h4>
-                            <div className="grid grid-cols-2 gap-y-1">
-                              <span className="text-muted-foreground">Position ID:</span>
-                              <span className="font-mono text-xs">{pair.entry?.positionId || 'N/A'}</span>
-                              
-                              <span className="text-muted-foreground">Node ID:</span>
-                              <span className="font-mono text-xs">{pair.entry?.nodeId || 'N/A'}</span>
-                              
+                      <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <Card className="border-muted">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-medium">Entry Details</CardTitle>
+                          </CardHeader>
+                          <CardContent className="text-sm space-y-2">
+                            <div className="grid grid-cols-2 gap-y-2">
                               <span className="text-muted-foreground">Date & Time:</span>
                               <span>{formatDateTime(pair.entry?.timestamp || "").date || 'N/A'} {formatDateTime(pair.entry?.timestamp || "").time || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Type:</span>
+                              <span>{pair.entry?.type || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Strike:</span>
+                              <span>{pair.entry?.strike || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Buy/Sell:</span>
+                              <span>{pair.entry?.buySell || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Quantity:</span>
+                              <span>{pair.entry?.quantity || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Entry Price:</span>
+                              <span>₹{pair.entry?.entryPrice?.toFixed(2) || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Order Type:</span>
+                              <span>{pair.entry?.orderType || 'N/A'}</span>
                               
                               <span className="text-muted-foreground">Entry Number:</span>
                               <span>#{pair.entry?.entryNumber || 'N/A'}</span>
                               
                               <span className="text-muted-foreground">Re-entry Number:</span>
                               <span>{pair.entry?.reEntryNumber || '0'}</span>
-                            </div>
-                          </div>
-                          
-                          <div className="text-sm border rounded-md p-2">
-                            <h4 className="font-medium mb-1">Exit Details</h4>
-                            <div className="grid grid-cols-2 gap-y-1">
+                              
                               <span className="text-muted-foreground">Position ID:</span>
-                              <span className="font-mono text-xs">{pair.exit?.positionId || 'N/A'}</span>
+                              <span className="font-mono text-xs">{pair.entry?.positionId || 'N/A'}</span>
                               
                               <span className="text-muted-foreground">Node ID:</span>
-                              <span className="font-mono text-xs">{pair.exit?.nodeId || 'N/A'}</span>
-                              
+                              <span className="font-mono text-xs">{pair.entry?.nodeId || 'N/A'}</span>
+                            </div>
+                          </CardContent>
+                        </Card>
+                        
+                        <Card className="border-muted">
+                          <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-medium">Exit Details</CardTitle>
+                          </CardHeader>
+                          <CardContent className="text-sm space-y-2">
+                            <div className="grid grid-cols-2 gap-y-2">
                               <span className="text-muted-foreground">Date & Time:</span>
                               <span>{formatDateTime(pair.exit?.timestamp || "").date || 'N/A'} {formatDateTime(pair.exit?.timestamp || "").time || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Type:</span>
+                              <span>{pair.exit?.type || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Strike:</span>
+                              <span>{pair.exit?.strike || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Buy/Sell:</span>
+                              <span>{pair.exit?.buySell || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Quantity:</span>
+                              <span>{pair.exit?.quantity || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Exit Price:</span>
+                              <span>₹{pair.exit?.exitPrice?.toFixed(2) || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Order Type:</span>
+                              <span>{pair.exit?.orderType || 'N/A'}</span>
                               
                               <span className="text-muted-foreground">Exit Reason:</span>
                               <span>{pair.exit?.exitReason ? getExitReasonBadge(pair.exit.exitReason) : '-'}</span>
                               
                               <span className="text-muted-foreground">P&L:</span>
                               <span className={`font-medium ${(pair.exit?.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                                ₹{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
+                                {(pair.exit?.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
                               </span>
+                              
+                              <span className="text-muted-foreground">Position ID:</span>
+                              <span className="font-mono text-xs">{pair.exit?.positionId || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Node ID:</span>
+                              <span className="font-mono text-xs">{pair.exit?.nodeId || 'N/A'}</span>
                             </div>
-                          </div>
-                        </div>
+                          </CardContent>
+                        </Card>
                       </div>
                     )}
                     

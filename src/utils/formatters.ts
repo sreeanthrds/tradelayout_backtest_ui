@@ -12,11 +12,14 @@ export function formatTime(timeStr: string): string {
 }
 
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-IN', {
+  const isNegative = value < 0;
+  const formattedValue = new Intl.NumberFormat('en-IN', {
     style: 'currency',
     currency: 'INR',
     minimumFractionDigits: 2
-  }).format(value);
+  }).format(Math.abs(value));
+  
+  return isNegative ? `-${formattedValue}` : formattedValue;
 }
 
 export function formatDateTime(timestamp: string): { date: string, time: string } {
