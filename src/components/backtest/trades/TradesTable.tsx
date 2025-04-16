@@ -24,7 +24,7 @@ interface TradesTableProps {
 }
 
 export function TradesTable({ 
-  trades,
+  trades = [],
   onViewDetails,
   onViewAnalysis,
   onReportIssue
@@ -44,6 +44,37 @@ export function TradesTable({
     if (trade.profitLoss < 0) return "loss";
     return "breakeven";
   };
+
+  // Safeguard if trades is undefined
+  if (!trades || trades.length === 0) {
+    return (
+      <div className="rounded-md border overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-[50px]"></TableHead>
+              <TableHead className="w-[100px]">ID</TableHead>
+              <TableHead>Date</TableHead>
+              <TableHead>Symbol</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Pairs</TableHead>
+              <TableHead className="text-right">P&L</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead className="text-right">VIX</TableHead>
+              <TableHead className="text-right"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell colSpan={10} className="text-center py-10 text-muted-foreground">
+                No trades available.
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-md border overflow-hidden">
@@ -84,7 +115,7 @@ export function TradesTable({
                 <TableCell>{trade.entryDate}</TableCell>
                 <TableCell>{trade.symbol}</TableCell>
                 <TableCell>{trade.tradeDuration}</TableCell>
-                <TableCell>{trade.tradePairs.length}</TableCell>
+                <TableCell>{trade.tradePairs?.length || 0}</TableCell>
                 <TableCell className={`text-right font-medium ${trade.profitLoss >= 0 ? "text-emerald-600" : "text-red-600"}`}>
                   ${Math.abs(trade.profitLoss).toFixed(2)}
                 </TableCell>

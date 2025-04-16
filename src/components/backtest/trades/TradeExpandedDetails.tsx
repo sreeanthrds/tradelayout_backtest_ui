@@ -51,6 +51,14 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
     );
   }
 
+  // Safeguard against missing trade data
+  if (!trade) {
+    return <div className="p-4 text-center text-muted-foreground">No trade details available.</div>;
+  }
+
+  // Ensure trade pairs array exists
+  const tradePairs = trade.tradePairs || [];
+
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -79,7 +87,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                     <div>
                       <p className="font-medium">{trade.entryDate} {trade.entryTime} - Entry</p>
                       <p className="text-muted-foreground">
-                        Trade opened with {trade.tradePairs.length} position pairs
+                        Trade opened with {tradePairs.length} position pairs
                       </p>
                     </div>
                     <div>
@@ -109,7 +117,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Trade Pairs:</span>
-                  <span className="font-medium">{trade.tradePairs.length}</span>
+                  <span className="font-medium">{tradePairs.length}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">VIX Level:</span>
@@ -133,84 +141,92 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {trade.tradePairs.map((pair) => (
-                <div key={pair.index} className="mb-4">
-                  <div 
-                    className="flex items-center justify-between bg-muted/50 p-2 rounded-md cursor-pointer"
-                    onClick={() => toggleGroup(pair.index)}
-                  >
-                    <div className="flex items-center gap-2">
-                      {expandedGroups[pair.index] ? 
-                        <ChevronDown className="h-4 w-4" /> : 
-                        <ChevronRight className="h-4 w-4" />
-                      }
-                      <span className="font-medium">
-                        {pair.entry.type} {pair.entry.strike} 
-                        <span className="text-gray-500 ml-2 text-xs">
-                          ({formatDateTime(pair.entry.timestamp).time} - {formatDateTime(pair.exit.timestamp).time})
+              {tradePairs.length === 0 ? (
+                <div className="text-center py-4 text-muted-foreground">No transaction pairs available.</div>
+              ) : (
+                tradePairs.map((pair) => (
+                  <div key={pair.index} className="mb-4">
+                    <div 
+                      className="flex items-center justify-between bg-muted/50 p-2 rounded-md cursor-pointer"
+                      onClick={() => toggleGroup(pair.index)}
+                    >
+                      <div className="flex items-center gap-2">
+                        {expandedGroups[pair.index] ? 
+                          <ChevronDown className="h-4 w-4" /> : 
+                          <ChevronRight className="h-4 w-4" />
+                        }
+                        <span className="font-medium">
+                          {pair.entry?.type} {pair.entry?.strike} 
+                          <span className="text-gray-500 ml-2 text-xs">
+                            ({formatDateTime(pair.entry?.timestamp || "").time} - {formatDateTime(pair.exit?.timestamp || "").time})
+                          </span>
                         </span>
+                        {pair.exit?.exitReason && (
+                          <span className="ml-2">{getExitReasonBadge(pair.exit.exitReason)}</span>
+                        )}
+                        {pair.entry?.reEntryNumber && pair.entry.reEntryNumber > 0 && (
+                          <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                            Re-entry #{pair.entry.reEntryNumber}
+                          </Badge>
+                        )}
+                      </div>
+                      <span className={`font-medium ${(pair.exit?.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                        ${Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
                       </span>
-                      {pair.exit.exitReason && (
-                        <span className="ml-2">{getExitReasonBadge(pair.exit.exitReason)}</span>
-                      )}
-                      {pair.entry.reEntryNumber && pair.entry.reEntryNumber > 0 && (
-                        <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
-                          Re-entry #{pair.entry.reEntryNumber}
-                        </Badge>
-                      )}
                     </div>
-                    <span className={`font-medium ${(pair.exit.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                      ${Math.abs(pair.exit.profitLoss || 0).toFixed(2)}
-                    </span>
+                    
+                    {expandedGroups[pair.index] && (
+                      <div className="mt-2">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Action</TableHead>
+                              <TableHead>Time</TableHead>
+                              <TableHead>Type</TableHead>
+                              <TableHead>Strike</TableHead>
+                              <TableHead>B/S</TableHead>
+                              <TableHead className="text-right">Qty</TableHead>
+                              <TableHead className="text-right">Price</TableHead>
+                              {pair.exit?.exitReason && <TableHead>Exit Reason</TableHead>}
+                              <TableHead>Position ID</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {pair.entry && (
+                              <TableRow>
+                                <TableCell className="font-medium">Entry</TableCell>
+                                <TableCell>{formatDateTime(pair.entry.timestamp).time}</TableCell>
+                                <TableCell>{pair.entry.type}</TableCell>
+                                <TableCell>{pair.entry.strike}</TableCell>
+                                <TableCell>{pair.entry.buySell}</TableCell>
+                                <TableCell className="text-right">{pair.entry.quantity}</TableCell>
+                                <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2)}</TableCell>
+                                {pair.exit?.exitReason && <TableCell>-</TableCell>}
+                                <TableCell className="text-xs text-gray-500">{pair.entry.positionId}</TableCell>
+                              </TableRow>
+                            )}
+                            {pair.exit && (
+                              <TableRow>
+                                <TableCell className="font-medium">Exit</TableCell>
+                                <TableCell>{formatDateTime(pair.exit.timestamp).time}</TableCell>
+                                <TableCell>{pair.exit.type}</TableCell>
+                                <TableCell>{pair.exit.strike}</TableCell>
+                                <TableCell>{pair.exit.buySell}</TableCell>
+                                <TableCell className="text-right">{pair.exit.quantity}</TableCell>
+                                <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2)}</TableCell>
+                                {pair.exit.exitReason && <TableCell>{getExitReasonBadge(pair.exit.exitReason)}</TableCell>}
+                                <TableCell className="text-xs text-gray-500">{pair.exit.positionId}</TableCell>
+                              </TableRow>
+                            )}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    )}
+                    
+                    <Separator className="my-2" />
                   </div>
-                  
-                  {expandedGroups[pair.index] && (
-                    <div className="mt-2">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead>Action</TableHead>
-                            <TableHead>Time</TableHead>
-                            <TableHead>Type</TableHead>
-                            <TableHead>Strike</TableHead>
-                            <TableHead>B/S</TableHead>
-                            <TableHead className="text-right">Qty</TableHead>
-                            <TableHead className="text-right">Price</TableHead>
-                            {pair.exit.exitReason && <TableHead>Exit Reason</TableHead>}
-                            <TableHead>Position ID</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell className="font-medium">Entry</TableCell>
-                            <TableCell>{formatDateTime(pair.entry.timestamp).time}</TableCell>
-                            <TableCell>{pair.entry.type}</TableCell>
-                            <TableCell>{pair.entry.strike}</TableCell>
-                            <TableCell>{pair.entry.buySell}</TableCell>
-                            <TableCell className="text-right">{pair.entry.quantity}</TableCell>
-                            <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2)}</TableCell>
-                            {pair.exit.exitReason && <TableCell>-</TableCell>}
-                            <TableCell className="text-xs text-gray-500">{pair.entry.positionId}</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="font-medium">Exit</TableCell>
-                            <TableCell>{formatDateTime(pair.exit.timestamp).time}</TableCell>
-                            <TableCell>{pair.exit.type}</TableCell>
-                            <TableCell>{pair.exit.strike}</TableCell>
-                            <TableCell>{pair.exit.buySell}</TableCell>
-                            <TableCell className="text-right">{pair.exit.quantity}</TableCell>
-                            <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2)}</TableCell>
-                            {pair.exit.exitReason && <TableCell>{getExitReasonBadge(pair.exit.exitReason)}</TableCell>}
-                            <TableCell className="text-xs text-gray-500">{pair.exit.positionId}</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </div>
-                  )}
-                  
-                  <Separator className="my-2" />
-                </div>
-              ))}
+                ))
+              )}
             </CardContent>
           </Card>
         </TabsContent>

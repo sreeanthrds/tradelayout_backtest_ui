@@ -15,15 +15,26 @@ export function TradesList() {
   const [showReportDialog, setShowReportDialog] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [trades, setTrades] = useState<Trade[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   
   const tradesPerPage = 5;
-  const totalTrades = trades.length;
   
   useEffect(() => {
-    // Get trades data from service (in a real app, this would be from an API)
-    // For now, we use the sample data from the service
-    const data = tradeService.getSampleData();
-    setTrades(data.trades);
+    // Get trades data from service
+    try {
+      const data = tradeService.getSampleData();
+      if (data && data.trades) {
+        setTrades(data.trades);
+      } else {
+        console.error("No trade data available or invalid format");
+        setTrades([]);
+      }
+    } catch (error) {
+      console.error("Error loading trade data:", error);
+      setTrades([]);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
 
   const handleViewDetails = (trade: Trade) => {
@@ -46,12 +57,25 @@ export function TradesList() {
     setPage(1); // Reset to first page when searching
   };
 
+  // Filter trades based on search query
+  const filteredTrades = searchQuery 
+    ? trades.filter(trade => 
+        trade.index.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        trade.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
+    : trades;
+    
+  const totalTrades = filteredTrades.length;
+
+  if (isLoading) {
+    return <div className="py-10 text-center">Loading trades data...</div>;
+  }
+
   return (
     <div className="space-y-4">
       <TradesSearch onSearch={handleSearch} />
       
       <TradesTable 
-        trades={trades}
+        trades={filteredTrades}
         onViewDetails={handleViewDetails}
         onViewAnalysis={handleViewAnalysis}
         onReportIssue={handleReportIssue}
