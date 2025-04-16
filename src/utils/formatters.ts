@@ -12,9 +12,9 @@ export function formatTime(timeStr: string): string {
 }
 
 export function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat('en-IN', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'INR',
     minimumFractionDigits: 2
   }).format(value);
 }
@@ -26,8 +26,8 @@ export function formatDateTime(timestamp: string): { date: string, time: string 
   try {
     const date = new Date(timestamp);
     return {
-      date: date.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' }),
-      time: date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })
+      date: date.toLocaleDateString('en-IN', { year: 'numeric', month: '2-digit', day: '2-digit' }),
+      time: date.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: false })
     };
   } catch (e) {
     return { date: "", time: "" };

@@ -61,7 +61,8 @@ export function TradesList() {
   const filteredTrades = searchQuery && trades ? 
     trades.filter(trade => 
         trade.index.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        trade.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
+        trade.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        trade.positionId.toLowerCase().includes(searchQuery.toLowerCase()))
     : trades;
     
   const totalTrades = filteredTrades ? filteredTrades.length : 0;

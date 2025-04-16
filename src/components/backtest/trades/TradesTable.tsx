@@ -118,7 +118,7 @@ export function TradesTable({
                 <TableCell>{trade.tradeDuration || 'N/A'}</TableCell>
                 <TableCell>{trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs.length : 0}</TableCell>
                 <TableCell className={`text-right font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  ${Math.abs(trade.profitLoss || 0).toFixed(2)}
+                  ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
                 </TableCell>
                 <TableCell><TradeStatusBadge status={getTradeStatus(trade)} /></TableCell>
                 <TableCell className="text-right">{typeof trade.vix === 'number' ? trade.vix.toFixed(2) : 'N/A'}</TableCell>

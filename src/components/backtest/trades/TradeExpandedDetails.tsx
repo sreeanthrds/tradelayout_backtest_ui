@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { CalendarDays, ArrowRight, BarChart2, Clock, DollarSign, ChevronDown, ChevronRight, RefreshCw, AlertOctagon } from "lucide-react";
+import { CalendarDays, ArrowRight, BarChart2, Clock, IndianRupee, ChevronDown, ChevronRight, RefreshCw, AlertOctagon } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -93,7 +93,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                     <div>
                       <p className="font-medium">{trade.exitDate || 'N/A'} {trade.exitTime || ''} - Exit</p>
                       <p className="text-muted-foreground">
-                        Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of ${Math.abs(trade.profitLoss || 0).toFixed(2)}
+                        Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -104,7 +104,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
             <Card>
               <CardHeader className="pb-2">
                 <CardTitle className="text-sm font-medium flex items-center gap-2">
-                  <DollarSign className="h-4 w-4" />
+                  <IndianRupee className="h-4 w-4" />
                   Performance Summary
                 </CardTitle>
               </CardHeader>
@@ -112,7 +112,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Net P&L:</span>
                   <span className={`font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    ${Math.abs(trade.profitLoss || 0).toFixed(2)}
+                    ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -127,6 +127,10 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                   <span className="text-muted-foreground">Holding Period:</span>
                   <span className="font-medium">{trade.tradeDuration || 'N/A'}</span>
                 </div>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-muted-foreground">Position ID:</span>
+                  <span className="font-medium">{trade.positionId || 'N/A'}</span>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -137,8 +141,11 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
                 <BarChart2 className="h-4 w-4" />
-                Transaction Pairs
+                Transaction Pairs ({tradePairs.length})
               </CardTitle>
+              <CardDescription>
+                Click on a pair to view detailed information
+              </CardDescription>
             </CardHeader>
             <CardContent>
               {tradePairs.length === 0 ? (
@@ -171,7 +178,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                         )}
                       </div>
                       <span className={`font-medium ${(pair.exit?.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                        ${Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
+                        ₹{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
                       </span>
                     </div>
                     
@@ -187,8 +194,10 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                               <TableHead>B/S</TableHead>
                               <TableHead className="text-right">Qty</TableHead>
                               <TableHead className="text-right">Price</TableHead>
-                              {pair.exit?.exitReason && <TableHead>Exit Reason</TableHead>}
-                              <TableHead>Position ID</TableHead>
+                              <TableHead>Entry/Re-entry</TableHead>
+                              <TableHead>Exit Reason</TableHead>
+                              <TableHead>Order Type</TableHead>
+                              <TableHead>Node ID</TableHead>
                             </TableRow>
                           </TableHeader>
                           <TableBody>
@@ -201,8 +210,21 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                                 <TableCell>{pair.entry.buySell || 'N/A'}</TableCell>
                                 <TableCell className="text-right">{pair.entry.quantity || 'N/A'}</TableCell>
                                 <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2) || 'N/A'}</TableCell>
-                                {pair.exit?.exitReason && <TableCell>-</TableCell>}
-                                <TableCell className="text-xs text-gray-500">{pair.entry.positionId || 'N/A'}</TableCell>
+                                <TableCell>
+                                  {pair.entry.entryNumber !== undefined ? (
+                                    <span>
+                                      #{pair.entry.entryNumber}
+                                      {pair.entry.reEntryNumber > 0 && (
+                                        <Badge variant="outline" className="ml-1 bg-purple-50 text-purple-700 border-purple-200">
+                                          Re-entry #{pair.entry.reEntryNumber}
+                                        </Badge>
+                                      )}
+                                    </span>
+                                  ) : 'N/A'}
+                                </TableCell>
+                                <TableCell>-</TableCell>
+                                <TableCell>{pair.entry.orderType || 'N/A'}</TableCell>
+                                <TableCell className="text-xs text-gray-500">{pair.entry.nodeId || 'N/A'}</TableCell>
                               </TableRow>
                             )}
                             {pair.exit && (
@@ -214,12 +236,58 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                                 <TableCell>{pair.exit.buySell || 'N/A'}</TableCell>
                                 <TableCell className="text-right">{pair.exit.quantity || 'N/A'}</TableCell>
                                 <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2) || 'N/A'}</TableCell>
-                                {pair.exit.exitReason && <TableCell>{getExitReasonBadge(pair.exit.exitReason)}</TableCell>}
-                                <TableCell className="text-xs text-gray-500">{pair.exit.positionId || 'N/A'}</TableCell>
+                                <TableCell>-</TableCell>
+                                <TableCell>{pair.exit.exitReason ? getExitReasonBadge(pair.exit.exitReason) : '-'}</TableCell>
+                                <TableCell>{pair.exit.orderType || 'N/A'}</TableCell>
+                                <TableCell className="text-xs text-gray-500">{pair.exit.nodeId || 'N/A'}</TableCell>
                               </TableRow>
                             )}
                           </TableBody>
                         </Table>
+                        
+                        <div className="mt-3 grid grid-cols-1 md:grid-cols-2 gap-3">
+                          <div className="text-sm border rounded-md p-2">
+                            <h4 className="font-medium mb-1">Entry Details</h4>
+                            <div className="grid grid-cols-2 gap-y-1">
+                              <span className="text-muted-foreground">Position ID:</span>
+                              <span className="font-mono text-xs">{pair.entry?.positionId || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Node ID:</span>
+                              <span className="font-mono text-xs">{pair.entry?.nodeId || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Date & Time:</span>
+                              <span>{formatDateTime(pair.entry?.timestamp || "").date || 'N/A'} {formatDateTime(pair.entry?.timestamp || "").time || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Entry Number:</span>
+                              <span>#{pair.entry?.entryNumber || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Re-entry Number:</span>
+                              <span>{pair.entry?.reEntryNumber || '0'}</span>
+                            </div>
+                          </div>
+                          
+                          <div className="text-sm border rounded-md p-2">
+                            <h4 className="font-medium mb-1">Exit Details</h4>
+                            <div className="grid grid-cols-2 gap-y-1">
+                              <span className="text-muted-foreground">Position ID:</span>
+                              <span className="font-mono text-xs">{pair.exit?.positionId || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Node ID:</span>
+                              <span className="font-mono text-xs">{pair.exit?.nodeId || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Date & Time:</span>
+                              <span>{formatDateTime(pair.exit?.timestamp || "").date || 'N/A'} {formatDateTime(pair.exit?.timestamp || "").time || 'N/A'}</span>
+                              
+                              <span className="text-muted-foreground">Exit Reason:</span>
+                              <span>{pair.exit?.exitReason ? getExitReasonBadge(pair.exit.exitReason) : '-'}</span>
+                              
+                              <span className="text-muted-foreground">P&L:</span>
+                              <span className={`font-medium ${(pair.exit?.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                                ₹{Math.abs(pair.exit?.profitLoss || 0).toFixed(2)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     )}
                     
