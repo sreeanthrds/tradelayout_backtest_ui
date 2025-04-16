@@ -13,12 +13,14 @@ import { TradeActionsMenu } from "./TradeActionsMenu";
 import { TradeExpandedDetails } from "./TradeExpandedDetails";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Trade } from "@/models/TradeTypes";
+import { formatDate, formatTime, formatCurrency } from "@/utils/formatters";
 
 interface TradesTableProps {
-  trades: any[];
-  onViewDetails: (trade: any) => void;
-  onViewAnalysis: (trade: any) => void;
-  onReportIssue: (trade: any) => void;
+  trades: Trade[];
+  onViewDetails: (trade: Trade) => void;
+  onViewAnalysis: (trade: Trade) => void;
+  onReportIssue: (trade: Trade) => void;
 }
 
 export function TradesTable({ 
@@ -36,6 +38,13 @@ export function TradesTable({
     }));
   };
 
+  // Get trade status based on P&L
+  const getTradeStatus = (trade: Trade): "win" | "loss" | "breakeven" => {
+    if (trade.profitLoss > 0) return "win";
+    if (trade.profitLoss < 0) return "loss";
+    return "breakeven";
+  };
+
   return (
     <div className="rounded-md border overflow-hidden">
       <Table>
@@ -44,57 +53,55 @@ export function TradesTable({
             <TableHead className="w-[50px]"></TableHead>
             <TableHead className="w-[100px]">ID</TableHead>
             <TableHead>Date</TableHead>
-            <TableHead>Strategy</TableHead>
             <TableHead>Symbol</TableHead>
-            <TableHead>Type</TableHead>
-            <TableHead className="text-right">Entry</TableHead>
-            <TableHead className="text-right">Exit</TableHead>
+            <TableHead>Duration</TableHead>
+            <TableHead>Pairs</TableHead>
             <TableHead className="text-right">P&L</TableHead>
             <TableHead>Status</TableHead>
+            <TableHead className="text-right">VIX</TableHead>
             <TableHead className="text-right"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {trades.map((trade) => (
             <>
-              <TableRow key={trade.id} className={expandedRows[trade.id] ? "border-b-0" : ""}>
+              <TableRow key={trade.index} className={expandedRows[trade.index] ? "border-b-0" : ""}>
                 <TableCell>
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => toggleRow(trade.id)}
+                    onClick={() => toggleRow(trade.index)}
                     className="h-8 w-8"
                   >
-                    {expandedRows[trade.id] ? (
+                    {expandedRows[trade.index] ? (
                       <ChevronDown className="h-4 w-4" />
                     ) : (
                       <ChevronRight className="h-4 w-4" />
                     )}
                   </Button>
                 </TableCell>
-                <TableCell className="font-medium">{trade.id}</TableCell>
-                <TableCell>{trade.date}</TableCell>
-                <TableCell>{trade.strategy}</TableCell>
+                <TableCell className="font-medium">{trade.index}</TableCell>
+                <TableCell>{trade.entryDate}</TableCell>
                 <TableCell>{trade.symbol}</TableCell>
-                <TableCell>{trade.type}</TableCell>
-                <TableCell className="text-right">${trade.entryPrice.toFixed(2)}</TableCell>
-                <TableCell className="text-right">${trade.exitPrice.toFixed(2)}</TableCell>
-                <TableCell className={`text-right font-medium ${trade.pnl >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  ${Math.abs(trade.pnl).toFixed(2)} ({trade.pnlPercent}%)
+                <TableCell>{trade.tradeDuration}</TableCell>
+                <TableCell>{trade.tradePairs.length}</TableCell>
+                <TableCell className={`text-right font-medium ${trade.profitLoss >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  ${Math.abs(trade.profitLoss).toFixed(2)}
                 </TableCell>
-                <TableCell><TradeStatusBadge status={trade.status} /></TableCell>
+                <TableCell><TradeStatusBadge status={getTradeStatus(trade)} /></TableCell>
+                <TableCell className="text-right">{trade.vix.toFixed(2)}</TableCell>
                 <TableCell className="text-right">
                   <TradeActionsMenu 
                     trade={trade}
-                    onViewDetails={() => toggleRow(trade.id)}
-                    onViewAnalysis={onViewAnalysis}
-                    onReportIssue={onReportIssue}
+                    onViewDetails={() => toggleRow(trade.index)}
+                    onViewAnalysis={() => onViewAnalysis(trade)}
+                    onReportIssue={() => onReportIssue(trade)}
                   />
                 </TableCell>
               </TableRow>
-              {expandedRows[trade.id] && (
-                <TableRow key={`${trade.id}-details`}>
-                  <TableCell colSpan={11} className="p-0">
+              {expandedRows[trade.index] && (
+                <TableRow key={`${trade.index}-details`}>
+                  <TableCell colSpan={10} className="p-0">
                     <TradeExpandedDetails trade={trade} />
                   </TableCell>
                 </TableRow>

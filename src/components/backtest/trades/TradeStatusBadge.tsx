@@ -8,14 +8,14 @@ import {
   Hourglass 
 } from "lucide-react";
 
-type TradeStatus = "win" | "loss" | "breakeven" | "pending" | "cancelled";
+type TradeStatus = "win" | "loss" | "breakeven" | "pending" | "cancelled" | string;
 
 interface TradeStatusBadgeProps {
-  status: TradeStatus | string;
+  status: TradeStatus;
 }
 
 // Define status configurations for consistent styling and icons
-const statusConfig = {
+const statusConfig: Record<string, { icon: any, label: string, classes: string }> = {
   win: {
     icon: TrendingUp,
     label: "Win",
@@ -40,12 +40,17 @@ const statusConfig = {
     icon: AlertCircle,
     label: "Cancelled",
     classes: "bg-gray-50 text-gray-700 border-gray-200"
+  },
+  closed: {
+    icon: TrendingDown,
+    label: "Closed",
+    classes: "bg-purple-50 text-purple-700 border-purple-200"
   }
 };
 
 export function TradeStatusBadge({ status }: TradeStatusBadgeProps) {
   // Default to showing status as-is if not in our predefined list
-  const config = statusConfig[status as TradeStatus] || {
+  const config = statusConfig[status.toLowerCase()] || {
     icon: AlertCircle,
     label: status,
     classes: "bg-gray-50 text-gray-700 border-gray-200"
