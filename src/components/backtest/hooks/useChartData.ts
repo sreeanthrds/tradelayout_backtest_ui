@@ -8,7 +8,10 @@ export function useChartData(chartType: ChartType) {
 
   // Generate different example data based on chart type
   useEffect(() => {
-    setData(generateChartData(chartType));
+    console.log('Generating chart data for type:', chartType);
+    const generatedData = generateChartData(chartType);
+    console.log('Generated Data:', generatedData);
+    setData(generatedData);
   }, [chartType]);
 
   return { data };
