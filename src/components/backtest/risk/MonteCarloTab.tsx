@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   LineChart,
@@ -39,28 +40,6 @@ export function MonteCarloTab({
 }: MonteCarloTabProps) {
   const [isSimulating, setIsSimulating] = useState(false);
   const [simulationResults, setSimulationResults] = useState<any>(null);
-
-  // Run simulation when component mounts
-  useState(() => {
-    runSimulation();
-  });
-
-  const runSimulation = () => {
-    setIsSimulating(true);
-    
-    // Use setTimeout to avoid blocking the UI
-    setTimeout(() => {
-      const results = performMonteCarloSimulation(
-        initialInvestment,
-        annualReturn,
-        annualVolatility,
-        simulationYears,
-        simulationPaths
-      );
-      setSimulationResults(results);
-      setIsSimulating(false);
-    }, 10);
-  };
 
   // Monte Carlo simulation algorithm
   const performMonteCarloSimulation = (
@@ -195,6 +174,28 @@ export function MonteCarloTab({
       },
     };
   };
+
+  const runSimulation = () => {
+    setIsSimulating(true);
+    
+    // Use setTimeout to avoid blocking the UI
+    setTimeout(() => {
+      const results = performMonteCarloSimulation(
+        initialInvestment,
+        annualReturn,
+        annualVolatility,
+        simulationYears,
+        simulationPaths
+      );
+      setSimulationResults(results);
+      setIsSimulating(false);
+    }, 10);
+  };
+
+  // Run simulation when component mounts using useEffect instead of useState
+  useEffect(() => {
+    runSimulation();
+  }, []);
 
   if (isSimulating) {
     return <div className="flex justify-center items-center h-60">Running simulation...</div>;
