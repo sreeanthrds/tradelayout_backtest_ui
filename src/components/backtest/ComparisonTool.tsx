@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Card,
@@ -198,7 +197,9 @@ export function ComparisonTool() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" />
                 <YAxis />
-                <Tooltip formatter={(value) => [`$${typeof value === 'number' ? value.toFixed(2) : value}`, '']} />
+                <Tooltip 
+                  formatter={(value) => [`₹${typeof value === 'number' ? value.toFixed(2) : value}`, '']} 
+                />
                 <Legend />
                 {selectedStrategies.map((strategy) => (
                   <Line
