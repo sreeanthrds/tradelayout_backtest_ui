@@ -57,7 +57,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   }
 
   // Ensure trade pairs array exists
-  const tradePairs = trade.tradePairs || [];
+  const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
 
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
@@ -85,15 +85,15 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                   </div>
                   <div className="space-y-4">
                     <div>
-                      <p className="font-medium">{trade.entryDate} {trade.entryTime} - Entry</p>
+                      <p className="font-medium">{trade.entryDate || 'N/A'} {trade.entryTime || ''} - Entry</p>
                       <p className="text-muted-foreground">
                         Trade opened with {tradePairs.length} position pairs
                       </p>
                     </div>
                     <div>
-                      <p className="font-medium">{trade.exitDate} {trade.exitTime} - Exit</p>
+                      <p className="font-medium">{trade.exitDate || 'N/A'} {trade.exitTime || ''} - Exit</p>
                       <p className="text-muted-foreground">
-                        Trade closed with {trade.profitLoss >= 0 ? "profit" : "loss"} of ${Math.abs(trade.profitLoss).toFixed(2)}
+                        Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of ${Math.abs(trade.profitLoss || 0).toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -111,8 +111,8 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
               <CardContent className="space-y-2">
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Net P&L:</span>
-                  <span className={`font-medium ${trade.profitLoss >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                    ${Math.abs(trade.profitLoss).toFixed(2)}
+                  <span className={`font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                    ${Math.abs(trade.profitLoss || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
@@ -121,11 +121,11 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">VIX Level:</span>
-                  <span className="font-medium">{trade.vix.toFixed(2)}</span>
+                  <span className="font-medium">{typeof trade.vix === 'number' ? trade.vix.toFixed(2) : 'N/A'}</span>
                 </div>
                 <div className="flex justify-between items-center text-sm">
                   <span className="text-muted-foreground">Holding Period:</span>
-                  <span className="font-medium">{trade.tradeDuration}</span>
+                  <span className="font-medium">{trade.tradeDuration || 'N/A'}</span>
                 </div>
               </CardContent>
             </Card>
@@ -156,15 +156,15 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                           <ChevronRight className="h-4 w-4" />
                         }
                         <span className="font-medium">
-                          {pair.entry?.type} {pair.entry?.strike} 
+                          {pair.entry?.type || 'N/A'} {pair.entry?.strike || 'N/A'} 
                           <span className="text-gray-500 ml-2 text-xs">
-                            ({formatDateTime(pair.entry?.timestamp || "").time} - {formatDateTime(pair.exit?.timestamp || "").time})
+                            ({formatDateTime(pair.entry?.timestamp || "").time || 'N/A'} - {formatDateTime(pair.exit?.timestamp || "").time || 'N/A'})
                           </span>
                         </span>
                         {pair.exit?.exitReason && (
                           <span className="ml-2">{getExitReasonBadge(pair.exit.exitReason)}</span>
                         )}
-                        {pair.entry?.reEntryNumber && pair.entry.reEntryNumber > 0 && (
+                        {pair.entry?.reEntryNumber !== undefined && pair.entry.reEntryNumber > 0 && (
                           <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                             Re-entry #{pair.entry.reEntryNumber}
                           </Badge>
@@ -195,27 +195,27 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
                             {pair.entry && (
                               <TableRow>
                                 <TableCell className="font-medium">Entry</TableCell>
-                                <TableCell>{formatDateTime(pair.entry.timestamp).time}</TableCell>
-                                <TableCell>{pair.entry.type}</TableCell>
-                                <TableCell>{pair.entry.strike}</TableCell>
-                                <TableCell>{pair.entry.buySell}</TableCell>
-                                <TableCell className="text-right">{pair.entry.quantity}</TableCell>
-                                <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2)}</TableCell>
+                                <TableCell>{formatDateTime(pair.entry.timestamp || "").time || 'N/A'}</TableCell>
+                                <TableCell>{pair.entry.type || 'N/A'}</TableCell>
+                                <TableCell>{pair.entry.strike || 'N/A'}</TableCell>
+                                <TableCell>{pair.entry.buySell || 'N/A'}</TableCell>
+                                <TableCell className="text-right">{pair.entry.quantity || 'N/A'}</TableCell>
+                                <TableCell className="text-right">{pair.entry.entryPrice?.toFixed(2) || 'N/A'}</TableCell>
                                 {pair.exit?.exitReason && <TableCell>-</TableCell>}
-                                <TableCell className="text-xs text-gray-500">{pair.entry.positionId}</TableCell>
+                                <TableCell className="text-xs text-gray-500">{pair.entry.positionId || 'N/A'}</TableCell>
                               </TableRow>
                             )}
                             {pair.exit && (
                               <TableRow>
                                 <TableCell className="font-medium">Exit</TableCell>
-                                <TableCell>{formatDateTime(pair.exit.timestamp).time}</TableCell>
-                                <TableCell>{pair.exit.type}</TableCell>
-                                <TableCell>{pair.exit.strike}</TableCell>
-                                <TableCell>{pair.exit.buySell}</TableCell>
-                                <TableCell className="text-right">{pair.exit.quantity}</TableCell>
-                                <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2)}</TableCell>
+                                <TableCell>{formatDateTime(pair.exit.timestamp || "").time || 'N/A'}</TableCell>
+                                <TableCell>{pair.exit.type || 'N/A'}</TableCell>
+                                <TableCell>{pair.exit.strike || 'N/A'}</TableCell>
+                                <TableCell>{pair.exit.buySell || 'N/A'}</TableCell>
+                                <TableCell className="text-right">{pair.exit.quantity || 'N/A'}</TableCell>
+                                <TableCell className="text-right">{pair.exit.exitPrice?.toFixed(2) || 'N/A'}</TableCell>
                                 {pair.exit.exitReason && <TableCell>{getExitReasonBadge(pair.exit.exitReason)}</TableCell>}
-                                <TableCell className="text-xs text-gray-500">{pair.exit.positionId}</TableCell>
+                                <TableCell className="text-xs text-gray-500">{pair.exit.positionId || 'N/A'}</TableCell>
                               </TableRow>
                             )}
                           </TableBody>

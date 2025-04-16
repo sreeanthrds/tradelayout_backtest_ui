@@ -40,12 +40,13 @@ export function TradesTable({
 
   // Get trade status based on P&L
   const getTradeStatus = (trade: Trade): "win" | "loss" | "breakeven" => {
+    if (!trade || typeof trade.profitLoss !== 'number') return "breakeven";
     if (trade.profitLoss > 0) return "win";
     if (trade.profitLoss < 0) return "loss";
     return "breakeven";
   };
 
-  // Safeguard if trades is undefined
+  // Safeguard if trades is undefined or empty
   if (!trades || trades.length === 0) {
     return (
       <div className="rounded-md border overflow-hidden">
@@ -112,15 +113,15 @@ export function TradesTable({
                   </Button>
                 </TableCell>
                 <TableCell className="font-medium">{trade.index}</TableCell>
-                <TableCell>{trade.entryDate}</TableCell>
-                <TableCell>{trade.symbol}</TableCell>
-                <TableCell>{trade.tradeDuration}</TableCell>
-                <TableCell>{trade.tradePairs?.length || 0}</TableCell>
-                <TableCell className={`text-right font-medium ${trade.profitLoss >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  ${Math.abs(trade.profitLoss).toFixed(2)}
+                <TableCell>{trade.entryDate || 'N/A'}</TableCell>
+                <TableCell>{trade.symbol || 'N/A'}</TableCell>
+                <TableCell>{trade.tradeDuration || 'N/A'}</TableCell>
+                <TableCell>{trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs.length : 0}</TableCell>
+                <TableCell className={`text-right font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                  ${Math.abs(trade.profitLoss || 0).toFixed(2)}
                 </TableCell>
                 <TableCell><TradeStatusBadge status={getTradeStatus(trade)} /></TableCell>
-                <TableCell className="text-right">{trade.vix.toFixed(2)}</TableCell>
+                <TableCell className="text-right">{typeof trade.vix === 'number' ? trade.vix.toFixed(2) : 'N/A'}</TableCell>
                 <TableCell className="text-right">
                   <TradeActionsMenu 
                     trade={trade}

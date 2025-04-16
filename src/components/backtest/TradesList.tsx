@@ -23,7 +23,7 @@ export function TradesList() {
     // Get trades data from service
     try {
       const data = tradeService.getSampleData();
-      if (data && data.trades) {
+      if (data && data.trades && Array.isArray(data.trades)) {
         setTrades(data.trades);
       } else {
         console.error("No trade data available or invalid format");
@@ -58,13 +58,13 @@ export function TradesList() {
   };
 
   // Filter trades based on search query
-  const filteredTrades = searchQuery 
-    ? trades.filter(trade => 
+  const filteredTrades = searchQuery && trades ? 
+    trades.filter(trade => 
         trade.index.toLowerCase().includes(searchQuery.toLowerCase()) ||
         trade.symbol.toLowerCase().includes(searchQuery.toLowerCase()))
     : trades;
     
-  const totalTrades = filteredTrades.length;
+  const totalTrades = filteredTrades ? filteredTrades.length : 0;
 
   if (isLoading) {
     return <div className="py-10 text-center">Loading trades data...</div>;
@@ -75,7 +75,7 @@ export function TradesList() {
       <TradesSearch onSearch={handleSearch} />
       
       <TradesTable 
-        trades={filteredTrades}
+        trades={filteredTrades || []}
         onViewDetails={handleViewDetails}
         onViewAnalysis={handleViewAnalysis}
         onReportIssue={handleReportIssue}
