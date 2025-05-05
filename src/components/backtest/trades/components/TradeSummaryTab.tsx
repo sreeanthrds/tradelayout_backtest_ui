@@ -11,6 +11,25 @@ interface TradeSummaryTabProps {
 export function TradeSummaryTab({ trade }: TradeSummaryTabProps) {
   // Ensure trade pairs array exists
   const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
+  
+  // Determine trade status string
+  const getTradeStatusText = () => {
+    if (trade.status === 'Pending' || trade.status === 'Open') {
+      return "Trade is still active";
+    }
+    if (trade.status === 'Cancelled') {
+      return "Trade was cancelled";
+    }
+    if (trade.status === 'Error') {
+      return "Trade had execution errors";
+    }
+    
+    if (trade.profitLoss === null || trade.profitLoss === undefined) {
+      return "Trade outcome not available";
+    }
+    
+    return `Trade closed with ${(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of ${(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}${Math.abs(trade.profitLoss || 0).toFixed(2)}`;
+  };
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -32,13 +51,15 @@ export function TradeSummaryTab({ trade }: TradeSummaryTabProps) {
               <div>
                 <p className="font-medium">{trade.entryDate || 'N/A'} {trade.entryTime || ''} - Entry</p>
                 <p className="text-muted-foreground">
-                  Trade opened with {tradePairs.length} position pairs
+                  Trade opened with {tradePairs.length} position {tradePairs.length === 1 ? 'pair' : 'pairs'}
                 </p>
               </div>
               <div>
-                <p className="font-medium">{trade.exitDate || 'N/A'} {trade.exitTime || ''} - Exit</p>
+                <p className="font-medium">
+                  {trade.exitDate ? `${trade.exitDate} ${trade.exitTime || ''} - Exit` : 'Trade Not Yet Closed'}
+                </p>
                 <p className="text-muted-foreground">
-                  Trade closed with {(trade.profitLoss || 0) >= 0 ? "profit" : "loss"} of {(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(trade.profitLoss || 0).toFixed(2)}
+                  {getTradeStatusText()}
                 </p>
               </div>
             </div>
@@ -56,9 +77,13 @@ export function TradeSummaryTab({ trade }: TradeSummaryTabProps) {
         <CardContent className="space-y-2">
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Net P&L:</span>
-            <span className={`font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-              {(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(trade.profitLoss || 0).toFixed(2)}
-            </span>
+            {trade.profitLoss === null || trade.profitLoss === undefined ? (
+              <span className="font-medium text-muted-foreground">N/A</span>
+            ) : (
+              <span className={`font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
+                {(trade.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(trade.profitLoss || 0).toFixed(2)}
+              </span>
+            )}
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Trade Pairs:</span>
@@ -70,11 +95,19 @@ export function TradeSummaryTab({ trade }: TradeSummaryTabProps) {
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Holding Period:</span>
-            <span className="font-medium">{trade.tradeDuration || 'N/A'}</span>
+            <span className="font-medium">{trade.tradeDuration || 'Active'}</span>
           </div>
           <div className="flex justify-between items-center text-sm">
             <span className="text-muted-foreground">Position ID:</span>
             <span className="font-medium">{trade.positionId || 'N/A'}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Instrument Type:</span>
+            <span className="font-medium">{trade.instrumentType || 'N/A'}</span>
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            <span className="text-muted-foreground">Status:</span>
+            <span className="font-medium">{trade.status || 'N/A'}</span>
           </div>
         </CardContent>
       </Card>

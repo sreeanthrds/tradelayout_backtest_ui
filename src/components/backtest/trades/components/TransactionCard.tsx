@@ -5,7 +5,7 @@ import { formatDateTime } from "@/utils/formatters";
 import { ExitReasonBadge } from "./ExitReasonBadge";
 
 interface TransactionCardProps {
-  transaction: Transaction | undefined;
+  transaction: Transaction | undefined | null;
   type: "Entry" | "Exit";
 }
 
@@ -17,7 +17,9 @@ export function TransactionCard({ transaction, type }: TransactionCardProps) {
           <CardTitle className="text-sm font-medium">{type} Details</CardTitle>
         </CardHeader>
         <CardContent className="text-sm">
-          <div className="text-center py-4 text-muted-foreground">No {type.toLowerCase()} information available</div>
+          <div className="text-center py-4 text-muted-foreground">
+            {type === "Entry" ? "No entry information available" : "Trade not yet closed"}
+          </div>
         </CardContent>
       </Card>
     );
@@ -68,7 +70,8 @@ export function TransactionCard({ transaction, type }: TransactionCardProps) {
               
               <span className="text-muted-foreground">P&L:</span>
               <span className={`font-medium ${(transaction.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                {(transaction.profitLoss || 0) >= 0 ? "₹" : "-₹"}{Math.abs(transaction.profitLoss || 0).toFixed(2)}
+                {transaction.profitLoss === undefined ? 'N/A' : 
+                  ((transaction.profitLoss || 0) >= 0 ? "₹" : "-₹") + Math.abs(transaction.profitLoss || 0).toFixed(2)}
               </span>
             </>
           )}

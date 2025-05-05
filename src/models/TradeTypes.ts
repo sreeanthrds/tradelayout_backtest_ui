@@ -8,10 +8,10 @@ export interface Trade {
   symbol: string;
   entryDate: string;
   entryTime: string;
-  exitDate: string;
-  exitTime: string;
+  exitDate: string | null;
+  exitTime: string | null;
   vix: number;
-  profitLoss: number;
+  profitLoss: number | null;
   status: string;
   tradeDuration: string;
   tradePairs: TradePair[];
@@ -20,7 +20,7 @@ export interface Trade {
 export interface TradePair {
   index: string;
   entry: Transaction;
-  exit: Transaction;
+  exit: Transaction | null;
 }
 
 export interface Transaction {

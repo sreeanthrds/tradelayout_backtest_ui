@@ -5,10 +5,12 @@ import {
   TrendingDown, 
   PauseCircle, 
   AlertCircle, 
-  Hourglass 
+  Hourglass,
+  XCircle,
+  Clock
 } from "lucide-react";
 
-type TradeStatus = "win" | "loss" | "breakeven" | "pending" | "cancelled" | string;
+type TradeStatus = "win" | "loss" | "breakeven" | "pending" | "cancelled" | "error" | "open" | string;
 
 interface TradeStatusBadgeProps {
   status: TradeStatus;
@@ -37,9 +39,19 @@ const statusConfig: Record<string, { icon: any, label: string, classes: string }
     classes: "bg-amber-50 text-amber-700 border-amber-200"
   },
   cancelled: {
-    icon: AlertCircle,
+    icon: XCircle,
     label: "Cancelled",
     classes: "bg-gray-50 text-gray-700 border-gray-200"
+  },
+  error: {
+    icon: AlertCircle,
+    label: "Error",
+    classes: "bg-rose-50 text-rose-700 border-rose-200"
+  },
+  open: {
+    icon: Clock,
+    label: "Open",
+    classes: "bg-indigo-50 text-indigo-700 border-indigo-200"
   },
   closed: {
     icon: TrendingDown,

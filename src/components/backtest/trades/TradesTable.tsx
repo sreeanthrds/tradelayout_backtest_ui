@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import {
   Table,
@@ -39,11 +38,28 @@ export function TradesTable({
   };
 
   // Get trade status based on P&L
-  const getTradeStatus = (trade: Trade): "win" | "loss" | "breakeven" => {
-    if (!trade || typeof trade.profitLoss !== 'number') return "breakeven";
+  const getTradeStatus = (trade: Trade): "win" | "loss" | "breakeven" | "pending" | "cancelled" | "error" | "open" => {
+    if (!trade) return "breakeven";
+    
+    // If trade has a status field, use that directly
+    if (trade.status) {
+      const status = trade.status.toLowerCase();
+      if (["pending", "cancelled", "error", "open"].includes(status)) {
+        return status as any;
+      }
+    }
+    
+    // Otherwise, determine by P&L
+    if (typeof trade.profitLoss !== 'number') return "pending";
     if (trade.profitLoss > 0) return "win";
     if (trade.profitLoss < 0) return "loss";
     return "breakeven";
+  };
+
+  // Format P&L with appropriate sign and currency
+  const formatPnL = (value: number | null | undefined): string => {
+    if (value === null || value === undefined) return 'N/A';
+    return `₹${Math.abs(value).toFixed(2)}`;
   };
 
   // Safeguard if trades is undefined or empty
@@ -95,51 +111,59 @@ export function TradesTable({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {trades.map((trade) => (
-            <>
-              <TableRow key={trade.index} className={expandedRows[trade.index] ? "border-b-0" : ""}>
-                <TableCell>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => toggleRow(trade.index)}
-                    className="h-8 w-8"
-                  >
-                    {expandedRows[trade.index] ? (
-                      <ChevronDown className="h-4 w-4" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4" />
-                    )}
-                  </Button>
-                </TableCell>
-                <TableCell className="font-medium">{trade.index}</TableCell>
-                <TableCell>{trade.entryDate || 'N/A'}</TableCell>
-                <TableCell>{trade.symbol || 'N/A'}</TableCell>
-                <TableCell>{trade.tradeDuration || 'N/A'}</TableCell>
-                <TableCell>{trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs.length : 0}</TableCell>
-                <TableCell className={`text-right font-medium ${(trade.profitLoss || 0) >= 0 ? "text-emerald-600" : "text-red-600"}`}>
-                  ₹{Math.abs(trade.profitLoss || 0).toFixed(2)}
-                </TableCell>
-                <TableCell><TradeStatusBadge status={getTradeStatus(trade)} /></TableCell>
-                <TableCell className="text-right">{typeof trade.vix === 'number' ? trade.vix.toFixed(2) : 'N/A'}</TableCell>
-                <TableCell className="text-right">
-                  <TradeActionsMenu 
-                    trade={trade}
-                    onViewDetails={() => toggleRow(trade.index)}
-                    onViewAnalysis={() => onViewAnalysis(trade)}
-                    onReportIssue={() => onReportIssue(trade)}
-                  />
-                </TableCell>
-              </TableRow>
-              {expandedRows[trade.index] && (
-                <TableRow key={`${trade.index}-details`}>
-                  <TableCell colSpan={10} className="p-0">
-                    <TradeExpandedDetails trade={trade} />
+          {trades.map((trade) => {
+            const tradeStatus = getTradeStatus(trade);
+            const isProfitable = (trade.profitLoss || 0) >= 0;
+            return (
+              <>
+                <TableRow key={trade.index} className={expandedRows[trade.index] ? "border-b-0" : ""}>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => toggleRow(trade.index)}
+                      className="h-8 w-8"
+                    >
+                      {expandedRows[trade.index] ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                  <TableCell className="font-medium">{trade.index}</TableCell>
+                  <TableCell>{trade.entryDate || 'N/A'}</TableCell>
+                  <TableCell>{trade.symbol || 'N/A'}</TableCell>
+                  <TableCell>{trade.tradeDuration || 'Active'}</TableCell>
+                  <TableCell>{trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs.length : 0}</TableCell>
+                  <TableCell className={`text-right font-medium ${
+                    trade.profitLoss === null || trade.profitLoss === undefined 
+                      ? "text-muted-foreground"
+                      : isProfitable ? "text-emerald-600" : "text-red-600"
+                  }`}>
+                    {trade.profitLoss === null || trade.profitLoss === undefined ? 'N/A' : formatPnL(trade.profitLoss)}
+                  </TableCell>
+                  <TableCell><TradeStatusBadge status={tradeStatus} /></TableCell>
+                  <TableCell className="text-right">{typeof trade.vix === 'number' ? trade.vix.toFixed(2) : 'N/A'}</TableCell>
+                  <TableCell className="text-right">
+                    <TradeActionsMenu 
+                      trade={trade}
+                      onViewDetails={() => toggleRow(trade.index)}
+                      onViewAnalysis={() => onViewAnalysis(trade)}
+                      onReportIssue={() => onReportIssue(trade)}
+                    />
                   </TableCell>
                 </TableRow>
-              )}
-            </>
-          ))}
+                {expandedRows[trade.index] && (
+                  <TableRow key={`${trade.index}-details`}>
+                    <TableCell colSpan={10} className="p-0">
+                      <TradeExpandedDetails trade={trade} />
+                    </TableCell>
+                  </TableRow>
+                )}
+              </>
+            );
+          })}
         </TableBody>
       </Table>
     </div>

@@ -1,4 +1,3 @@
-
 import { BacktestResults } from "@/models/TradeTypes";
 
 export const sampleTradeData: BacktestResults = {
@@ -357,6 +356,358 @@ export const sampleTradeData: BacktestResults = {
             timestamp: "2024-04-19T14:56:00Z",
             profitLoss: 111562.50,
             status: "Executed"
+          }
+        }
+      ]
+    },
+    {
+      index: "4",
+      positionId: "POS-20240420-4",
+      instrumentType: "Futures",
+      symbol: "BANKNIFTY",
+      entryDate: "2024-04-20",
+      entryTime: "09:30:00",
+      exitDate: "2024-04-20",
+      exitTime: "15:30:00",
+      vix: 14.85,
+      profitLoss: 45750.00,
+      status: "Closed",
+      tradeDuration: "06:00:00",
+      tradePairs: [
+        {
+          index: "4.1",
+          entry: {
+            nodeId: "ENTRY-023",
+            positionId: "POS-20240420-4-1",
+            type: "FUT",
+            strike: 48250,
+            buySell: "Buy",
+            quantity: 15,
+            entryPrice: 48250.00,
+            orderType: "Limit",
+            timestamp: "2024-04-20T09:30:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-023",
+            positionId: "POS-20240420-4-1",
+            type: "FUT",
+            strike: 48250,
+            buySell: "Sell",
+            quantity: 15,
+            exitPrice: 49300.00,
+            orderType: "Market",
+            exitReason: "Target",
+            timestamp: "2024-04-20T15:30:00Z",
+            profitLoss: 15750.00,
+            status: "Executed"
+          }
+        },
+        {
+          index: "4.2",
+          entry: {
+            nodeId: "ENTRY-024",
+            positionId: "POS-20240420-4-2",
+            type: "FUT",
+            strike: 48300,
+            buySell: "Buy",
+            quantity: 15,
+            entryPrice: 48300.00,
+            orderType: "SL-M",
+            timestamp: "2024-04-20T11:45:00Z",
+            status: "Executed",
+            entryNumber: 2,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-024",
+            positionId: "POS-20240420-4-2",
+            type: "FUT",
+            strike: 48300,
+            buySell: "Sell",
+            quantity: 15,
+            exitPrice: 50300.00,
+            orderType: "Target",
+            exitReason: "Target",
+            timestamp: "2024-04-20T14:15:00Z",
+            profitLoss: 30000.00,
+            status: "Executed"
+          }
+        }
+      ]
+    },
+    {
+      index: "5",
+      positionId: "POS-20240421-5",
+      instrumentType: "Options",
+      symbol: "INFY",
+      entryDate: "2024-04-21",
+      entryTime: "09:32:00",
+      exitDate: null,
+      exitTime: null,
+      vix: 16.75,
+      profitLoss: 0,
+      status: "Pending",
+      tradeDuration: "",
+      tradePairs: [
+        {
+          index: "5.1",
+          entry: {
+            nodeId: "ENTRY-025",
+            positionId: "POS-20240421-5-1",
+            type: "PE",
+            strike: 1620,
+            buySell: "Buy",
+            quantity: 300,
+            entryPrice: 18.50,
+            orderType: "Limit",
+            timestamp: "2024-04-21T09:32:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: null
+        }
+      ]
+    },
+    {
+      index: "6",
+      positionId: "POS-20240422-6",
+      instrumentType: "Options",
+      symbol: "RELIANCE",
+      entryDate: "2024-04-22",
+      entryTime: "09:18:00",
+      exitDate: "2024-04-22",
+      exitTime: "09:19:00",
+      vix: 15.32,
+      profitLoss: 0,
+      status: "Cancelled",
+      tradeDuration: "00:01:00",
+      tradePairs: [
+        {
+          index: "6.1",
+          entry: {
+            nodeId: "ENTRY-026",
+            positionId: "POS-20240422-6-1",
+            type: "CE",
+            strike: 2950,
+            buySell: "Buy",
+            quantity: 250,
+            entryPrice: 35.25,
+            orderType: "Limit",
+            timestamp: "2024-04-22T09:18:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-026",
+            positionId: "POS-20240422-6-1",
+            type: "CE",
+            strike: 2950,
+            buySell: "Sell",
+            quantity: 250,
+            exitPrice: 35.25,
+            orderType: "Market",
+            exitReason: "Cancelled",
+            timestamp: "2024-04-22T09:19:00Z",
+            profitLoss: 0,
+            status: "Cancelled"
+          }
+        }
+      ]
+    },
+    {
+      index: "7",
+      positionId: "POS-20240423-7",
+      instrumentType: "Options",
+      symbol: "HDFCBANK",
+      entryDate: "2024-04-23",
+      entryTime: "10:05:00",
+      exitDate: "2024-04-23",
+      exitTime: "15:25:00",
+      vix: 13.25,
+      profitLoss: -12850.00,
+      status: "Closed",
+      tradeDuration: "05:20:00",
+      tradePairs: [
+        {
+          index: "7.1",
+          entry: {
+            nodeId: "ENTRY-027",
+            positionId: "POS-20240423-7-1",
+            type: "CE",
+            strike: 1680,
+            buySell: "Sell", // Short position
+            quantity: 500,
+            entryPrice: 25.70,
+            orderType: "Market",
+            timestamp: "2024-04-23T10:05:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-027",
+            positionId: "POS-20240423-7-1",
+            type: "CE",
+            strike: 1680,
+            buySell: "Buy", // Covering short
+            quantity: 500,
+            exitPrice: 51.40,
+            orderType: "SL-M",
+            exitReason: "SL",
+            timestamp: "2024-04-23T12:15:00Z",
+            profitLoss: -12850.00,
+            status: "Executed"
+          }
+        }
+      ]
+    },
+    {
+      index: "8",
+      positionId: "POS-20240424-8",
+      instrumentType: "Options",
+      symbol: "SBIN",
+      entryDate: "2024-04-24",
+      entryTime: "09:36:00",
+      exitDate: null,
+      exitTime: null,
+      vix: 14.18,
+      profitLoss: null,
+      status: "Open",
+      tradeDuration: "",
+      tradePairs: [
+        {
+          index: "8.1",
+          entry: {
+            nodeId: "ENTRY-028",
+            positionId: "POS-20240424-8-1",
+            type: "Straddle",
+            strike: 725,
+            buySell: "Buy",
+            quantity: 400,
+            entryPrice: 18.75,
+            orderType: "Market",
+            timestamp: "2024-04-24T09:36:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: null
+        },
+        {
+          index: "8.2",
+          entry: {
+            nodeId: "ENTRY-029",
+            positionId: "POS-20240424-8-2",
+            type: "PE",
+            strike: 725,
+            buySell: "Buy",
+            quantity: 400,
+            entryPrice: 17.85,
+            orderType: "Market",
+            timestamp: "2024-04-24T09:36:00Z",
+            status: "Executed",
+            entryNumber: 2,
+            reEntryNumber: 0
+          },
+          exit: null
+        }
+      ]
+    },
+    {
+      index: "9",
+      positionId: "POS-20240425-9",
+      instrumentType: "Options",
+      symbol: "TCS",
+      entryDate: "2024-04-25",
+      entryTime: "09:18:00",
+      exitDate: "2024-04-25",
+      exitTime: "15:29:00",
+      vix: 15.10,
+      profitLoss: 28750.00,
+      status: "Closed",
+      tradeDuration: "06:11:00",
+      tradePairs: [
+        {
+          index: "9.1",
+          entry: {
+            nodeId: "ENTRY-030",
+            positionId: "POS-20240425-9-1",
+            type: "Iron Condor",
+            strike: 3850,
+            buySell: "Sell",
+            quantity: 250,
+            entryPrice: 45.80,
+            orderType: "Limit",
+            timestamp: "2024-04-25T09:18:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-030",
+            positionId: "POS-20240425-9-1",
+            type: "Iron Condor",
+            strike: 3850,
+            buySell: "Buy",
+            quantity: 250,
+            exitPrice: 34.30,
+            orderType: "Market",
+            exitReason: "Time Decay",
+            timestamp: "2024-04-25T15:29:00Z",
+            profitLoss: 28750.00,
+            status: "Executed"
+          }
+        }
+      ]
+    },
+    {
+      index: "10",
+      positionId: "POS-20240426-10",
+      instrumentType: "Options",
+      symbol: "TATAMOTORS",
+      entryDate: "2024-04-26",
+      entryTime: "10:22:00",
+      exitDate: "2024-04-26", 
+      exitTime: "11:05:00",
+      vix: 16.85,
+      profitLoss: -5625.00,
+      status: "Error",
+      tradeDuration: "00:43:00",
+      tradePairs: [
+        {
+          index: "10.1",
+          entry: {
+            nodeId: "ENTRY-031",
+            positionId: "POS-20240426-10-1",
+            type: "CE",
+            strike: 950,
+            buySell: "Buy",
+            quantity: 450,
+            entryPrice: 15.25,
+            orderType: "Market",
+            timestamp: "2024-04-26T10:22:00Z",
+            status: "Executed",
+            entryNumber: 1,
+            reEntryNumber: 0
+          },
+          exit: {
+            nodeId: "EXIT-031",
+            positionId: "POS-20240426-10-1",
+            type: "CE",
+            strike: 950,
+            buySell: "Sell",
+            quantity: 450,
+            exitPrice: 12.75,
+            orderType: "Market",
+            exitReason: "Error",
+            timestamp: "2024-04-26T11:05:00Z",
+            profitLoss: -5625.00,
+            status: "Error"
           }
         }
       ]
