@@ -33,7 +33,7 @@ export function useBacktestSubmit() {
       
       // Show success notification - using the correct format for sonner toast
       toast.success("Backtest Completed", {
-        description: `Successfully ran ${data.strategy} backtest on ${data.symbol}`,
+        description: `Successfully ran ${data.strategy} backtest`,
       });
 
       // Navigate to results page
