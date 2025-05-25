@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { strategyOptions, symbolOptions } from "./options";
+import { strategyOptions } from "./options";
 import { Control } from "react-hook-form";
 import { FormValues } from "./formSchema";
 
@@ -24,63 +24,33 @@ export function StrategySection({ control }: StrategySectionProps) {
         <CardDescription>Set up the core parameters for your backtest</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <FormField
-            control={control}
-            name="strategy"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Strategy</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a strategy" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {strategyOptions.map((strategy) => (
-                      <SelectItem key={strategy.value} value={strategy.value}>
-                        {strategy.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={control}
-            name="symbol"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Symbol</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a symbol" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {symbolOptions.map((symbol) => (
-                      <SelectItem key={symbol.value} value={symbol.value}>
-                        {symbol.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
+        <FormField
+          control={control}
+          name="strategy"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Strategy</FormLabel>
+              <Select 
+                onValueChange={field.onChange} 
+                defaultValue={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a strategy" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {strategyOptions.map((strategy) => (
+                    <SelectItem key={strategy.value} value={strategy.value}>
+                      {strategy.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField

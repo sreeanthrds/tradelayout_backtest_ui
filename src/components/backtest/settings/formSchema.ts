@@ -3,7 +3,6 @@ import { z } from "zod";
 
 export const formSchema = z.object({
   strategy: z.string().min(1, "Strategy is required"),
-  symbol: z.string().min(1, "Symbol is required"),
   startDate: z.date({
     required_error: "Start date is required",
   }),
@@ -25,8 +24,7 @@ export const formSchema = z.object({
 export type FormValues = z.infer<typeof formSchema>;
 
 export const defaultValues: Partial<FormValues> = {
-  strategy: "Iron Condor",
-  symbol: "SPY",
+  strategy: "My New Strategy",
   startDate: new Date(2022, 0, 1), // Jan 1, 2022
   endDate: new Date(2023, 11, 31), // Dec 31, 2023
   initialCapital: 10000,
