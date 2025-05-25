@@ -4,7 +4,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { StrategySection } from "./StrategySection";
 import { CapitalSection } from "./CapitalSection";
-import { TradingRulesSection } from "./TradingRulesSection";
 import { SubmitButton } from "./SubmitButton";
 import { formSchema, FormValues, defaultValues } from "./formSchema";
 import { useBacktestSubmit } from "@/hooks/useBacktestSubmit";
@@ -22,7 +21,6 @@ export function BacktestForm() {
       <form onSubmit={form.handleSubmit(submitBacktest)} className="space-y-8">
         <StrategySection control={form.control} />
         <CapitalSection control={form.control} />
-        <TradingRulesSection control={form.control} />
 
         <div className="flex justify-center gap-4">
           <SubmitButton isLoading={isLoading} />
