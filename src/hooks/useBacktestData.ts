@@ -1,5 +1,6 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { tradeService } from "@/services/TradeDataService";
 
 export interface BacktestData {
   name: string;
@@ -13,9 +14,7 @@ export interface BacktestData {
 }
 
 export function useBacktestData() {
-  // This would typically fetch data from an API
-  // For now, we're using mock data
-  const [backtestData] = useState<BacktestData>({
+  const [backtestData, setBacktestData] = useState<BacktestData>({
     name: "Iron Condor Strategy",
     symbol: "SPY",
     period: "Jan 2022 - Dec 2023",
@@ -25,6 +24,30 @@ export function useBacktestData() {
     sharpeRatio: 1.42,
     trades: 47
   });
+
+  useEffect(() => {
+    // Get the actual backtest parameters from the service
+    const parameters = tradeService.getBacktestParameters();
+    
+    if (parameters) {
+      // Format the date range from the parameters
+      const startDate = parameters.startDate?.toLocaleDateString('en-US', { 
+        month: 'short', 
+        year: 'numeric' 
+      }) || 'Jan 2022';
+      
+      const endDate = parameters.endDate?.toLocaleDateString('en-US', { 
+        month: 'short', 
+        year: 'numeric' 
+      }) || 'Dec 2023';
+
+      setBacktestData(prev => ({
+        ...prev,
+        name: parameters.strategy,
+        period: `${startDate} - ${endDate}`
+      }));
+    }
+  }, []);
 
   return { backtestData };
 }

@@ -24,6 +24,9 @@ export function useBacktestSubmit() {
       // Log the submitted data (would be sent to an API in a real app)
       console.log("Running backtest with parameters:", data);
       
+      // Store the backtest parameters in the trade service
+      tradeService.setBacktestParameters(data);
+      
       // In a real implementation, we would make an API call here to get the backtest results
       // For now, we're using sample data that's already in the trade service
       

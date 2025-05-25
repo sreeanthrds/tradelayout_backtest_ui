@@ -1,10 +1,12 @@
 
 import { BacktestResults, Trade } from "@/models/TradeTypes";
+import { FormValues } from "@/components/backtest/settings/formSchema";
 
 // This class will handle trade data operations
 export class TradeDataService {
   private static _instance: TradeDataService;
   private _data: BacktestResults = { trades: [] };
+  private _backtestParameters: FormValues | null = null;
 
   private constructor() {
     // Initialize with empty data - will be populated later
@@ -27,6 +29,14 @@ export class TradeDataService {
 
   public getTrades(): Trade[] {
     return this._data.trades || [];
+  }
+
+  public setBacktestParameters(parameters: FormValues): void {
+    this._backtestParameters = parameters;
+  }
+
+  public getBacktestParameters(): FormValues | null {
+    return this._backtestParameters;
   }
 
   // Sample data for testing
