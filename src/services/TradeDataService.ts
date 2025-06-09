@@ -41,241 +41,156 @@ export class TradeDataService {
     return this._backtestParameters;
   }
 
-  // Sample data for testing - now loads synchronously
+  // Generate comprehensive sample data with daily trades
   public getSampleData(): BacktestResults {
     if (!this._dataLoaded) {
-      // Load sample data synchronously
       try {
-        // Since we can't import the sample data directly due to circular dependencies,
-        // let's create comprehensive sample data right here
-        const sampleData: BacktestResults = {
-          trades: [
-            {
-              index: "T001",
-              positionId: "POS_2024_001",
-              instrumentType: "Iron Condor",
-              symbol: "NIFTY",
-              entryDate: "2024-01-15",
-              entryTime: "09:30:00",
-              exitDate: "2024-01-16",
-              exitTime: "15:30:00",
-              vix: 18.5,
-              profitLoss: 1250.75,
-              status: "Closed",
-              tradeDuration: "1 day",
-              tradePairs: [
-                {
-                  index: "TP001_1",
-                  entry: {
-                    nodeId: "N001_E",
-                    positionId: "POS_2024_001",
-                    type: "CE",
-                    strike: 21500,
-                    buySell: "Sell",
-                    quantity: 50,
-                    entryPrice: 125.50,
-                    orderType: "Market",
-                    timestamp: "2024-01-15T09:30:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: {
-                    nodeId: "N001_X",
-                    positionId: "POS_2024_001",
-                    type: "CE",
-                    strike: 21500,
-                    buySell: "Buy",
-                    quantity: 50,
-                    exitPrice: 85.25,
-                    orderType: "Market",
-                    exitReason: "Target",
-                    timestamp: "2024-01-16T15:30:00Z",
-                    profitLoss: 2012.50,
-                    status: "Executed"
-                  }
-                },
-                {
-                  index: "TP001_2",
-                  entry: {
-                    nodeId: "N002_E",
-                    positionId: "POS_2024_001",
-                    type: "PE",
-                    strike: 21000,
-                    buySell: "Sell",
-                    quantity: 50,
-                    entryPrice: 95.75,
-                    orderType: "Market",
-                    timestamp: "2024-01-15T09:30:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: {
-                    nodeId: "N002_X",
-                    positionId: "POS_2024_001",
-                    type: "PE",
-                    strike: 21000,
-                    buySell: "Buy",
-                    quantity: 50,
-                    exitPrice: 110.50,
-                    orderType: "Market",
-                    exitReason: "Target",
-                    timestamp: "2024-01-16T15:30:00Z",
-                    profitLoss: -761.75,
-                    status: "Executed"
-                  }
-                }
-              ]
-            },
-            {
-              index: "T002",
-              positionId: "POS_2024_002",
-              instrumentType: "Strangle",
-              symbol: "BANKNIFTY",
-              entryDate: "2024-02-20",
-              entryTime: "10:15:00",
-              exitDate: "2024-02-21",
-              exitTime: "14:45:00",
-              vix: 16.8,
-              profitLoss: -892.25,
-              status: "Closed",
-              tradeDuration: "1 day",
-              tradePairs: [
-                {
-                  index: "TP002_1",
-                  entry: {
-                    nodeId: "N003_E",
-                    positionId: "POS_2024_002",
-                    type: "CE",
-                    strike: 48000,
-                    buySell: "Sell",
-                    quantity: 25,
-                    entryPrice: 180.25,
-                    orderType: "Limit",
-                    timestamp: "2024-02-20T10:15:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: {
-                    nodeId: "N003_X",
-                    positionId: "POS_2024_002",
-                    type: "CE",
-                    strike: 48000,
-                    buySell: "Buy",
-                    quantity: 25,
-                    exitPrice: 255.75,
-                    orderType: "Market",
-                    exitReason: "SL",
-                    timestamp: "2024-02-21T14:45:00Z",
-                    profitLoss: -1887.50,
-                    status: "Executed"
-                  }
-                },
-                {
-                  index: "TP002_2",
-                  entry: {
-                    nodeId: "N004_E",
-                    positionId: "POS_2024_002",
-                    type: "PE",
-                    strike: 45500,
-                    buySell: "Sell",
-                    quantity: 25,
-                    entryPrice: 160.50,
-                    orderType: "Limit",
-                    timestamp: "2024-02-20T10:15:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: {
-                    nodeId: "N004_X",
-                    positionId: "POS_2024_002",
-                    type: "PE",
-                    strike: 45500,
-                    buySell: "Buy",
-                    quantity: 25,
-                    exitPrice: 120.75,
-                    orderType: "Market",
-                    exitReason: "Target",
-                    timestamp: "2024-02-21T14:45:00Z",
-                    profitLoss: 995.25,
-                    status: "Executed"
-                  }
-                }
-              ]
-            },
-            {
-              index: "T003",
-              positionId: "POS_2024_003",
-              instrumentType: "Iron Butterfly",
-              symbol: "NIFTY",
-              entryDate: "2024-03-10",
-              entryTime: "09:45:00",
-              exitDate: null,
-              exitTime: null,
-              vix: 19.2,
-              profitLoss: null,
-              status: "Open",
-              tradeDuration: "Active",
-              tradePairs: [
-                {
-                  index: "TP003_1",
-                  entry: {
-                    nodeId: "N005_E",
-                    positionId: "POS_2024_003",
-                    type: "CE",
-                    strike: 22000,
-                    buySell: "Sell",
-                    quantity: 50,
-                    entryPrice: 145.75,
-                    orderType: "Market",
-                    timestamp: "2024-03-10T09:45:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: null
-                },
-                {
-                  index: "TP003_2",
-                  entry: {
-                    nodeId: "N006_E",
-                    positionId: "POS_2024_003",
-                    type: "PE",
-                    strike: 21500,
-                    buySell: "Sell",
-                    quantity: 50,
-                    entryPrice: 125.25,
-                    orderType: "Market",
-                    timestamp: "2024-03-10T09:45:00Z",
-                    status: "Executed",
-                    entryNumber: 1,
-                    reEntryNumber: 0
-                  },
-                  exit: null
-                }
-              ]
-            }
-          ]
-        };
+        const trades: Trade[] = [];
+        const startDate = new Date('2024-01-01');
+        const endDate = new Date('2024-12-31');
         
+        let tradeIndex = 1;
+        let positionIndex = 1;
+        
+        // Generate trades for every trading day (Mon-Fri)
+        for (let date = new Date(startDate); date <= endDate; date.setDate(date.getDate() + 1)) {
+          // Skip weekends
+          if (date.getDay() === 0 || date.getDay() === 6) continue;
+          
+          // Generate 2-4 trades per day
+          const tradesPerDay = Math.floor(Math.random() * 3) + 2;
+          
+          for (let dayTrade = 0; dayTrade < tradesPerDay; dayTrade++) {
+            const entryHour = 9 + Math.floor(Math.random() * 6); // 9 AM to 3 PM
+            const entryMinute = Math.floor(Math.random() * 60);
+            const entryTime = `${entryHour.toString().padStart(2, '0')}:${entryMinute.toString().padStart(2, '0')}:00`;
+            
+            // Exit 1-8 hours later
+            const exitHours = Math.floor(Math.random() * 8) + 1;
+            const exitDate = new Date(date);
+            exitDate.setHours(exitDate.getHours() + exitHours);
+            
+            // Sometimes trades extend to next day
+            if (exitDate.getHours() > 15) {
+              exitDate.setDate(exitDate.getDate() + 1);
+              exitDate.setHours(9 + Math.floor(Math.random() * 6));
+            }
+            
+            const exitTime = `${exitDate.getHours().toString().padStart(2, '0')}:${exitDate.getMinutes().toString().padStart(2, '0')}:00`;
+            
+            const instruments = ['Iron Condor', 'Iron Butterfly', 'Strangle', 'Straddle', 'Bull Call Spread', 'Bear Put Spread', 'Collar', 'Butterfly'];
+            const symbols = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'];
+            const exitReasons = ['Target', 'SL', 'Time Decay', 'Manual', 'Adjustment', 'Market Close'];
+            
+            const instrumentType = instruments[Math.floor(Math.random() * instruments.length)];
+            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
+            const baseStrike = symbol === 'NIFTY' ? 21000 : symbol === 'BANKNIFTY' ? 47000 : symbol === 'FINNIFTY' ? 19000 : 10000;
+            
+            // Generate 10-15 transaction pairs per trade
+            const pairCount = Math.floor(Math.random() * 6) + 10;
+            const tradePairs = [];
+            let totalPnL = 0;
+            
+            for (let pairIndex = 0; pairIndex < pairCount; pairIndex++) {
+              const strikeOffset = (Math.floor(Math.random() * 20) - 10) * 50; // -500 to +500 strike variation
+              const strike = baseStrike + strikeOffset;
+              const optionType = Math.random() > 0.5 ? 'CE' : 'PE';
+              const buySell = Math.random() > 0.3 ? 'Sell' : 'Buy'; // 70% sell, 30% buy
+              const quantity = [25, 50, 75, 100][Math.floor(Math.random() * 4)];
+              
+              const entryPrice = Math.random() * 200 + 50; // 50-250
+              const priceMovement = (Math.random() - 0.5) * 100; // -50 to +50
+              const exitPrice = Math.max(5, entryPrice + priceMovement);
+              
+              const pairPnL = buySell === 'Sell' ? 
+                (entryPrice - exitPrice) * quantity : 
+                (exitPrice - entryPrice) * quantity;
+              
+              totalPnL += pairPnL;
+              
+              const entryTimestamp = new Date(date);
+              entryTimestamp.setHours(entryHour, entryMinute + pairIndex * 2, 0, 0);
+              
+              const exitTimestamp = new Date(exitDate);
+              exitTimestamp.setMinutes(exitTimestamp.getMinutes() + pairIndex * 2);
+              
+              const nodeId = `NODE_${symbol}_${date.getFullYear()}_${(date.getMonth() + 1).toString().padStart(2, '0')}_${date.getDate().toString().padStart(2, '0')}_${pairIndex + 1}`;
+              const positionId = `POS_${positionIndex}_${tradeIndex}`;
+              
+              tradePairs.push({
+                index: `TP${tradeIndex}_${pairIndex + 1}`,
+                entry: {
+                  nodeId: `${nodeId}_E`,
+                  positionId,
+                  type: optionType,
+                  strike,
+                  buySell,
+                  quantity,
+                  entryPrice,
+                  orderType: Math.random() > 0.7 ? 'Limit' : 'Market',
+                  timestamp: entryTimestamp.toISOString(),
+                  status: 'Executed',
+                  entryNumber: pairIndex + 1,
+                  reEntryNumber: Math.random() > 0.9 ? Math.floor(Math.random() * 3) + 1 : 0
+                },
+                exit: Math.random() > 0.05 ? { // 95% trades are closed
+                  nodeId: `${nodeId}_X`,
+                  positionId,
+                  type: optionType,
+                  strike,
+                  buySell: buySell === 'Buy' ? 'Sell' : 'Buy',
+                  quantity,
+                  exitPrice,
+                  orderType: Math.random() > 0.8 ? 'Limit' : 'Market',
+                  exitReason: exitReasons[Math.floor(Math.random() * exitReasons.length)],
+                  timestamp: exitTimestamp.toISOString(),
+                  profitLoss: pairPnL,
+                  status: 'Executed'
+                } : null // 5% open positions
+              });
+            }
+            
+            const isOpen = tradePairs.some(pair => pair.exit === null);
+            const tradeDurationHours = Math.floor((exitDate.getTime() - date.getTime()) / (1000 * 60 * 60));
+            const tradeDuration = isOpen ? 'Active' : tradeDurationHours < 24 ? `${tradeDurationHours}h ${Math.floor(Math.random() * 60)}m` : `${Math.floor(tradeDurationHours / 24)}d ${tradeDurationHours % 24}h`;
+            
+            trades.push({
+              index: `T${tradeIndex.toString().padStart(4, '0')}`,
+              positionId: `POS_${positionIndex}_${tradeIndex}`,
+              instrumentType,
+              symbol,
+              entryDate: date.toISOString().split('T')[0],
+              entryTime,
+              exitDate: isOpen ? null : exitDate.toISOString().split('T')[0],
+              exitTime: isOpen ? null : exitTime,
+              vix: Math.random() * 15 + 12, // VIX between 12-27
+              profitLoss: isOpen ? null : totalPnL,
+              status: isOpen ? 'Open' : (totalPnL >= 0 ? 'Closed' : 'Closed'),
+              tradeDuration,
+              tradePairs
+            });
+            
+            tradeIndex++;
+            if (tradeIndex % 5 === 0) positionIndex++;
+          }
+        }
+        
+        const sampleData: BacktestResults = { trades };
         this.setData(sampleData);
-        console.log("Loaded sample trade data with", sampleData.trades.length, "trades");
+        console.log(`Generated comprehensive sample data with ${sampleData.trades.length} trades across 2024`);
+        console.log(`Total transaction pairs: ${sampleData.trades.reduce((sum, trade) => sum + trade.tradePairs.length, 0)}`);
       } catch (error) {
-        console.error("Error loading sample data:", error);
+        console.error("Error generating comprehensive sample data:", error);
       }
     }
     return this._data;
   }
 
-  // Remove the async loading method as we're now loading synchronously
   public loadSampleData(): void {
     this.getSampleData();
   }
 }
 
 export const tradeService = TradeDataService.getInstance();
-// Initialize with sample data synchronously
+// Initialize with comprehensive sample data
 tradeService.loadSampleData();
