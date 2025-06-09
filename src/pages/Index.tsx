@@ -11,7 +11,15 @@ const Index = () => {
         <ThemeToggle />
       </div>
       <div className="text-center max-w-3xl px-6">
-        <h1 className="text-4xl md:text-5xl font-bold mb-6 text-foreground">Options Backtesting Analytics</h1>
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <img 
+            src="/lovable-uploads/f3ce26b4-45b8-4260-9e93-cd5ef27b2713.png" 
+            alt="TradeLayout Logo" 
+            className="w-12 h-12"
+          />
+          <h1 className="text-4xl md:text-5xl font-bold text-foreground">TradeLayout</h1>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-semibold mb-6 text-foreground">Options Backtesting Analytics</h2>
         <p className="text-xl text-muted-foreground mb-8">Visualize and analyze your options trading strategies with comprehensive backtest results and performance metrics.</p>
         
         <div className="flex flex-wrap justify-center gap-4 mb-12">
