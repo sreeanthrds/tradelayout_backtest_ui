@@ -41,7 +41,7 @@ export class TradeDataService {
     return this._backtestParameters;
   }
 
-  // Generate comprehensive sample data with daily trades
+  // Generate comprehensive sample data with daily trades - NIFTY only
   public getSampleData(): BacktestResults {
     if (!this._dataLoaded) {
       try {
@@ -57,8 +57,8 @@ export class TradeDataService {
           // Skip weekends
           if (date.getDay() === 0 || date.getDay() === 6) continue;
           
-          // Generate 2-4 trades per day
-          const tradesPerDay = Math.floor(Math.random() * 3) + 2;
+          // Generate 3-5 trades per day
+          const tradesPerDay = Math.floor(Math.random() * 3) + 3;
           
           for (let dayTrade = 0; dayTrade < tradesPerDay; dayTrade++) {
             const entryHour = 9 + Math.floor(Math.random() * 6); // 9 AM to 3 PM
@@ -79,12 +79,11 @@ export class TradeDataService {
             const exitTime = `${exitDate.getHours().toString().padStart(2, '0')}:${exitDate.getMinutes().toString().padStart(2, '0')}:00`;
             
             const instruments = ['Iron Condor', 'Iron Butterfly', 'Strangle', 'Straddle', 'Bull Call Spread', 'Bear Put Spread', 'Collar', 'Butterfly'];
-            const symbols = ['NIFTY', 'BANKNIFTY', 'FINNIFTY', 'MIDCPNIFTY'];
             const exitReasons = ['Target', 'SL', 'Time Decay', 'Manual', 'Adjustment', 'Market Close'];
             
             const instrumentType = instruments[Math.floor(Math.random() * instruments.length)];
-            const symbol = symbols[Math.floor(Math.random() * symbols.length)];
-            const baseStrike = symbol === 'NIFTY' ? 21000 : symbol === 'BANKNIFTY' ? 47000 : symbol === 'FINNIFTY' ? 19000 : 10000;
+            const symbol = 'NIFTY'; // Only NIFTY
+            const baseStrike = 21000; // NIFTY base strike
             
             // Generate 10-15 transaction pairs per trade
             const pairCount = Math.floor(Math.random() * 6) + 10;
@@ -177,7 +176,7 @@ export class TradeDataService {
         
         const sampleData: BacktestResults = { trades };
         this.setData(sampleData);
-        console.log(`Generated comprehensive sample data with ${sampleData.trades.length} trades across 2024`);
+        console.log(`Generated comprehensive NIFTY-only sample data with ${sampleData.trades.length} trades across 2024`);
         console.log(`Total transaction pairs: ${sampleData.trades.reduce((sum, trade) => sum + trade.tradePairs.length, 0)}`);
       } catch (error) {
         console.error("Error generating comprehensive sample data:", error);
