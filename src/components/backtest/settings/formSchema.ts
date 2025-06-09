@@ -17,8 +17,8 @@ export type FormValues = z.infer<typeof formSchema>;
 
 export const defaultValues: Partial<FormValues> = {
   strategy: "My New Strategy",
-  startDate: new Date(2022, 0, 1), // Jan 1, 2022
-  endDate: new Date(2023, 11, 31), // Dec 31, 2023
+  startDate: new Date(2024, 0, 1), // Jan 1, 2024
+  endDate: new Date(2024, 11, 31), // Dec 31, 2024
   initialCapital: 10000,
   positionSize: 5,
 };
