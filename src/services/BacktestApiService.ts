@@ -61,7 +61,18 @@ class BacktestApiService {
         method: 'POST',
         body: JSON.stringify({ user_id: TEMP_USER_ID }),
       });
-      return response.strategies || [];
+      
+      // If API returns empty strategies, use fallback for development
+      if (!response.strategies || response.strategies.length === 0) {
+        console.warn('No strategies found from API, using fallback data');
+        return [
+          { id: '1', name: 'Strategy 1' },
+          { id: '2', name: 'Strategy 2' },
+          { id: '3', name: 'Strategy 3' },
+        ];
+      }
+      
+      return response.strategies;
     } catch (error) {
       console.error('Error fetching strategies:', error);
       // Fallback to mock data for development
