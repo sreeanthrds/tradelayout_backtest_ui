@@ -62,7 +62,7 @@ export function BacktestResultsHeader({ backtestData }: BacktestResultsHeaderPro
         <Button 
           variant="outline" 
           size="icon"
-          onClick={() => navigate(-1)}
+          onClick={() => navigate("/")}
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
