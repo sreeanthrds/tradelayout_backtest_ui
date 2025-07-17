@@ -15,26 +15,29 @@ export interface BacktestRequest {
 }
 
 export interface BacktestResult {
-  strategy_name: string;
-  total_return: number;
-  max_drawdown: number;
-  sharpe_ratio: number;
-  win_rate: number;
-  trades: Array<{
-    entry_date: string;
-    exit_date: string;
-    symbol: string;
-    profit_loss: number;
-    return_percentage: number;
-  }>;
-  equity_curve: Array<{
-    date: string;
-    value: number;
-  }>;
-  monthly_returns: Array<{
-    month: string;
-    return: number;
-  }>;
+  message: string;
+  processing_method: string;
+  workers_used: number;
+  gps_aggregated: {
+    all_positions: {
+      [key: string]: {
+        entry: any;
+        exit: any;
+        status: string;
+        entry_time: string;
+        exit_time: string;
+        close_reason: string;
+        pnl: number;
+        quantity: number;
+        entry_price: number;
+        exit_price: number;
+        instrument: string;
+        strategy: string;
+        node_id: string;
+        date: string;
+      };
+    };
+  };
 }
 
 class BacktestApiService {
@@ -103,37 +106,45 @@ class BacktestApiService {
 
   private getMockBacktestResult(): BacktestResult {
     return {
-      strategy_name: 'Mock Strategy',
-      total_return: 15.5,
-      max_drawdown: -8.2,
-      sharpe_ratio: 1.35,
-      win_rate: 68.5,
-      trades: [
-        {
-          entry_date: '2024-01-15',
-          exit_date: '2024-01-20',
-          symbol: 'AAPL',
-          profit_loss: 150.00,
-          return_percentage: 2.5,
+      message: 'Mock backtest completed',
+      processing_method: 'mock',
+      workers_used: 1,
+      gps_aggregated: {
+        all_positions: {
+          'mock-position-1': {
+            entry: {},
+            exit: {},
+            status: 'closed',
+            entry_time: '2024-01-15T09:30:00',
+            exit_time: '2024-01-15T15:30:00',
+            close_reason: 'manual_exit',
+            pnl: 150.00,
+            quantity: 1,
+            entry_price: 6000,
+            exit_price: 6150,
+            instrument: 'AAPL',
+            strategy: 'Mock Strategy',
+            node_id: 'mock-1',
+            date: '15-01-2024',
+          },
+          'mock-position-2': {
+            entry: {},
+            exit: {},
+            status: 'closed',
+            entry_time: '2024-01-22T09:30:00',
+            exit_time: '2024-01-22T15:30:00',
+            close_reason: 'stop_loss',
+            pnl: -75.00,
+            quantity: 1,
+            entry_price: 6200,
+            exit_price: 6125,
+            instrument: 'MSFT',
+            strategy: 'Mock Strategy',
+            node_id: 'mock-2',
+            date: '22-01-2024',
+          },
         },
-        {
-          entry_date: '2024-01-22',
-          exit_date: '2024-01-25',
-          symbol: 'MSFT',
-          profit_loss: -75.00,
-          return_percentage: -1.2,
-        },
-      ],
-      equity_curve: [
-        { date: '2024-01-01', value: 10000 },
-        { date: '2024-01-15', value: 10150 },
-        { date: '2024-01-30', value: 11550 },
-      ],
-      monthly_returns: [
-        { month: 'Jan 2024', return: 5.5 },
-        { month: 'Feb 2024', return: 3.2 },
-        { month: 'Mar 2024', return: -1.8 },
-      ],
+      },
     };
   }
 }

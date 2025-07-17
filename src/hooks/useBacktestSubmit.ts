@@ -39,36 +39,42 @@ export function useBacktestSubmit() {
       });
       
       // Transform API result to match existing trade service format
+      const positions = result.gps_aggregated?.all_positions || {};
+      const trades = Object.entries(positions).map(([key, position]: [string, any], index) => ({
+        id: `trade-${index}`,
+        symbol: position.instrument || 'N/A',
+        entryDate: position.entry_time?.split('T')[0] || position.date,
+        exitDate: position.exit_time?.split('T')[0] || position.date,
+        quantity: position.quantity || 1,
+        entryPrice: position.entry_price || 0,
+        exitPrice: position.exit_price || 0,
+        profitLoss: position.pnl || 0,
+        returnPercentage: position.pnl ? (position.pnl / position.entry_price) * 100 : 0,
+        strategy: position.strategy || 'Unknown',
+        status: position.pnl > 0 ? 'closed-win' : 'closed-loss',
+      }));
+
+      const totalPnL = trades.reduce((sum, trade) => sum + trade.profitLoss, 0);
+      const winningTrades = trades.filter(trade => trade.profitLoss > 0);
+      
       const transformedData = {
-        trades: result.trades.map((trade, index) => ({
-          id: `trade-${index}`,
-          symbol: trade.symbol,
-          entryDate: trade.entry_date,
-          exitDate: trade.exit_date,
-          quantity: 1, // Default value
-          entryPrice: 100, // Would need to be in API
-          exitPrice: 100 + (trade.profit_loss / 1), // Calculated
-          profitLoss: trade.profit_loss,
-          returnPercentage: trade.return_percentage,
-          strategy: result.strategy_name,
-          status: trade.profit_loss > 0 ? 'closed-win' : 'closed-loss',
-        })),
+        trades,
         summary: {
-          totalReturn: result.total_return,
-          maxDrawdown: result.max_drawdown,
-          sharpeRatio: result.sharpe_ratio,
-          winRate: result.win_rate,
-          totalTrades: result.trades.length,
+          totalReturn: totalPnL,
+          maxDrawdown: 0, // Would need calculation from equity curve
+          sharpeRatio: 0, // Would need calculation
+          winRate: (winningTrades.length / trades.length) * 100,
+          totalTrades: trades.length,
         },
-        equityCurve: result.equity_curve,
-        monthlyReturns: result.monthly_returns,
+        equityCurve: [], // Would need to be calculated from trades
+        monthlyReturns: [], // Would need to be calculated from trades
       };
       
       // Update trade service with API results
       tradeService.setApiData(transformedData);
       
       toast.success("Backtest Completed", {
-        description: `Successfully ran ${result.strategy_name} backtest`,
+        description: `Successfully ran backtest`,
       });
 
       navigate("/backtest-results");
