@@ -1,16 +1,12 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PerformanceChart } from "@/components/backtest/PerformanceChart";
+import { MonthlyPerformanceChart } from "./MonthlyPerformanceChart";
+import { EquityCurveChart } from "./EquityCurveChart";
 
 export function PerformanceTabContent() {
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Detailed Performance Metrics</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <PerformanceChart chartType="detailed" />
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      <EquityCurveChart />
+      <MonthlyPerformanceChart />
+    </div>
   );
 }

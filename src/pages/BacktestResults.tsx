@@ -12,7 +12,7 @@ import { CompareTabContent } from "@/components/backtest/results/CompareTabConte
 import { useBacktestData } from "@/hooks/useBacktestData";
 
 export default function BacktestResults() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("performance");
   const { backtestData } = useBacktestData();
   
   return (
@@ -26,32 +26,17 @@ export default function BacktestResults() {
       <BacktestFilters />
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-4 lg:w-auto lg:grid-cols-5">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="performance">Performance</TabsTrigger>
+        <TabsList className="grid w-full grid-cols-2 lg:w-auto">
+          <TabsTrigger value="performance">Performance Analysis</TabsTrigger>
           <TabsTrigger value="trades">Trades</TabsTrigger>
-          <TabsTrigger value="risk">Risk Analysis</TabsTrigger>
-          <TabsTrigger value="compare">Compare</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview" className="space-y-6">
-          <OverviewTabContent />
-        </TabsContent>
-        
-        <TabsContent value="performance">
+        <TabsContent value="performance" className="space-y-6 bg-background rounded-lg p-6">
           <PerformanceTabContent />
         </TabsContent>
         
         <TabsContent value="trades">
           <TradesTabContent />
-        </TabsContent>
-        
-        <TabsContent value="risk">
-          <RiskTabContent />
-        </TabsContent>
-        
-        <TabsContent value="compare">
-          <CompareTabContent />
         </TabsContent>
       </Tabs>
     </div>

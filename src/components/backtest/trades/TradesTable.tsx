@@ -154,7 +154,14 @@ export function TradesTable({
                         </Button>
                       </div>
                     </TableCell>
-                    <TableCell>{trade.entryDate || 'N/A'}</TableCell>
+                    <TableCell>
+                      <div className="text-sm">
+                        <div className="font-medium">{new Date(trade.entryDate).toLocaleDateString('en-IN')}</div>
+                        <div className="text-muted-foreground text-xs">
+                          {trade.entryTime} {trade.exitTime ? `- ${trade.exitTime}` : '(Active)'}
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>{trade.symbol || 'N/A'}</TableCell>
                     <TableCell>{trade.tradeDuration || 'Active'}</TableCell>
                     <TableCell>{trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs.length : 0}</TableCell>
