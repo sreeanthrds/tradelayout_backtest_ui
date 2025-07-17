@@ -23,11 +23,19 @@ export function useBacktestSubmit() {
       // Store the backtest parameters
       tradeService.setBacktestParameters(data);
       
+      // Format dates to DD-MM-YYYY format as required by API
+      const formatDate = (date: Date) => {
+        const day = date.getDate().toString().padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+      };
+
       // Call the API to run backtest
       const result = await backtestApiService.runBacktest({
         strategy_id: data.strategy,
-        start_date: data.startDate.toISOString().split('T')[0],
-        end_date: data.endDate.toISOString().split('T')[0],
+        start_date: formatDate(data.startDate),
+        end_date: formatDate(data.endDate),
       });
       
       // Transform API result to match existing trade service format
