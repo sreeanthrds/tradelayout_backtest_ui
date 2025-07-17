@@ -8,15 +8,16 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { strategyOptions } from "./options";
 import { Control } from "react-hook-form";
 import { FormValues } from "./formSchema";
+import { useStrategies } from "../hooks/useStrategies";
 
 interface StrategySectionProps {
   control: Control<FormValues>;
 }
 
 export function StrategySection({ control }: StrategySectionProps) {
+  const { strategies, isLoading, error } = useStrategies();
   return (
     <Card>
       <CardHeader>
@@ -33,20 +34,22 @@ export function StrategySection({ control }: StrategySectionProps) {
               <Select 
                 onValueChange={field.onChange} 
                 defaultValue={field.value}
+                disabled={isLoading}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a strategy" />
+                    <SelectValue placeholder={isLoading ? "Loading strategies..." : "Select a strategy"} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {strategyOptions.map((strategy) => (
-                    <SelectItem key={strategy.value} value={strategy.value}>
-                      {strategy.label}
+                  {strategies.map((strategy) => (
+                    <SelectItem key={strategy.id} value={strategy.id}>
+                      {strategy.name}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {error && <p className="text-sm text-destructive mt-1">Error: {error}</p>}
               <FormMessage />
             </FormItem>
           )}

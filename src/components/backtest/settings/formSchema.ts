@@ -9,16 +9,12 @@ export const formSchema = z.object({
   endDate: z.date({
     required_error: "End date is required",
   }),
-  initialCapital: z.coerce.number().min(1, "Initial capital must be at least 1"),
-  positionSize: z.coerce.number().min(1, "Position size must be at least 1"),
 });
 
 export type FormValues = z.infer<typeof formSchema>;
 
 export const defaultValues: Partial<FormValues> = {
-  strategy: "My New Strategy",
+  strategy: "",
   startDate: new Date(2024, 0, 1), // Jan 1, 2024
   endDate: new Date(2024, 11, 31), // Dec 31, 2024
-  initialCapital: 10000,
-  positionSize: 5,
 };

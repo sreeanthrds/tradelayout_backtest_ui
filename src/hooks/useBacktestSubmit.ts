@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FormValues } from "@/components/backtest/settings/formSchema";
+import { backtestApiService } from "@/services/BacktestApiService";
 import { tradeService } from "@/services/TradeDataService";
 
 /**
@@ -14,41 +15,61 @@ export function useBacktestSubmit() {
   const navigate = useNavigate();
 
   const submitBacktest = async (data: FormValues) => {
-    // Set loading state
     setIsLoading(true);
     
     try {
-      // Simulate API call or processing delay
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      
-      // Log the submitted data (would be sent to an API in a real app)
       console.log("Running backtest with parameters:", data);
       
-      // Store the backtest parameters in the trade service
+      // Store the backtest parameters
       tradeService.setBacktestParameters(data);
       
-      // In a real implementation, we would make an API call here to get the backtest results
-      // For now, we're using sample data that's already in the trade service
+      // Call the API to run backtest
+      const result = await backtestApiService.runBacktest({
+        strategy_id: data.strategy,
+        start_date: data.startDate.toISOString().split('T')[0],
+        end_date: data.endDate.toISOString().split('T')[0],
+      });
       
-      // Here's where you would put your API call and set the results in the trade service:
-      // const backtestResults = await yourBacktestApi.runBacktest(data);
-      // tradeService.setData(backtestResults);
+      // Transform API result to match existing trade service format
+      const transformedData = {
+        trades: result.trades.map((trade, index) => ({
+          id: `trade-${index}`,
+          symbol: trade.symbol,
+          entryDate: trade.entry_date,
+          exitDate: trade.exit_date,
+          quantity: 1, // Default value
+          entryPrice: 100, // Would need to be in API
+          exitPrice: 100 + (trade.profit_loss / 1), // Calculated
+          profitLoss: trade.profit_loss,
+          returnPercentage: trade.return_percentage,
+          strategy: result.strategy_name,
+          status: trade.profit_loss > 0 ? 'closed-win' : 'closed-loss',
+        })),
+        summary: {
+          totalReturn: result.total_return,
+          maxDrawdown: result.max_drawdown,
+          sharpeRatio: result.sharpe_ratio,
+          winRate: result.win_rate,
+          totalTrades: result.trades.length,
+        },
+        equityCurve: result.equity_curve,
+        monthlyReturns: result.monthly_returns,
+      };
       
-      // Show success notification - using the correct format for sonner toast
+      // Update trade service with API results
+      tradeService.setApiData(transformedData);
+      
       toast.success("Backtest Completed", {
-        description: `Successfully ran ${data.strategy} backtest`,
+        description: `Successfully ran ${result.strategy_name} backtest`,
       });
 
-      // Navigate to results page
       navigate("/backtest-results");
     } catch (error) {
-      // Handle any errors
       console.error("Backtest error:", error);
       toast.error("Backtest Failed", {
         description: "There was an error running your backtest",
       });
     } finally {
-      // Reset loading state
       setIsLoading(false);
     }
   };

@@ -37,6 +37,11 @@ export class TradeDataService {
     this._backtestParameters = parameters;
   }
 
+  public setApiData(data: any): void {
+    this._data = data;
+    this._dataLoaded = true;
+  }
+
   public getBacktestParameters(): FormValues | null {
     return this._backtestParameters;
   }
