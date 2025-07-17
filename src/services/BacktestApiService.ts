@@ -1,7 +1,7 @@
 const API_BASE_URL = 'https://5f48e29893bb.ngrok-free.app';
 
 // Temporary user ID for development
-const TEMP_USER_ID = 'dev-user-123';
+const TEMP_USER_ID = 'user_2yfjTGEKjL7XkklQyBaMP6SN2Lc';
 
 export interface Strategy {
   id: string;
