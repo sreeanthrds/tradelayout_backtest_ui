@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { tradeService } from "@/services/TradeDataService";
 import { strategyOptions } from "@/components/backtest/settings/options";
+import { backtestApiService } from "@/services/BacktestApiService";
 
 export interface BacktestData {
   name: string;
@@ -75,46 +76,64 @@ export function useBacktestData() {
   });
 
   useEffect(() => {
-    // Get the actual backtest parameters and data from the service
-    const parameters = tradeService.getBacktestParameters();
-    const tradesData = tradeService.getData();
-    
-    const metrics = calculateMetrics(tradesData.trades || []);
-    
-    if (parameters) {
-      // Format the date range from the parameters with full dates
-      const startDate = parameters.startDate?.toLocaleDateString('en-GB', { 
-        day: 'numeric',
-        month: 'short', 
-        year: 'numeric' 
-      }) || '1 Dec 2024';
+    const loadData = async () => {
+      // Get the actual backtest parameters and data from the service
+      const parameters = tradeService.getBacktestParameters();
+      const tradesData = tradeService.getData();
       
-      const endDate = parameters.endDate?.toLocaleDateString('en-GB', { 
-        day: 'numeric',
-        month: 'short', 
-        year: 'numeric' 
-      }) || '31 Dec 2024';
+      const metrics = calculateMetrics(tradesData.trades || []);
+      
+      if (parameters) {
+        // Format the date range from the parameters with full dates
+        const startDate = parameters.startDate?.toLocaleDateString('en-GB', { 
+          day: 'numeric',
+          month: 'short', 
+          year: 'numeric' 
+        }) || '1 Dec 2024';
+        
+        const endDate = parameters.endDate?.toLocaleDateString('en-GB', { 
+          day: 'numeric',
+          month: 'short', 
+          year: 'numeric' 
+        }) || '31 Dec 2024';
 
-      // Find strategy name from options, fallback to a default meaningful name
-      const strategyOption = strategyOptions.find(opt => opt.value === parameters.strategy);
-      const strategyName = strategyOption?.label || "Iron Condor Strategy";
+        // Try to get strategy name from API strategies first, then fallback to static options
+        let strategyName = "Trading Strategy";
+        try {
+          const apiStrategies = await backtestApiService.getStrategies();
+          const apiStrategy = apiStrategies.find(s => s.id === parameters.strategy);
+          if (apiStrategy) {
+            strategyName = apiStrategy.name;
+          } else {
+            // Fallback to static options
+            const strategyOption = strategyOptions.find(opt => opt.value === parameters.strategy);
+            strategyName = strategyOption?.label || "Trading Strategy";
+          }
+        } catch (error) {
+          // If API fails, use static options
+          const strategyOption = strategyOptions.find(opt => opt.value === parameters.strategy);
+          strategyName = strategyOption?.label || "Trading Strategy";
+        }
 
-      setBacktestData({
-        name: strategyName,
-        symbol: "RELIANCE", // Use RELIANCE as requested
-        period: `${startDate} - ${endDate}`,
-        ...metrics
-      });
-    } else {
-      // If no parameters, just use the calculated metrics with default data
-      setBacktestData(prev => ({
-        ...prev,
-        name: "Iron Condor Strategy",
-        symbol: "RELIANCE",
-        period: "1 Dec 2024 - 31 Dec 2024",
-        ...metrics
-      }));
-    }
+        setBacktestData({
+          name: strategyName,
+          symbol: "RELIANCE", // Use RELIANCE as requested
+          period: `${startDate} - ${endDate}`,
+          ...metrics
+        });
+      } else {
+        // If no parameters, just use the calculated metrics with default data
+        setBacktestData(prev => ({
+          ...prev,
+          name: "Trading Strategy",
+          symbol: "RELIANCE",
+          period: "1 Dec 2024 - 31 Dec 2024",
+          ...metrics
+        }));
+      }
+    };
+
+    loadData();
   }, []);
 
   return { backtestData };
