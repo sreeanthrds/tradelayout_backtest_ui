@@ -82,24 +82,26 @@ export function useBacktestData() {
     const metrics = calculateMetrics(tradesData.trades || []);
     
     if (parameters) {
-      // Format the date range from the parameters
-      const startDate = parameters.startDate?.toLocaleDateString('en-US', { 
+      // Format the date range from the parameters with full dates
+      const startDate = parameters.startDate?.toLocaleDateString('en-GB', { 
+        day: 'numeric',
         month: 'short', 
         year: 'numeric' 
-      }) || 'Jan 2024';
+      }) || '1 Dec 2024';
       
-      const endDate = parameters.endDate?.toLocaleDateString('en-US', { 
+      const endDate = parameters.endDate?.toLocaleDateString('en-GB', { 
+        day: 'numeric',
         month: 'short', 
         year: 'numeric' 
-      }) || 'Dec 2024';
+      }) || '31 Dec 2024';
 
-      // Find strategy name from options
+      // Find strategy name from options, fallback to a default meaningful name
       const strategyOption = strategyOptions.find(opt => opt.value === parameters.strategy);
-      const strategyName = strategyOption?.label || parameters.strategy || "Trading Strategy";
+      const strategyName = strategyOption?.label || "Iron Condor Strategy";
 
       setBacktestData({
         name: strategyName,
-        symbol: "NIFTY", // Default to NIFTY as per requirements
+        symbol: "RELIANCE", // Use RELIANCE as requested
         period: `${startDate} - ${endDate}`,
         ...metrics
       });
@@ -107,6 +109,9 @@ export function useBacktestData() {
       // If no parameters, just use the calculated metrics with default data
       setBacktestData(prev => ({
         ...prev,
+        name: "Iron Condor Strategy",
+        symbol: "RELIANCE",
+        period: "1 Dec 2024 - 31 Dec 2024",
         ...metrics
       }));
     }
