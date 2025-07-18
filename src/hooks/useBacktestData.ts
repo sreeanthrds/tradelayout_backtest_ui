@@ -376,7 +376,9 @@ export function useBacktestData() {
       const parameters = tradeService.getBacktestParameters();
       const apiData = tradeService.getData();
       
+      console.log("=== FULL API DATA STRUCTURE ===");
       console.log("Current API Data Structure:", JSON.stringify(apiData, null, 2));
+      console.log("=== END API DATA ===");
       
       const metrics = calculateMetrics(apiData);
       

@@ -13,6 +13,9 @@ interface TradeExpandedDetailsProps {
 export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   const [activeTab, setActiveTab] = useState("summary");
   
+  // Debug logging
+  console.log("TradeExpandedDetails received trade:", trade);
+  
   // Safeguard against missing trade data
   if (!trade) {
     return <div className="p-4 text-center text-muted-foreground">No trade details available.</div>;
@@ -21,6 +24,8 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   // Ensure trade pairs array exists
   const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
   const backendTrades = trade.trades || [];
+  
+  console.log("Trade pairs:", tradePairs.length, "Backend trades:", backendTrades.length);
 
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
