@@ -1,13 +1,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { 
-  Form, 
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel 
-} from "@/components/ui/form";
+import { Label } from "@/components/ui/label";
 import { 
   Select, 
   SelectContent, 
@@ -62,7 +56,7 @@ export function BacktestFilters() {
         <AccordionContent className="px-4 pb-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-2">
-              <FormLabel>Date Range</FormLabel>
+              <Label>Date Range</Label>
               <Popover>
                 <PopoverTrigger asChild>
                   <Button
@@ -105,7 +99,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Symbol</FormLabel>
+              <Label>Symbol</Label>
               <Select defaultValue="spy">
                 <SelectTrigger>
                   <SelectValue placeholder="Select symbol" />
@@ -122,7 +116,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Strategy</FormLabel>
+              <Label>Strategy</Label>
               <Select defaultValue="iron_condor">
                 <SelectTrigger>
                   <SelectValue placeholder="Select strategy" />
@@ -139,7 +133,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>DTE Range</FormLabel>
+              <Label>DTE Range</Label>
               <Select defaultValue="30-45">
                 <SelectTrigger>
                   <SelectValue placeholder="Select DTE range" />
@@ -156,7 +150,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>IV Percentile Range</FormLabel>
+              <Label>IV Percentile Range</Label>
               <div className="pt-5 px-2">
                 <Slider
                   defaultValue={volatilityRange}
@@ -172,7 +166,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Entry Days</FormLabel>
+              <Label>Entry Days</Label>
               <Select defaultValue="any">
                 <SelectTrigger>
                   <SelectValue placeholder="Select entry days" />
@@ -189,7 +183,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Position Size</FormLabel>
+              <Label>Position Size</Label>
               <Select defaultValue="fixed">
                 <SelectTrigger>
                   <SelectValue placeholder="Select position sizing" />
@@ -204,7 +198,7 @@ export function BacktestFilters() {
             </div>
 
             <div className="space-y-2">
-              <FormLabel>Exit Strategy</FormLabel>
+              <Label>Exit Strategy</Label>
               <Select defaultValue="profit_loss">
                 <SelectTrigger>
                   <SelectValue placeholder="Select exit strategy" />
