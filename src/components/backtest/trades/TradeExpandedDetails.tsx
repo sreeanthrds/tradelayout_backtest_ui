@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trade } from "@/models/TradeTypes";
 import { TradeSummaryTab } from "./components/TradeSummaryTab";
 import { TransactionsTab } from "./components/TransactionsTab";
+import { BackendTradeDetails } from "./components/BackendTradeDetails";
 
 interface TradeExpandedDetailsProps {
   trade: Trade;
@@ -19,6 +20,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
 
   // Ensure trade pairs array exists
   const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
+  const backendTrades = trade.trades || [];
 
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
@@ -26,6 +28,9 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
         <TabsList className="mb-4">
           <TabsTrigger value="summary">Summary</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
+          {backendTrades.length > 0 && (
+            <TabsTrigger value="details">Comprehensive Details</TabsTrigger>
+          )}
         </TabsList>
 
         <TabsContent value="summary">
@@ -35,6 +40,12 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
         <TabsContent value="transactions">
           <TransactionsTab tradePairs={tradePairs} />
         </TabsContent>
+
+        {backendTrades.length > 0 && (
+          <TabsContent value="details">
+            <BackendTradeDetails trades={backendTrades} />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
