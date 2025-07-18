@@ -25,18 +25,14 @@ export function DailyPnLChart() {
     const dailyPnL: { [key: string]: { pnl: number; trades: Trade[] } } = {};
     
     backtestData.allTrades.forEach((trade) => {
-      if (trade.exitTime && trade.profitLoss !== null && trade.status === 'closed') {
-        // Extract date from exitTime (assuming format: DD-MM-YYYY HH:mm:ss)
-        const exitDate = trade.exitTime.split(' ')[0];
-        const dateParts = exitDate.split('-');
-        if (dateParts.length === 3) {
-          const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
-          if (!dailyPnL[formattedDate]) {
-            dailyPnL[formattedDate] = { pnl: 0, trades: [] };
-          }
-          dailyPnL[formattedDate].pnl += trade.profitLoss;
-          dailyPnL[formattedDate].trades.push(trade);
+      if (trade.exitDate && trade.profitLoss !== null && trade.status === 'Closed') {
+        // Use exitDate directly (format: YYYY-MM-DD)
+        const formattedDate = trade.exitDate;
+        if (!dailyPnL[formattedDate]) {
+          dailyPnL[formattedDate] = { pnl: 0, trades: [] };
         }
+        dailyPnL[formattedDate].pnl += trade.profitLoss;
+        dailyPnL[formattedDate].trades.push(trade);
       }
     });
 
@@ -297,7 +293,7 @@ export function DailyPnLChart() {
                           {trade.profitLoss ? formatCurrency(trade.profitLoss) : '--'}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {trade.exitTime?.split(' ')[1] || '--'}
+                          {trade.exitTime || '--'}
                         </div>
                       </div>
                     </div>
