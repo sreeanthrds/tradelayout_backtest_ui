@@ -13,19 +13,27 @@ interface TradeExpandedDetailsProps {
 export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   const [activeTab, setActiveTab] = useState("summary");
   
-  // Debug logging
-  console.log("TradeExpandedDetails received trade:", trade);
+  // Debug logging - check what data we're receiving
+  console.log("=== TradeExpandedDetails Debug ===");
+  console.log("Trade object:", trade);
+  console.log("Trade keys:", Object.keys(trade));
+  console.log("Trade.trades:", trade.trades);
+  console.log("Trade.tradePairs:", trade.tradePairs);
+  console.log("=== End Debug ===");
   
   // Safeguard against missing trade data
   if (!trade) {
     return <div className="p-4 text-center text-muted-foreground">No trade details available.</div>;
   }
 
-  // Ensure trade pairs array exists
-  const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
+  // Check for your backend data structure
   const backendTrades = trade.trades || [];
+  const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
   
-  console.log("Trade pairs:", tradePairs.length, "Backend trades:", backendTrades.length);
+  // Force show comprehensive details if we have backend trades
+  const hasBackendData = backendTrades.length > 0;
+  
+  console.log("Backend trades available:", hasBackendData, "Count:", backendTrades.length);
 
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
@@ -33,9 +41,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
         <TabsList className="mb-4">
           <TabsTrigger value="summary">Summary</TabsTrigger>
           <TabsTrigger value="transactions">Transactions</TabsTrigger>
-          {backendTrades.length > 0 && (
-            <TabsTrigger value="details">Comprehensive Details</TabsTrigger>
-          )}
+          <TabsTrigger value="details">Comprehensive Details</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary">
@@ -46,11 +52,16 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
           <TransactionsTab tradePairs={tradePairs} />
         </TabsContent>
 
-        {backendTrades.length > 0 && (
-          <TabsContent value="details">
+        <TabsContent value="details">
+          {hasBackendData ? (
             <BackendTradeDetails trades={backendTrades} />
-          </TabsContent>
-        )}
+          ) : (
+            <div className="p-4 text-center text-muted-foreground">
+              <p>No comprehensive backend data available for this trade.</p>
+              <p className="text-xs mt-2">Expected format: trade.trades array with entry/exit details</p>
+            </div>
+          )}
+        </TabsContent>
       </Tabs>
     </div>
   );
