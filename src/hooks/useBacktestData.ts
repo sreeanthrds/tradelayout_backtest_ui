@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { tradeService } from "@/services/TradeDataService";
 import { strategyOptions } from "@/components/backtest/settings/options";
