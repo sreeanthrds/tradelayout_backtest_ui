@@ -38,40 +38,11 @@ export function useBacktestSubmit() {
         end_date: formatDate(data.endDate),
       });
       
-      // Transform API result to match existing trade service format
-      const positions = result.gps_aggregated?.all_positions || {};
-      const trades = Object.entries(positions).map(([key, position]: [string, any], index) => ({
-        id: `trade-${index}`,
-        symbol: position.instrument || 'N/A',
-        entryDate: position.entry_time?.split('T')[0] || position.date,
-        exitDate: position.exit_time?.split('T')[0] || position.date,
-        quantity: position.quantity || 1,
-        entryPrice: position.entry_price || 0,
-        exitPrice: position.exit_price || 0,
-        profitLoss: position.pnl || 0,
-        returnPercentage: position.pnl ? (position.pnl / position.entry_price) * 100 : 0,
-        strategy: position.strategy || 'Unknown',
-        status: position.pnl > 0 ? 'closed-win' : 'closed-loss',
-      }));
-
-      const totalPnL = trades.reduce((sum, trade) => sum + trade.profitLoss, 0);
-      const winningTrades = trades.filter(trade => trade.profitLoss > 0);
+      // Store the raw API result directly for the new data structure
+      console.log("Raw API result:", result);
       
-      const transformedData = {
-        trades,
-        summary: {
-          totalReturn: totalPnL,
-          maxDrawdown: 0, // Would need calculation from equity curve
-          sharpeRatio: 0, // Would need calculation
-          winRate: (winningTrades.length / trades.length) * 100,
-          totalTrades: trades.length,
-        },
-        equityCurve: [], // Would need to be calculated from trades
-        monthlyReturns: [], // Would need to be calculated from trades
-      };
-      
-      // Update trade service with API results
-      tradeService.setApiData(transformedData);
+      // Store the complete API response - the useBacktestData hook will process it
+      tradeService.setApiData(result);
       
       toast.success("Backtest Completed", {
         description: `Successfully ran backtest`,
