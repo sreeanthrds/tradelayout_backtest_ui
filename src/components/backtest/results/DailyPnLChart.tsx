@@ -11,7 +11,7 @@ interface DailyPnLData {
   monthYear: string;
   month: string;
   year: string;
-  trades: Trade[];
+  trades: any[]; // Use any[] to handle both formats
 }
 
 export function DailyPnLChart() {
@@ -22,17 +22,21 @@ export function DailyPnLChart() {
     if (!backtestData?.allTrades || backtestData.allTrades.length === 0) return [];
 
     // Group trades by date and calculate daily P&L
-    const dailyPnL: { [key: string]: { pnl: number; trades: Trade[] } } = {};
+    const dailyPnL: { [key: string]: { pnl: number; trades: any[] } } = {};
     
-    backtestData.allTrades.forEach((trade) => {
-      if (trade.exitDate && trade.profitLoss !== null && trade.status === 'Closed') {
-        // Use exitDate directly (format: YYYY-MM-DD)
-        const formattedDate = trade.exitDate;
-        if (!dailyPnL[formattedDate]) {
-          dailyPnL[formattedDate] = { pnl: 0, trades: [] };
+    backtestData.allTrades.forEach((trade: any) => {
+      // Handle both formats - raw API data and transformed data
+      const exitDate = trade.exitDate || (trade.exit_time ? trade.exit_time.split('T')[0] : null);
+      const profitLoss = trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl;
+      const status = trade.status;
+      const isClosedTrade = status === 'Closed' || status === 'closed';
+      
+      if (exitDate && profitLoss !== null && profitLoss !== undefined && isClosedTrade) {
+        if (!dailyPnL[exitDate]) {
+          dailyPnL[exitDate] = { pnl: 0, trades: [] };
         }
-        dailyPnL[formattedDate].pnl += trade.profitLoss;
-        dailyPnL[formattedDate].trades.push(trade);
+        dailyPnL[exitDate].pnl += profitLoss;
+        dailyPnL[exitDate].trades.push(trade);
       }
     });
 
@@ -277,23 +281,23 @@ export function DailyPnLChart() {
               <div className="space-y-3">
                 <h4 className="font-medium">Trades</h4>
                 <div className="max-h-64 overflow-y-auto space-y-2">
-                  {selectedDay.trades.map((trade, index) => (
-                    <div key={trade.symbol + index} className="flex justify-between items-center p-3 border rounded-lg">
+                  {selectedDay.trades.map((trade: any, index) => (
+                    <div key={(trade.symbol || trade.instrument || 'trade') + index} className="flex justify-between items-center p-3 border rounded-lg">
                       <div className="flex items-center gap-3">
                         <Badge variant="outline">
-                          {trade.symbol}
+                          {trade.symbol || trade.instrument || 'N/A'}
                         </Badge>
-                        <span className="font-medium">{trade.instrumentType}</span>
+                        <span className="font-medium">{trade.instrumentType || 'Trade'}</span>
                         <span className="text-sm text-muted-foreground">
-                          Duration: {trade.tradeDuration}
+                          Duration: {trade.tradeDuration || 'N/A'}
                         </span>
                       </div>
                       <div className="text-right">
-                        <div className={`font-medium ${trade.profitLoss && trade.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {trade.profitLoss ? formatCurrency(trade.profitLoss) : '--'}
+                        <div className={`font-medium ${(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                          {formatCurrency(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl)}
                         </div>
                         <div className="text-xs text-muted-foreground">
-                          {trade.exitTime || '--'}
+                          {trade.exitTime || (trade.exit_time ? trade.exit_time.split('T')[1].slice(0, 5) : '--')}
                         </div>
                       </div>
                     </div>
