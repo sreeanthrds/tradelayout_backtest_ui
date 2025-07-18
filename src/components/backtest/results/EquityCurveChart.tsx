@@ -1,21 +1,23 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
-import { tradeService } from "@/services/TradeDataService";
+import { useBacktestData } from "@/hooks/useBacktestData";
 import { useMemo } from "react";
 
 export function EquityCurveChart() {
+  const { backtestData } = useBacktestData();
+  
   const equityData = useMemo(() => {
-    const trades = tradeService.getData().trades || [];
+    const trades = backtestData.allTrades || [];
     const closedTrades = trades
-      .filter(trade => trade.profitLoss !== null)
-      .sort((a, b) => new Date(a.entryDate + 'T' + a.entryTime).getTime() - new Date(b.entryDate + 'T' + b.entryTime).getTime());
+      .filter(trade => trade.pnl !== null && trade.status === 'closed')
+      .sort((a, b) => new Date(a.entry_time).getTime() - new Date(b.entry_time).getTime());
     
     let runningPnL = 0;
     let peak = 0;
     let maxDrawdown = 0;
     
     const equityCurve = closedTrades.map((trade, index) => {
-      runningPnL += trade.profitLoss || 0;
+      runningPnL += trade.pnl || 0;
       
       if (runningPnL > peak) {
         peak = runningPnL;
@@ -28,7 +30,7 @@ export function EquityCurveChart() {
         maxDrawdown = currentDrawdown;
       }
       
-      const date = new Date(trade.entryDate);
+      const date = new Date(trade.entry_time);
       
       return {
         tradeNumber: index + 1,
@@ -36,12 +38,12 @@ export function EquityCurveChart() {
         equity: Math.round(runningPnL),
         drawdown: Math.round(currentDrawdown),
         drawdownPercent: Math.round(drawdownPercent * 100) / 100,
-        tradePnL: trade.profitLoss || 0
+        tradePnL: trade.pnl || 0
       };
     });
     
     return { equityCurve, maxDrawdown: Math.round(maxDrawdown), finalEquity: Math.round(runningPnL) };
-  }, []);
+  }, [backtestData.allTrades]);
 
   const winningTrades = equityData.equityCurve.filter(point => point.tradePnL > 0).length;
   const totalTrades = equityData.equityCurve.length;

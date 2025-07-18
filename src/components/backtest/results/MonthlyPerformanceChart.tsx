@@ -1,24 +1,26 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { tradeService } from "@/services/TradeDataService";
+import { useBacktestData } from "@/hooks/useBacktestData";
 import { useMemo } from "react";
 
 export function MonthlyPerformanceChart() {
+  const { backtestData } = useBacktestData();
+  
   const monthlyData = useMemo(() => {
-    const trades = tradeService.getData().trades || [];
+    const trades = backtestData.allTrades || [];
     const monthlyStats: { [key: string]: { pnl: number, trades: number } } = {};
     
     trades
-      .filter(trade => trade.profitLoss !== null)
+      .filter(trade => trade.pnl !== null && trade.status === 'closed')
       .forEach(trade => {
-        const date = new Date(trade.entryDate);
+        const date = new Date(trade.entry_time);
         const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         
         if (!monthlyStats[monthKey]) {
           monthlyStats[monthKey] = { pnl: 0, trades: 0 };
         }
         
-        monthlyStats[monthKey].pnl += trade.profitLoss || 0;
+        monthlyStats[monthKey].pnl += trade.pnl || 0;
         monthlyStats[monthKey].trades += 1;
       });
     
@@ -30,7 +32,7 @@ export function MonthlyPerformanceChart() {
         isProfit: stats.pnl >= 0
       }))
       .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
-  }, []);
+  }, [backtestData.allTrades]);
 
   const totalPnL = monthlyData.reduce((sum, month) => sum + month.pnl, 0);
   const winningMonths = monthlyData.filter(month => month.isProfit).length;

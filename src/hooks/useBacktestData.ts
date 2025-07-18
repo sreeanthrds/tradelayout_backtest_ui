@@ -13,6 +13,7 @@ export interface BacktestData {
   sharpeRatio: number;
   trades: number;
   apiData?: any; // Store the raw API data
+  allTrades: any[]; // Array of all individual trades
   // New comprehensive metrics
   totalReturnPercent: number;
   totalWins: number;
@@ -35,6 +36,7 @@ function calculateMetricsFromTrades(trades: any[]) {
       maxDrawdown: 0,
       sharpeRatio: 0,
       trades: 0,
+      allTrades: [],
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -122,6 +124,7 @@ function calculateMetricsFromTrades(trades: any[]) {
     maxDrawdown: Math.round(maxDrawdownPercent * 100) / 100,
     sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
     trades: trades.length,
+    allTrades: trades,
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -185,6 +188,7 @@ function calculateMetrics(apiData: any) {
       maxDrawdown: 0,
       sharpeRatio: 0,
       trades: 0,
+      allTrades: [],
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -272,6 +276,7 @@ function calculateMetrics(apiData: any) {
     maxDrawdown: Math.round(maxDrawdownPercent * 100) / 100,
     sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
     trades: allTrades.length,
+    allTrades: allTrades, // Include the trades array
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -294,6 +299,7 @@ export function useBacktestData() {
     maxDrawdown: 0,
     sharpeRatio: 0,
     trades: 0,
+    allTrades: [],
     totalReturnPercent: 0,
     totalWins: 0,
     totalTrades: 0,
