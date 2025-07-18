@@ -279,27 +279,83 @@ export function DailyPnLChart() {
               </div>
               
               <div className="space-y-3">
-                <h4 className="font-medium">Trades</h4>
-                <div className="max-h-64 overflow-y-auto space-y-2">
+                <h4 className="font-medium">Trades Details</h4>
+                <div className="max-h-96 overflow-y-auto space-y-4">
                   {selectedDay.trades.map((trade: any, index) => (
-                    <div key={(trade.symbol || trade.instrument || 'trade') + index} className="flex justify-between items-center p-3 border rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Badge variant="outline">
-                          {trade.symbol || trade.instrument || 'N/A'}
-                        </Badge>
-                        <span className="font-medium">{trade.instrumentType || 'Trade'}</span>
-                        <span className="text-sm text-muted-foreground">
-                          Duration: {trade.tradeDuration || 'N/A'}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <div className={`font-medium ${(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                          {formatCurrency(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl)}
+                    <div key={(trade.symbol || trade.instrument || 'trade') + index} className="border rounded-lg p-4 space-y-3">
+                      {/* Trade Header */}
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-3">
+                          <Badge variant="outline" className="text-sm">
+                            {trade.symbol || trade.instrument || 'N/A'}
+                          </Badge>
+                          <span className="font-medium">{trade.instrumentType || 'Trade'}</span>
+                          <span className="text-sm text-muted-foreground">
+                            Duration: {trade.tradeDuration || 'N/A'}
+                          </span>
                         </div>
-                        <div className="text-xs text-muted-foreground">
-                          {trade.exitTime || (trade.exit_time ? trade.exit_time.split('T')[1].slice(0, 5) : '--')}
+                        <div className="text-right">
+                          <div className={`font-bold text-lg ${(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl) >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                            {formatCurrency(trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl)}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            Exit: {trade.exitTime || (trade.exit_time ? trade.exit_time.split('T')[1].slice(0, 5) : '--')}
+                          </div>
                         </div>
                       </div>
+
+                      {/* Trade Details */}
+                      <div className="grid grid-cols-2 gap-4 text-sm">
+                        <div>
+                          <span className="text-muted-foreground">Entry:</span>
+                          <span className="ml-2">{trade.entryTime || (trade.entry_time ? trade.entry_time.split('T')[1].slice(0, 5) : 'N/A')}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">VIX:</span>
+                          <span className="ml-2">{trade.vix || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Position ID:</span>
+                          <span className="ml-2 font-mono text-xs">{trade.positionId || trade.position_id || 'N/A'}</span>
+                        </div>
+                        <div>
+                          <span className="text-muted-foreground">Status:</span>
+                          <span className="ml-2">{trade.status || 'N/A'}</span>
+                        </div>
+                      </div>
+
+                      {/* Trade Pairs if available */}
+                      {trade.tradePairs && trade.tradePairs.length > 0 && (
+                        <div className="mt-3">
+                          <h5 className="font-medium text-sm mb-2">Trade Pairs ({trade.tradePairs.length})</h5>
+                          <div className="space-y-2 max-h-32 overflow-y-auto">
+                            {trade.tradePairs.slice(0, 3).map((pair: any, pairIndex: number) => (
+                              <div key={pairIndex} className="bg-muted/30 rounded p-2 text-xs">
+                                <div className="grid grid-cols-2 gap-2">
+                                  <div>
+                                    <span className="text-muted-foreground">Entry:</span>
+                                    <span className="ml-1">{pair.entry?.type} {pair.entry?.strike} {pair.entry?.buySell} {pair.entry?.quantity}</span>
+                                  </div>
+                                  <div>
+                                    <span className="text-muted-foreground">Exit:</span>
+                                    <span className="ml-1">{pair.exit?.exitReason || 'N/A'}</span>
+                                  </div>
+                                </div>
+                                {pair.exit?.profitLoss !== undefined && (
+                                  <div className={`mt-1 font-medium ${pair.exit.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                    P&L: {formatCurrency(pair.exit.profitLoss)}
+                                  </div>
+                                )}
+                              </div>
+                            ))}
+                            {trade.tradePairs.length > 3 && (
+                              <div className="text-xs text-muted-foreground text-center">
+                                +{trade.tradePairs.length - 3} more pairs...
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>

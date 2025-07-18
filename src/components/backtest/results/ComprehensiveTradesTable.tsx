@@ -241,24 +241,87 @@ export function ComprehensiveTradesTable() {
                               {isTradeExpanded && (
                                 <TableRow>
                                   <TableCell colSpan={11} className="bg-muted/30 p-4">
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                                    <div className="flex justify-between items-center mb-4">
+                                      <h4 className="font-medium">Comprehensive Trade Details</h4>
+                                      <Badge variant="outline" className="text-xs">
+                                        {(trade.tradePairs || []).length} Trade Pairs
+                                      </Badge>
+                                    </div>
+                                    
+                                    {/* Basic Trade Info */}
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4 pb-4 border-b">
                                       <div>
-                                        <span className="font-medium text-muted-foreground">Strategy:</span>
-                                        <div>{trade.strategy || 'N/A'}</div>
+                                        <span className="font-medium text-muted-foreground">Position ID:</span>
+                                        <div className="font-mono text-xs">{trade.positionId || trade.position_id || 'N/A'}</div>
                                       </div>
                                       <div>
-                                        <span className="font-medium text-muted-foreground">Entry Order ID:</span>
-                                        <div className="font-mono text-xs">{trade.entry?.order_id || 'N/A'}</div>
+                                        <span className="font-medium text-muted-foreground">Trade Index:</span>
+                                        <div>{trade.index || trade.trade_index || 'N/A'}</div>
                                       </div>
                                       <div>
-                                        <span className="font-medium text-muted-foreground">Exit Reason:</span>
-                                        <div>{trade.close_reason || trade.exit?.reason || 'N/A'}</div>
+                                        <span className="font-medium text-muted-foreground">VIX Level:</span>
+                                        <div>{trade.vix || trade.vix_level || 'N/A'}</div>
                                       </div>
                                       <div>
-                                        <span className="font-medium text-muted-foreground">Re-entry #:</span>
-                                        <div>{trade.entry?.reentry_number || 0}</div>
+                                        <span className="font-medium text-muted-foreground">Trade Duration:</span>
+                                        <div>{trade.tradeDuration || trade.trade_duration || 'N/A'}</div>
                                       </div>
                                     </div>
+
+                                    {/* Trade Pairs Details */}
+                                    {trade.tradePairs && trade.tradePairs.length > 0 && (
+                                      <div>
+                                        <h5 className="font-medium mb-3">Trade Pairs Details</h5>
+                                        <div className="space-y-3 max-h-64 overflow-y-auto">
+                                          {trade.tradePairs.map((pair: any, pairIndex: number) => (
+                                            <div key={`pair-${pairIndex}-${pair.entry?.nodeId || pairIndex}`} className="border rounded-lg p-3 bg-background">
+                                              <div className="flex justify-between items-center mb-2">
+                                                <Badge variant="secondary" className="text-xs">
+                                                  Pair {pairIndex + 1}
+                                                </Badge>
+                                                {pair.exit?.profitLoss !== undefined && (
+                                                  <span className={`font-medium text-sm ${pair.exit.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                    {formatCurrency(pair.exit.profitLoss)}
+                                                  </span>
+                                                )}
+                                              </div>
+                                              
+                                              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                                                {/* Entry Details */}
+                                                <div className="space-y-1">
+                                                  <div className="font-medium text-muted-foreground">Entry:</div>
+                                                  <div className="space-y-1 pl-2">
+                                                    <div><span className="text-muted-foreground">Type:</span> {pair.entry?.type} {pair.entry?.strike}</div>
+                                                    <div><span className="text-muted-foreground">Action:</span> {pair.entry?.buySell} {pair.entry?.quantity}</div>
+                                                    <div><span className="text-muted-foreground">Price:</span> ₹{pair.entry?.entryPrice || 'N/A'}</div>
+                                                    <div><span className="text-muted-foreground">Order:</span> {pair.entry?.orderType}</div>
+                                                    <div><span className="text-muted-foreground">Time:</span> {pair.entry?.timestamp ? new Date(pair.entry.timestamp).toLocaleTimeString() : 'N/A'}</div>
+                                                    <div><span className="text-muted-foreground">Node ID:</span> <span className="font-mono">{pair.entry?.nodeId}</span></div>
+                                                  </div>
+                                                </div>
+                                                
+                                                {/* Exit Details */}
+                                                <div className="space-y-1">
+                                                  <div className="font-medium text-muted-foreground">Exit:</div>
+                                                  {pair.exit ? (
+                                                    <div className="space-y-1 pl-2">
+                                                      <div><span className="text-muted-foreground">Action:</span> {pair.exit.buySell} {pair.exit.quantity}</div>
+                                                      <div><span className="text-muted-foreground">Price:</span> ₹{pair.exit.exitPrice || 'N/A'}</div>
+                                                      <div><span className="text-muted-foreground">Reason:</span> {pair.exit.exitReason || 'N/A'}</div>
+                                                      <div><span className="text-muted-foreground">Order:</span> {pair.exit.orderType}</div>
+                                                      <div><span className="text-muted-foreground">Time:</span> {pair.exit.timestamp ? new Date(pair.exit.timestamp).toLocaleTimeString() : 'N/A'}</div>
+                                                      <div><span className="text-muted-foreground">Node ID:</span> <span className="font-mono">{pair.exit.nodeId}</span></div>
+                                                    </div>
+                                                  ) : (
+                                                    <div className="pl-2 text-muted-foreground">Not exited</div>
+                                                  )}
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      </div>
+                                    )}
                                   </TableCell>
                                 </TableRow>
                               )}
