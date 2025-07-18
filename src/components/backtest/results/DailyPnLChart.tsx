@@ -149,8 +149,8 @@ export function DailyPnLChart() {
                   
                   {/* Day headers */}
                   <div className="grid grid-cols-7 gap-1 text-xs text-center text-muted-foreground">
-                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map(day => (
-                      <div key={day} className="w-8 h-4 flex items-center justify-center">
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, index) => (
+                      <div key={`${day}-${index}`} className="w-8 h-4 flex items-center justify-center">
                         {day}
                       </div>
                     ))}
