@@ -3,6 +3,10 @@ import { tradeService } from "@/services/TradeDataService";
 import { strategyOptions } from "@/components/backtest/settings/options";
 import { backtestApiService } from "@/services/BacktestApiService";
 
+export interface TradesByDate {
+  [date: string]: any[];
+}
+
 export interface BacktestData {
   name: string;
   symbol: string;
@@ -13,7 +17,8 @@ export interface BacktestData {
   sharpeRatio: number;
   trades: number;
   apiData?: any; // Store the raw API data
-  allTrades: any[]; // Array of all individual trades
+  allTrades: any[]; // Array of all individual trades (flattened)
+  tradesByDate: TradesByDate; // Trades grouped by execution date
   // New comprehensive metrics
   totalReturnPercent: number;
   totalWins: number;
@@ -37,6 +42,7 @@ function calculateMetricsFromTrades(trades: any[]) {
       sharpeRatio: 0,
       trades: 0,
       allTrades: [],
+      tradesByDate: {},
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -125,6 +131,7 @@ function calculateMetricsFromTrades(trades: any[]) {
     sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
     trades: trades.length,
     allTrades: trades,
+    tradesByDate: {}, // Will be populated by calling function if needed
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -145,27 +152,52 @@ function calculateMetrics(apiData: any) {
   
   console.log("Looking for gps_aggregated.positions_by_date:", positionsByDate);
   
-  // Flatten all trades from all positions across all dates
+  // Group trades by date and also maintain a flattened array
+  const tradesByDate: TradesByDate = {};
   const allTrades: any[] = [];
   
   Object.keys(positionsByDate).forEach(date => {
     const positions = positionsByDate[date];
+    const dateTrades: any[] = [];
+    
     Object.keys(positions).forEach(positionId => {
       const position = positions[positionId];
       
       // Check if this position has the new trades array structure
       if (position.trades && Array.isArray(position.trades)) {
         console.log(`Found ${position.trades.length} trades in position ${positionId} for date ${date}`);
-        allTrades.push(...position.trades);
+        
+        // Add position info to each trade for context
+        const tradesWithPosition = position.trades.map((trade: any) => ({
+          ...trade,
+          positionId,
+          executionDate: date,
+          instrument: position.instrument,
+          strategy: position.strategy
+        }));
+        
+        dateTrades.push(...tradesWithPosition);
+        allTrades.push(...tradesWithPosition);
       } else {
         // Fallback to old structure for backwards compatibility
         console.log(`Using old structure for position ${positionId} for date ${date}`);
-        allTrades.push(position);
+        const tradeWithDate = {
+          ...position,
+          positionId,
+          executionDate: date
+        };
+        dateTrades.push(tradeWithDate);
+        allTrades.push(tradeWithDate);
       }
     });
+    
+    if (dateTrades.length > 0) {
+      tradesByDate[date] = dateTrades;
+    }
   });
   
   console.log("Total flattened trades:", allTrades.length);
+  console.log("Trades grouped by date:", Object.keys(tradesByDate).length, "dates");
   
   // If we still don't have trades data, check for the old all_positions structure
   if (allTrades.length === 0) {
@@ -175,10 +207,34 @@ function calculateMetrics(apiData: any) {
     
     if (positionsArray.length === 0 && apiData?.trades) {
       console.log("No positions data found, checking trades structure:", apiData.trades.length);
-      return calculateMetricsFromTrades(apiData.trades);
+      const metrics = calculateMetricsFromTrades(apiData.trades);
+      return {
+        ...metrics,
+        tradesByDate: {},
+        allTrades: apiData.trades
+      };
     }
+    // Process old structure trades and group by date if possible
+    const oldTrades = positionsArray.length > 0 ? positionsArray : [];
+    const oldTradesByDate: TradesByDate = {};
     
-    allTrades.push(...positionsArray);
+    oldTrades.forEach((trade: any) => {
+      const date = trade.entry_time?.split('T')[0] || trade.date || 'unknown';
+      if (!oldTradesByDate[date]) {
+        oldTradesByDate[date] = [];
+      }
+      oldTradesByDate[date].push({
+        ...trade,
+        executionDate: date
+      });
+    });
+    
+    const metrics = calculateMetricsFromTrades(oldTrades);
+    return {
+      ...metrics,
+      tradesByDate: oldTradesByDate,
+      allTrades: oldTrades
+    };
   }
   
   if (allTrades.length === 0) {
@@ -189,6 +245,7 @@ function calculateMetrics(apiData: any) {
       sharpeRatio: 0,
       trades: 0,
       allTrades: [],
+      tradesByDate: {},
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -277,6 +334,7 @@ function calculateMetrics(apiData: any) {
     sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
     trades: allTrades.length,
     allTrades: allTrades, // Include the trades array
+    tradesByDate: tradesByDate, // Include the grouped trades
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -300,6 +358,7 @@ export function useBacktestData() {
     sharpeRatio: 0,
     trades: 0,
     allTrades: [],
+    tradesByDate: {},
     totalReturnPercent: 0,
     totalWins: 0,
     totalTrades: 0,
