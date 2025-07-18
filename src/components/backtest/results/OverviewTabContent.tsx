@@ -1,10 +1,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { PerformanceChart } from "@/components/backtest/PerformanceChart";
+import { ComprehensiveMetricsCards } from "./ComprehensiveMetricsCards";
 
 export function OverviewTabContent() {
   return (
     <div className="space-y-6">
+      {/* Comprehensive Metrics Cards */}
+      <ComprehensiveMetricsCards />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card className="col-span-2">
           <CardHeader>

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { TradesList } from "@/components/backtest/TradesList";
+import { ComprehensiveTradesTable } from "./ComprehensiveTradesTable";
 import { tradeService } from "@/services/TradeDataService";
 
 export function TradesTabContent() {
@@ -29,22 +30,18 @@ export function TradesTabContent() {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>Trade History</CardTitle>
-            <CardDescription>Detailed view of all trades</CardDescription>
-          </div>
-          <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2">
-            <Download className="h-4 w-4" />
-            Export JSON
-          </Button>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-semibold">Trade History</h2>
+          <p className="text-sm text-muted-foreground">Detailed view of all trades and transactions</p>
         </div>
-      </CardHeader>
-      <CardContent>
-        <TradesList />
-      </CardContent>
-    </Card>
+        <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2">
+          <Download className="h-4 w-4" />
+          Export JSON
+        </Button>
+      </div>
+      <ComprehensiveTradesTable />
+    </div>
   );
 }

@@ -13,53 +13,127 @@ export interface BacktestData {
   maxDrawdown: number;
   sharpeRatio: number;
   trades: number;
+  apiData?: any; // Store the raw API data
+  // New comprehensive metrics
+  totalReturnPercent: number;
+  totalWins: number;
+  totalTrades: number;
+  maxDrawdownAmount: number;
+  maxDrawdownPercent: number;
+  maxProfitSingleTrade: number;
+  maxLossSingleTrade: number;
+  maxWinStreak: number;
+  maxLossStreak: number;
 }
 
-function calculateMetrics(trades: any[]) {
-  if (!trades || trades.length === 0) {
+function calculateMetrics(apiData: any) {
+  // Handle both API positions data and trades data
+  const positions = apiData?.gps_aggregated?.all_positions || {};
+  const positionsArray = Object.values(positions);
+  
+  if (positionsArray.length === 0) {
     return {
       totalReturn: 0,
       winRate: 0,
       maxDrawdown: 0,
       sharpeRatio: 0,
-      trades: 0
+      trades: 0,
+      totalReturnPercent: 0,
+      totalWins: 0,
+      totalTrades: 0,
+      maxDrawdownAmount: 0,
+      maxDrawdownPercent: 0,
+      maxProfitSingleTrade: 0,
+      maxLossSingleTrade: 0,
+      maxWinStreak: 0,
+      maxLossStreak: 0
     };
   }
 
-  const closedTrades = trades.filter(trade => trade.profitLoss !== null);
-  const winningTrades = closedTrades.filter(trade => trade.profitLoss > 0);
+  const closedPositions = positionsArray.filter((pos: any) => pos.status === 'closed' && pos.pnl !== null);
+  const winningPositions = closedPositions.filter((pos: any) => pos.pnl > 0);
   
-  const totalPnL = closedTrades.reduce((sum, trade) => sum + (trade.profitLoss || 0), 0);
-  const winRate = closedTrades.length > 0 ? (winningTrades.length / closedTrades.length) * 100 : 0;
+  const totalPnL = closedPositions.reduce((sum: number, pos: any) => sum + (Number(pos.pnl) || 0), 0);
+  const winRate = closedPositions.length > 0 ? (winningPositions.length / closedPositions.length) * 100 : 0;
   
   // Calculate running equity for drawdown
   let runningPnL = 0;
   let peak = 0;
-  let maxDrawdown = 0;
+  let maxDrawdownAmount = 0;
+  let maxDrawdownPercent = 0;
   
-  closedTrades.forEach(trade => {
-    runningPnL += trade.profitLoss || 0;
+  // Sort positions by date for chronological calculation
+  const sortedPositions = [...closedPositions].sort((a: any, b: any) => {
+    const dateA = new Date(a.entry_time);
+    const dateB = new Date(b.entry_time);
+    return dateA.getTime() - dateB.getTime();
+  });
+  
+  sortedPositions.forEach((pos: any) => {
+    runningPnL += Number(pos.pnl) || 0;
     if (runningPnL > peak) {
       peak = runningPnL;
     }
-    const drawdown = ((peak - runningPnL) / Math.max(peak, 1)) * 100;
-    maxDrawdown = Math.max(maxDrawdown, drawdown);
+    const drawdownAmount = peak - runningPnL;
+    const drawdownPercent = peak > 0 ? (drawdownAmount / peak) * 100 : 0;
+    maxDrawdownAmount = Math.max(maxDrawdownAmount, drawdownAmount);
+    maxDrawdownPercent = Math.max(maxDrawdownPercent, drawdownPercent);
   });
 
-  // Simple Sharpe ratio calculation (assuming returns, no risk-free rate)
-  const returns = closedTrades.map(t => t.profitLoss || 0);
+  // Calculate max profit and loss in single trade
+  const pnlValues = closedPositions.map((pos: any) => Number(pos.pnl) || 0);
+  const maxProfitSingleTrade = pnlValues.length > 0 ? Math.max(...pnlValues) : 0;
+  const maxLossSingleTrade = pnlValues.length > 0 ? Math.min(...pnlValues) : 0;
+  
+  // Calculate win/loss streaks
+  let currentWinStreak = 0;
+  let currentLossStreak = 0;
+  let maxWinStreak = 0;
+  let maxLossStreak = 0;
+  
+  sortedPositions.forEach((pos: any) => {
+    const pnl = Number(pos.pnl) || 0;
+    if (pnl > 0) {
+      currentWinStreak++;
+      currentLossStreak = 0;
+      maxWinStreak = Math.max(maxWinStreak, currentWinStreak);
+    } else if (pnl < 0) {
+      currentLossStreak++;
+      currentWinStreak = 0;
+      maxLossStreak = Math.max(maxLossStreak, currentLossStreak);
+    } else {
+      currentWinStreak = 0;
+      currentLossStreak = 0;
+    }
+  });
+
+  // Simple Sharpe ratio calculation
+  const returns = pnlValues;
   const avgReturn = returns.length > 0 ? returns.reduce((a, b) => a + b, 0) / returns.length : 0;
   const variance = returns.length > 1 ? 
     returns.reduce((sum, ret) => sum + Math.pow(ret - avgReturn, 2), 0) / (returns.length - 1) : 0;
   const stdDev = Math.sqrt(variance);
   const sharpeRatio = stdDev > 0 ? avgReturn / stdDev : 0;
 
+  // Calculate total return percentage (assuming initial capital)
+  const initialCapital = 100000; // Assume 1 lakh initial capital
+  const totalReturnPercent = initialCapital > 0 ? (Number(totalPnL) / initialCapital) * 100 : 0;
+
   return {
-    totalReturn: totalPnL,
+    totalReturn: Math.round(Number(totalPnL) * 100) / 100,
     winRate: Math.round(winRate * 100) / 100,
-    maxDrawdown: Math.round(-maxDrawdown * 100) / 100,
-    sharpeRatio: Math.round(sharpeRatio * 100) / 100,
-    trades: trades.length
+    maxDrawdown: Math.round(maxDrawdownPercent * 100) / 100,
+    sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
+    trades: positionsArray.length,
+    totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
+    totalWins: winningPositions.length,
+    totalTrades: closedPositions.length,
+    maxDrawdownAmount: Math.round(maxDrawdownAmount * 100) / 100,
+    maxDrawdownPercent: Math.round(maxDrawdownPercent * 100) / 100,
+    maxProfitSingleTrade: Math.round(maxProfitSingleTrade * 100) / 100,
+    maxLossSingleTrade: Math.round(maxLossSingleTrade * 100) / 100,
+    maxWinStreak,
+    maxLossStreak
   };
 }
 
@@ -72,16 +146,25 @@ export function useBacktestData() {
     winRate: 0,
     maxDrawdown: 0,
     sharpeRatio: 0,
-    trades: 0
+    trades: 0,
+    totalReturnPercent: 0,
+    totalWins: 0,
+    totalTrades: 0,
+    maxDrawdownAmount: 0,
+    maxDrawdownPercent: 0,
+    maxProfitSingleTrade: 0,
+    maxLossSingleTrade: 0,
+    maxWinStreak: 0,
+    maxLossStreak: 0
   });
 
   useEffect(() => {
     const loadData = async () => {
-      // Get the actual backtest parameters and data from the service
+      // Get the actual backtest parameters and API data from the service
       const parameters = tradeService.getBacktestParameters();
-      const tradesData = tradeService.getData();
+      const apiData = tradeService.getData();
       
-      const metrics = calculateMetrics(tradesData.trades || []);
+      const metrics = calculateMetrics(apiData);
       
       if (parameters) {
         // Format the date range from the parameters with full dates
@@ -119,6 +202,7 @@ export function useBacktestData() {
           name: strategyName,
           symbol: "RELIANCE", // Use RELIANCE as requested
           period: `${startDate} - ${endDate}`,
+          apiData, // Include the raw API data
           ...metrics
         });
       } else {
@@ -128,6 +212,7 @@ export function useBacktestData() {
           name: "Trading Strategy",
           symbol: "RELIANCE",
           period: "1 Dec 2024 - 31 Dec 2024",
+          apiData, // Include the raw API data
           ...metrics
         }));
       }

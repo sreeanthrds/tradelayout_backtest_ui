@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { tradeService } from "@/services/TradeDataService";
+import { useBacktestData } from "@/hooks/useBacktestData";
 
 interface DailyPnLData {
   date: string;
@@ -11,19 +11,28 @@ interface DailyPnLData {
 }
 
 export function DailyPnLChart() {
+  const { backtestData } = useBacktestData();
+  
   const dailyPnLData = useMemo(() => {
-    const tradesData = tradeService.getData();
-    const trades = tradesData.trades || [];
+    // Get positions data from API response
+    const positions = backtestData?.apiData?.gps_aggregated?.all_positions || {};
+    const positionsArray = Object.values(positions);
     
-    if (trades.length === 0) return [];
+    if (positionsArray.length === 0) return [];
 
-    // Group trades by date and calculate daily P&L
+    console.log('Daily P&L Chart - Positions data:', positionsArray);
+
+    // Group positions by date and calculate daily P&L
     const dailyPnL: { [key: string]: number } = {};
     
-    trades.forEach(trade => {
-      if (trade.exitTime && trade.profitLoss !== null) {
-        const date = new Date(trade.exitDate || trade.entryDate).toISOString().split('T')[0];
-        dailyPnL[date] = (dailyPnL[date] || 0) + trade.profitLoss;
+    positionsArray.forEach((position: any) => {
+      if (position.exit_time && position.pnl !== null && position.status === 'closed') {
+        // Convert DD-MM-YYYY to YYYY-MM-DD format for proper date handling
+        const dateParts = position.date.split('-');
+        if (dateParts.length === 3) {
+          const formattedDate = `${dateParts[2]}-${dateParts[1]}-${dateParts[0]}`;
+          dailyPnL[formattedDate] = (dailyPnL[formattedDate] || 0) + position.pnl;
+        }
       }
     });
 
@@ -40,7 +49,7 @@ export function DailyPnLChart() {
     }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     return data;
-  }, []);
+  }, [backtestData]);
 
   // Group data by month for display
   const monthlyData = useMemo(() => {
