@@ -1,53 +1,30 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { PerformanceChart } from "@/components/backtest/PerformanceChart";
 import { ComprehensiveMetricsCards } from "./ComprehensiveMetricsCards";
+import { SimpleEquityChart } from "./SimpleEquityChart";
+import { DailyPnLChart } from "./DailyPnLChart";
 
 export function OverviewTabContent() {
   return (
     <div className="space-y-6">
       {/* Comprehensive Metrics Cards */}
       <ComprehensiveMetricsCards />
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card className="col-span-2">
-          <CardHeader>
-            <CardTitle>Equity Curve</CardTitle>
-            <CardDescription>Cumulative returns over time</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <PerformanceChart chartType="equity" />
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle>Monthly Returns (%)</CardTitle>
-            <CardDescription>Performance breakdown by month</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <PerformanceChart chartType="monthly" />
-          </CardContent>
-        </Card>
-      </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* New Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Win/Loss Distribution</CardTitle>
-            <CardDescription>Trade outcome analysis</CardDescription>
+            <CardTitle>P&L Overview</CardTitle>
+            <CardDescription>Cumulative profit and loss over trades</CardDescription>
           </CardHeader>
-          <CardContent className="h-80">
-            <PerformanceChart chartType="distribution" />
+          <CardContent className="h-64">
+            <SimpleEquityChart />
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Drawdown Periods</CardTitle>
-            <CardDescription>Maximum drawdown analysis</CardDescription>
-          </CardHeader>
-          <CardContent className="h-80">
-            <PerformanceChart chartType="drawdown" />
+        <Card className="lg:col-span-2">
+          <CardContent className="p-0">
+            <DailyPnLChart />
           </CardContent>
         </Card>
       </div>
