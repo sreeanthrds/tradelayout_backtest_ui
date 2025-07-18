@@ -17,17 +17,67 @@ export function ComprehensiveTradesTable() {
   const { backtestData } = useBacktestData();
   const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
 
-  // Get positions data from API response
-  const positions = backtestData?.apiData?.gps_aggregated?.all_positions || {};
-  const positionsArray = Object.entries(positions).map(([key, position]) => ({
-    id: key,
-    ...(position as any)
-  }));
+  // Extract trades from the new nested structure
+  const getAllTrades = () => {
+    const apiData = backtestData.apiData;
+    if (!apiData?.gps_aggregated?.positions_by_date) {
+      // Fallback to old structure
+      const positions = apiData?.gps_aggregated?.all_positions || {};
+      return Object.entries(positions).map(([key, position]) => ({
+        id: key,
+        ...(position as any),
+        tradeIndex: 1,
+        reentryNumber: 0
+      }));
+    }
+    
+    const allTrades: any[] = [];
+    const positionsByDate = apiData.gps_aggregated.positions_by_date;
+    
+    Object.keys(positionsByDate).forEach(date => {
+      const positions = positionsByDate[date];
+      Object.keys(positions).forEach(positionId => {
+        const position = positions[positionId];
+        
+        // Check if this position has the new trades array structure
+        if (position.trades && Array.isArray(position.trades)) {
+          position.trades.forEach((trade: any, index: number) => {
+            allTrades.push({
+              ...trade,
+              id: `${positionId}_${index}`,
+              positionId,
+              date,
+              tradeIndex: index + 1,
+              reentryNumber: trade.entry?.reentry_number || 0
+            });
+          });
+        } else {
+          // Fallback to old structure for backwards compatibility
+          allTrades.push({
+            ...position,
+            id: positionId,
+            positionId,
+            date,
+            tradeIndex: 1,
+            reentryNumber: 0
+          });
+        }
+      });
+    });
+    
+    return allTrades.sort((a, b) => {
+      const dateA = new Date(a.entry_time || a.entry?.entry_time);
+      const dateB = new Date(b.entry_time || b.entry?.entry_time);
+      return dateA.getTime() - dateB.getTime();
+    });
+  };
 
-  const toggleRow = (positionId: string) => {
+  const trades = getAllTrades();
+
+  const toggleRow = (tradeId: string) => {
     setExpandedRows(prev => ({
       ...prev,
-      [positionId]: !prev[positionId]
+      [tradeId]: !prev[tradeId]
     }));
   };
 
@@ -82,7 +132,7 @@ export function ComprehensiveTradesTable() {
     }
   };
 
-  if (positionsArray.length === 0) {
+  if (trades.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -124,20 +174,20 @@ export function ComprehensiveTradesTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {positionsArray.map((position: any) => {
-                const entryDateTime = formatDateTime(position.entry_time);
-                const exitDateTime = formatDateTime(position.exit_time);
-                const isExpanded = expandedRows[position.id];
+              {trades.map((trade: any) => {
+                const entryDateTime = formatDateTime(trade.entry_time);
+                const exitDateTime = formatDateTime(trade.exit_time);
+                const isExpanded = expandedRows[trade.id];
                 
                 return (
                   <>
                     {/* Main row */}
-                    <TableRow key={position.id} className="cursor-pointer hover:bg-muted/50">
+                    <TableRow key={trade.id} className="cursor-pointer hover:bg-muted/50">
                       <TableCell>
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => toggleRow(position.id)}
+                          onClick={() => toggleRow(trade.id)}
                           className="h-6 w-6 p-0"
                         >
                           {isExpanded ? (
@@ -148,20 +198,27 @@ export function ComprehensiveTradesTable() {
                         </Button>
                       </TableCell>
                       <TableCell className="font-mono text-xs">
-                        {position.node_id}
+                        <div>{trade.node_id}</div>
+                        {trade.reentryNumber > 0 && (
+                          <div className="text-orange-600 font-semibold">
+                            Re-entry #{trade.reentryNumber}
+                          </div>
+                        )}
                       </TableCell>
                       <TableCell className="font-medium">
-                        {position.instrument}
+                        {trade.instrument}
                       </TableCell>
                       <TableCell>
-                        {getPositionTypeBadge(position)}
+                        <Badge variant={trade.trade_side === 'Long' ? 'default' : 'secondary'}>
+                          {trade.trade_side || (trade.entry?.side === 'buy' ? 'LONG' : 'SHORT')}
+                        </Badge>
                       </TableCell>
-                      <TableCell>{position.quantity}</TableCell>
+                      <TableCell>{trade.quantity}</TableCell>
                       <TableCell className="font-mono">
-                        {formatCurrency(position.entry_price)}
+                        {formatCurrency(trade.entry_price)}
                       </TableCell>
                       <TableCell className="font-mono">
-                        {position.exit_price ? formatCurrency(position.exit_price) : '-'}
+                        {trade.exit_price ? formatCurrency(trade.exit_price) : '-'}
                       </TableCell>
                       <TableCell>
                         <div className="text-xs">
@@ -170,7 +227,7 @@ export function ComprehensiveTradesTable() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {position.exit_time ? (
+                        {trade.exit_time ? (
                           <div className="text-xs">
                             <div>{exitDateTime.date}</div>
                             <div className="text-muted-foreground">{exitDateTime.time}</div>
@@ -181,15 +238,15 @@ export function ComprehensiveTradesTable() {
                       </TableCell>
                       <TableCell>
                         <span className={`font-mono font-medium ${
-                          Number(position.pnl) > 0 ? 'text-emerald-600' : 
-                          Number(position.pnl) < 0 ? 'text-red-600' : 
+                          Number(trade.pnl) > 0 ? 'text-emerald-600' : 
+                          Number(trade.pnl) < 0 ? 'text-red-600' : 
                           'text-muted-foreground'
                         }`}>
-                          {formatCurrency(Number(position.pnl) || 0)}
+                          {formatCurrency(Number(trade.pnl) || 0)}
                         </span>
                       </TableCell>
                       <TableCell>
-                        {getStatusBadge(position)}
+                        {getStatusBadge(trade)}
                       </TableCell>
                     </TableRow>
                     
@@ -205,12 +262,15 @@ export function ComprehensiveTradesTable() {
                               <div className="space-y-2">
                                 <h5 className="font-medium text-xs text-emerald-600">ENTRY TRANSACTION</h5>
                                 <div className="space-y-1 text-xs">
-                                  <div><strong>Node ID:</strong> {position.entry?.node_id || 'N/A'}</div>
-                                  <div><strong>Order ID:</strong> {position.entry?.order_id || 'N/A'}</div>
-                                  <div><strong>Order Type:</strong> {position.entry?.order_type || 'N/A'}</div>
-                                  <div><strong>Product Type:</strong> {position.entry?.product_type || 'N/A'}</div>
-                                  <div><strong>Fill Time:</strong> {position.entry?.fill_time ? formatDateTime(position.entry.fill_time).time : 'N/A'}</div>
-                                  <div><strong>Fill Price:</strong> {position.entry?.fill_price ? formatCurrency(position.entry.fill_price) : 'N/A'}</div>
+                                  <div><strong>Node ID:</strong> {trade.entry?.node_id || 'N/A'}</div>
+                                  <div><strong>Order ID:</strong> {trade.entry?.order_id || 'N/A'}</div>
+                                  <div><strong>Order Type:</strong> {trade.entry?.order_type || 'N/A'}</div>
+                                  <div><strong>Product Type:</strong> {trade.entry?.product_type || 'N/A'}</div>
+                                  <div><strong>Fill Time:</strong> {trade.entry?.fill_time ? formatDateTime(trade.entry.fill_time).time : 'N/A'}</div>
+                                  <div><strong>Fill Price:</strong> {trade.entry?.fill_price ? formatCurrency(trade.entry.fill_price) : 'N/A'}</div>
+                                  {trade.reentryNumber > 0 && (
+                                    <div><strong>Re-entry Number:</strong> {trade.reentryNumber}</div>
+                                  )}
                                 </div>
                               </div>
                               
@@ -218,14 +278,14 @@ export function ComprehensiveTradesTable() {
                               <div className="space-y-2">
                                 <h5 className="font-medium text-xs text-red-600">EXIT TRANSACTION</h5>
                                 <div className="space-y-1 text-xs">
-                                  {position.exit ? (
+                                  {trade.exit ? (
                                     <>
-                                      <div><strong>Node ID:</strong> {position.exit.node_id || 'N/A'}</div>
-                                      <div><strong>Order ID:</strong> {position.exit.order_id || 'N/A'}</div>
-                                      <div><strong>Order Type:</strong> {position.exit.order_type || 'N/A'}</div>
-                                      <div><strong>Exit Reason:</strong> {position.exit.reason || position.close_reason || 'N/A'}</div>
-                                      <div><strong>Fill Time:</strong> {position.exit.fill_time ? formatDateTime(position.exit.fill_time).time : 'N/A'}</div>
-                                      <div><strong>Fill Price:</strong> {position.exit.fill_price ? formatCurrency(position.exit.fill_price) : 'N/A'}</div>
+                                      <div><strong>Node ID:</strong> {trade.exit.node_id || 'N/A'}</div>
+                                      <div><strong>Order ID:</strong> {trade.exit.order_id || 'N/A'}</div>
+                                      <div><strong>Order Type:</strong> {trade.exit.order_type || 'N/A'}</div>
+                                      <div><strong>Exit Reason:</strong> {trade.exit.reason || trade.close_reason || 'N/A'}</div>
+                                      <div><strong>Fill Time:</strong> {trade.exit.fill_time ? formatDateTime(trade.exit.fill_time).time : 'N/A'}</div>
+                                      <div><strong>Fill Price:</strong> {trade.exit.fill_price ? formatCurrency(trade.exit.fill_price) : 'N/A'}</div>
                                     </>
                                   ) : (
                                     <div className="text-muted-foreground">Position still open</div>
@@ -237,12 +297,14 @@ export function ComprehensiveTradesTable() {
                               <div className="space-y-2">
                                 <h5 className="font-medium text-xs text-blue-600">ADDITIONAL INFO</h5>
                                 <div className="space-y-1 text-xs">
-                                  <div><strong>Strategy:</strong> {position.strategy || 'N/A'}</div>
-                                  <div><strong>Date:</strong> {position.date || 'N/A'}</div>
-                                  <div><strong>Position ID:</strong> {position.entry?.position_config?.id || 'N/A'}</div>
-                                  <div><strong>VPI:</strong> {position.entry?.position_config?.vpi || 'N/A'}</div>
-                                  <div><strong>Priority:</strong> {position.entry?.position_config?.priority || 'N/A'}</div>
-                                  <div><strong>Multiplier:</strong> {position.entry?.position_config?.multiplier || 'N/A'}</div>
+                                  <div><strong>Strategy:</strong> {trade.strategy || 'N/A'}</div>
+                                  <div><strong>Date:</strong> {trade.date || 'N/A'}</div>
+                                  <div><strong>Position ID:</strong> {trade.positionId || trade.entry?.position_config?.id || 'N/A'}</div>
+                                  <div><strong>VPI:</strong> {trade.entry?.position_config?.vpi || 'N/A'}</div>
+                                  <div><strong>Priority:</strong> {trade.entry?.position_config?.priority || 'N/A'}</div>
+                                  <div><strong>Multiplier:</strong> {trade.entry?.position_config?.multiplier || 'N/A'}</div>
+                                  <div><strong>Trade Index:</strong> {trade.tradeIndex || 'N/A'}</div>
+                                  <div><strong>Trade Side:</strong> {trade.trade_side || 'N/A'}</div>
                                 </div>
                               </div>
                             </div>
@@ -259,9 +321,9 @@ export function ComprehensiveTradesTable() {
         
         {/* Summary */}
         <div className="mt-4 text-sm text-muted-foreground">
-          Total Transactions: {positionsArray.length} | 
-          Closed: {positionsArray.filter(p => p.status === 'closed').length} | 
-          Open: {positionsArray.filter(p => p.status === 'open').length}
+          Total Transactions: {trades.length} | 
+          Closed: {trades.filter(t => t.status === 'closed').length} | 
+          Open: {trades.filter(t => t.status === 'open').length}
         </div>
       </CardContent>
     </Card>

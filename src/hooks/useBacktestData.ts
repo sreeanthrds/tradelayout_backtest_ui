@@ -137,20 +137,48 @@ function calculateMetricsFromTrades(trades: any[]) {
 function calculateMetrics(apiData: any) {
   console.log("calculateMetrics called with:", apiData);
   
-  // Handle both API positions data and trades data
-  const positions = apiData?.gps_aggregated?.all_positions || {};
-  const positionsArray = Object.values(positions);
+  // Handle the new nested trades structure
+  const positionsByDate = apiData?.gps_aggregated?.positions_by_date || {};
   
-  console.log("Looking for gps_aggregated.all_positions:", apiData?.gps_aggregated?.all_positions);
-  console.log("positionsArray length:", positionsArray.length);
+  console.log("Looking for gps_aggregated.positions_by_date:", positionsByDate);
   
-  // If we don't have positions data, check for trades data structure
-  if (positionsArray.length === 0 && apiData?.trades) {
-    console.log("No positions data found, checking trades structure:", apiData.trades.length);
-    return calculateMetricsFromTrades(apiData.trades);
+  // Flatten all trades from all positions across all dates
+  const allTrades: any[] = [];
+  
+  Object.keys(positionsByDate).forEach(date => {
+    const positions = positionsByDate[date];
+    Object.keys(positions).forEach(positionId => {
+      const position = positions[positionId];
+      
+      // Check if this position has the new trades array structure
+      if (position.trades && Array.isArray(position.trades)) {
+        console.log(`Found ${position.trades.length} trades in position ${positionId} for date ${date}`);
+        allTrades.push(...position.trades);
+      } else {
+        // Fallback to old structure for backwards compatibility
+        console.log(`Using old structure for position ${positionId} for date ${date}`);
+        allTrades.push(position);
+      }
+    });
+  });
+  
+  console.log("Total flattened trades:", allTrades.length);
+  
+  // If we still don't have trades data, check for the old all_positions structure
+  if (allTrades.length === 0) {
+    const positions = apiData?.gps_aggregated?.all_positions || {};
+    const positionsArray = Object.values(positions);
+    console.log("Falling back to old all_positions structure:", positionsArray.length);
+    
+    if (positionsArray.length === 0 && apiData?.trades) {
+      console.log("No positions data found, checking trades structure:", apiData.trades.length);
+      return calculateMetricsFromTrades(apiData.trades);
+    }
+    
+    allTrades.push(...positionsArray);
   }
   
-  if (positionsArray.length === 0) {
+  if (allTrades.length === 0) {
     return {
       totalReturn: 0,
       winRate: 0,
@@ -169,11 +197,11 @@ function calculateMetrics(apiData: any) {
     };
   }
 
-  const closedPositions = positionsArray.filter((pos: any) => pos.status === 'closed' && pos.pnl !== null);
-  const winningPositions = closedPositions.filter((pos: any) => pos.pnl > 0);
+  const closedTrades = allTrades.filter((trade: any) => trade.status === 'closed' && trade.pnl !== null);
+  const winningTrades = closedTrades.filter((trade: any) => trade.pnl > 0);
   
-  const totalPnL = closedPositions.reduce((sum: number, pos: any) => sum + (Number(pos.pnl) || 0), 0);
-  const winRate = closedPositions.length > 0 ? (winningPositions.length / closedPositions.length) * 100 : 0;
+  const totalPnL = closedTrades.reduce((sum: number, trade: any) => sum + (Number(trade.pnl) || 0), 0);
+  const winRate = closedTrades.length > 0 ? (winningTrades.length / closedTrades.length) * 100 : 0;
   
   // Calculate running equity for drawdown
   let runningPnL = 0;
@@ -181,15 +209,15 @@ function calculateMetrics(apiData: any) {
   let maxDrawdownAmount = 0;
   let maxDrawdownPercent = 0;
   
-  // Sort positions by date for chronological calculation
-  const sortedPositions = [...closedPositions].sort((a: any, b: any) => {
+  // Sort trades by date for chronological calculation
+  const sortedTrades = [...closedTrades].sort((a: any, b: any) => {
     const dateA = new Date(a.entry_time);
     const dateB = new Date(b.entry_time);
     return dateA.getTime() - dateB.getTime();
   });
   
-  sortedPositions.forEach((pos: any) => {
-    runningPnL += Number(pos.pnl) || 0;
+  sortedTrades.forEach((trade: any) => {
+    runningPnL += Number(trade.pnl) || 0;
     if (runningPnL > peak) {
       peak = runningPnL;
     }
@@ -200,7 +228,7 @@ function calculateMetrics(apiData: any) {
   });
 
   // Calculate max profit and loss in single trade
-  const pnlValues = closedPositions.map((pos: any) => Number(pos.pnl) || 0);
+  const pnlValues = closedTrades.map((trade: any) => Number(trade.pnl) || 0);
   const maxProfitSingleTrade = pnlValues.length > 0 ? Math.max(...pnlValues) : 0;
   const maxLossSingleTrade = pnlValues.length > 0 ? Math.min(...pnlValues) : 0;
   
@@ -210,8 +238,8 @@ function calculateMetrics(apiData: any) {
   let maxWinStreak = 0;
   let maxLossStreak = 0;
   
-  sortedPositions.forEach((pos: any) => {
-    const pnl = Number(pos.pnl) || 0;
+  sortedTrades.forEach((trade: any) => {
+    const pnl = Number(trade.pnl) || 0;
     if (pnl > 0) {
       currentWinStreak++;
       currentLossStreak = 0;
@@ -243,10 +271,10 @@ function calculateMetrics(apiData: any) {
     winRate: Math.round(winRate * 100) / 100,
     maxDrawdown: Math.round(maxDrawdownPercent * 100) / 100,
     sharpeRatio: Math.round(sharpeRatio * 1000) / 1000,
-    trades: positionsArray.length,
+    trades: allTrades.length,
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
-    totalWins: winningPositions.length,
-    totalTrades: closedPositions.length,
+    totalWins: winningTrades.length,
+    totalTrades: closedTrades.length,
     maxDrawdownAmount: Math.round(maxDrawdownAmount * 100) / 100,
     maxDrawdownPercent: Math.round(maxDrawdownPercent * 100) / 100,
     maxProfitSingleTrade: Math.round(maxProfitSingleTrade * 100) / 100,
