@@ -167,13 +167,15 @@ function calculateMetrics(apiData: any) {
       if (position.trades && Array.isArray(position.trades)) {
         console.log(`Found ${position.trades.length} trades in position ${positionId} for date ${date}`);
         
-        // Add position info to each trade for context
+        // Add position info to each trade for context, but PRESERVE the original trades array
         const tradesWithPosition = position.trades.map((trade: any) => ({
           ...trade,
           positionId,
           executionDate: date,
           instrument: position.instrument,
-          strategy: position.strategy
+          strategy: position.strategy,
+          // IMPORTANT: Preserve the original backend trades array for comprehensive details
+          trades: position.trades
         }));
         
         dateTrades.push(...tradesWithPosition);
