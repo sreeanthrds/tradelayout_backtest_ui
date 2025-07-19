@@ -250,21 +250,17 @@ export function ComprehensiveTradesTable() {
                                      
                                      {/* Debug trade data structure */}
                                      <div className="text-xs bg-gray-100 p-2 rounded mb-4">
-                                       <details>
+                                       <details open>
                                          <summary className="cursor-pointer font-mono">Debug: Trade Data Structure</summary>
-                                         <pre className="mt-2 overflow-auto max-h-32">
+                                         <pre className="mt-2 overflow-auto max-h-32 text-xs">
                                            {JSON.stringify({
-                                             hasEntry: !!trade.entry,
-                                             hasExit: !!trade.exit,
+                                             hasEntry: !!(trade as any).entry,
+                                             hasExit: !!(trade as any).exit,
+                                             hasTrades: !!(trade as any).trades,
                                              hasTradePairs: !!trade.tradePairs,
                                              tradePairsLength: (trade.tradePairs || []).length,
                                              tradeKeys: Object.keys(trade),
-                                             sampleData: {
-                                               instrument: trade.instrument,
-                                               entry_time: trade.entry_time,
-                                               exit_time: trade.exit_time,
-                                               pnl: trade.pnl
-                                             }
+                                             fullTrade: trade
                                            }, null, 2)}
                                          </pre>
                                        </details>
