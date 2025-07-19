@@ -8,6 +8,7 @@ import { OverviewTabContent } from "@/components/backtest/results/OverviewTabCon
 import { TradesTabContent } from "@/components/backtest/results/TradesTabContent";
 import { useBacktestData } from "@/hooks/useBacktestData";
 import { tradeService } from "@/services/TradeDataService";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 export default function BacktestResults() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -28,6 +29,10 @@ export default function BacktestResults() {
   
   return (
     <div className="container mx-auto py-6 max-w-7xl">
+      <div className="flex justify-end mb-4">
+        <ThemeToggle />
+      </div>
+      
       <BacktestResultsHeader backtestData={backtestData} />
 
       <BacktestFilters />
