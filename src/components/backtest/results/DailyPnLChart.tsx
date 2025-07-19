@@ -25,35 +25,66 @@ export function DailyPnLChart() {
     // Group trades by date and calculate daily P&L
     const dailyPnL: { [key: string]: { pnl: number; trades: any[] } } = {};
     
-    backtestData.allTrades.forEach((trade: any) => {
+    console.log('=== Daily P&L Chart Debug ===');
+    console.log('Total trades:', backtestData.allTrades.length);
+    
+    backtestData.allTrades.forEach((trade: any, index) => {
       // Handle both formats - raw API data and transformed data
       const exitDate = trade.exitDate || (trade.exit_time ? trade.exit_time.split('T')[0] : null);
       const profitLoss = trade.profitLoss !== undefined ? trade.profitLoss : trade.pnl;
       const status = trade.status;
       const isClosedTrade = status === 'Closed' || status === 'closed';
       
+      if (index < 3) {
+        console.log(`Trade ${index}:`, {
+          exitDate,
+          exit_time: trade.exit_time,
+          exitDate_field: trade.exitDate,
+          profitLoss,
+          status,
+          isClosedTrade
+        });
+      }
+      
       if (exitDate && profitLoss !== null && profitLoss !== undefined && isClosedTrade) {
-        if (!dailyPnL[exitDate]) {
-          dailyPnL[exitDate] = { pnl: 0, trades: [] };
+        // Ensure consistent date format
+        const dateObj = new Date(exitDate + 'T00:00:00.000Z'); // Force UTC to avoid timezone issues
+        const normalizedDate = dateObj.toISOString().split('T')[0];
+        
+        if (index < 3) {
+          console.log(`Normalized date for trade ${index}:`, {
+            original: exitDate,
+            normalized: normalizedDate,
+            dayOfWeek: dateObj.getDay() // 0=Sunday, 1=Monday, etc.
+          });
         }
-        dailyPnL[exitDate].pnl += profitLoss;
-        dailyPnL[exitDate].trades.push(trade);
+        
+        if (!dailyPnL[normalizedDate]) {
+          dailyPnL[normalizedDate] = { pnl: 0, trades: [] };
+        }
+        dailyPnL[normalizedDate].pnl += profitLoss;
+        dailyPnL[normalizedDate].trades.push(trade);
       }
     });
 
+    console.log('Daily P&L data keys (first 5):', Object.keys(dailyPnL).slice(0, 5));
+    console.log('Sample daily P&L entry:', Object.entries(dailyPnL)[0]);
+
     // Convert to array and sort by date
     const data: DailyPnLData[] = Object.entries(dailyPnL).map(([date, { pnl, trades }]) => {
-      const dateObj = new Date(date);
+      const dateObj = new Date(date + 'T00:00:00.000Z'); // Consistent UTC parsing
       return {
         date,
         pnl,
         trades,
         monthYear: dateObj.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
         month: dateObj.toLocaleDateString('en-US', { month: 'short' }),
-        year: dateObj.getFullYear().toString()
+        year: dateObj.getFullYear().toString(),
+        dayNumber: dateObj.getDate()
       };
-    }).sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    }).sort((a, b) => new Date(a.date + 'T00:00:00.000Z').getTime() - new Date(b.date + 'T00:00:00.000Z').getTime());
 
+    console.log('Final processed data (first 3):', data.slice(0, 3));
     return data;
   }, [backtestData?.allTrades]);
 
@@ -129,12 +160,29 @@ export function DailyPnLChart() {
     
     // Add actual days with proper date formatting
     for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = new Date(year, month, day).toISOString().split('T')[0];
+      // Create date in UTC to avoid timezone shifts
+      const dateStr = new Date(Date.UTC(year, month, day)).toISOString().split('T')[0];
       const dayData = monthData.find(d => d.date === dateStr);
       
+      console.log(`Calendar day ${day}:`, {
+        dateStr,
+        dayOfWeek: new Date(Date.UTC(year, month, day)).getUTCDay(),
+        hasData: !!dayData
+      });
+      
       // Add day number for display
-      const calendarItem = dayData || { date: dateStr, pnl: 0, trades: [], monthYear: '', month: '', year: '' };
-      calendarItem.dayNumber = day;
+      const calendarItem = dayData || { 
+        date: dateStr, 
+        pnl: 0, 
+        trades: [], 
+        monthYear: '', 
+        month: '', 
+        year: '',
+        dayNumber: day
+      };
+      if (!calendarItem.dayNumber) {
+        calendarItem.dayNumber = day;
+      }
       calendar.push(calendarItem);
     }
     
