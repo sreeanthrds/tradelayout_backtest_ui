@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table";
 import { ChevronDown, ChevronRight, Calendar, TrendingUp, TrendingDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { ComprehensiveTradeDetails } from "@/components/backtest/trades/ComprehensiveTradeDetails";
 
 export function ComprehensiveTradesTable() {
   const { backtestData } = useBacktestData();
@@ -241,113 +242,7 @@ export function ComprehensiveTradesTable() {
                               {isTradeExpanded && (
                                 <TableRow>
                                   <TableCell colSpan={11} className="bg-muted/30 p-4">
-                                     <div className="flex justify-between items-center mb-4">
-                                       <h4 className="font-medium">Comprehensive Trade Details</h4>
-                                       <Badge variant="outline" className="text-xs">
-                                         {(trade.tradePairs || []).length} Trade Pairs
-                                       </Badge>
-                                     </div>
-                                     
-                                     {/* Debug trade data structure */}
-                                     <div className="text-xs bg-gray-100 p-2 rounded mb-4 text-gray-800">
-                                       <details open>
-                                         <summary className="cursor-pointer font-mono text-gray-900">Debug: Trade Data Structure</summary>
-                                         <pre className="mt-2 overflow-auto max-h-32 text-xs text-gray-800 bg-white p-2 rounded">
-                                           {JSON.stringify({
-                                             hasEntry: !!(trade as any).entry,
-                                             hasExit: !!(trade as any).exit,
-                                             hasTrades: !!(trade as any).trades,
-                                             hasTradePairs: !!trade.tradePairs,
-                                             tradePairsLength: (trade.tradePairs || []).length,
-                                             tradeKeys: Object.keys(trade),
-                                             fullTrade: trade
-                                           }, null, 2)}
-                                         </pre>
-                                       </details>
-                                     </div>
-                                    
-                                     {/* All Trade Details */}
-                                     <div className="space-y-4">
-                                       <h4 className="font-medium text-lg">Complete Trade Information</h4>
-                                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
-                                         {Object.entries(trade).map(([key, value]) => {
-                                           // Skip complex objects like tradePairs for now
-                                           if (typeof value === 'object' && value !== null) return null;
-                                           
-                                           return (
-                                             <div key={key} className="bg-muted/30 p-3 rounded">
-                                               <span className="font-medium text-muted-foreground capitalize">
-                                                 {key.replace(/([A-Z])/g, ' $1').replace(/^./, str => str.toUpperCase())}:
-                                               </span>
-                                               <div className={`font-medium mt-1 ${
-                                                 key.includes('pnl') || key.includes('profit') ? 
-                                                 (Number(value) >= 0 ? 'text-green-600' : 'text-red-600') : ''
-                                               }`}>
-                                                 {key.includes('price') || key.includes('pnl') || key.includes('profit') ? 
-                                                   `₹${Number(value).toFixed(2)}` : 
-                                                   String(value || 'N/A')
-                                                 }
-                                               </div>
-                                             </div>
-                                           );
-                                         })}
-                                       </div>
-                                      </div>
-
-                                      {/* Trade Pairs Details */}
-                                      {trade.tradePairs && trade.tradePairs.length > 0 && (
-                                        <div className="mt-6">
-                                          <h5 className="font-medium mb-3">Trade Pairs Details</h5>
-                                          <div className="space-y-3 max-h-64 overflow-y-auto">
-                                            {trade.tradePairs.map((pair: any, pairIndex: number) => (
-                                              <div key={`pair-${pairIndex}-${pair.entry?.nodeId || pairIndex}`} className="border rounded-lg p-3 bg-background">
-                                                <div className="flex justify-between items-center mb-2">
-                                                  <Badge variant="secondary" className="text-xs">
-                                                    Pair {pairIndex + 1}
-                                                  </Badge>
-                                                  {pair.exit?.profitLoss !== undefined && (
-                                                    <span className={`font-medium text-sm ${pair.exit.profitLoss >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                                      {formatCurrency(pair.exit.profitLoss)}
-                                                    </span>
-                                                  )}
-                                                </div>
-                                                
-                                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
-                                                  {/* Entry Details */}
-                                                  <div className="space-y-1">
-                                                    <div className="font-medium text-muted-foreground">Entry:</div>
-                                                    <div className="space-y-1 pl-2">
-                                                      <div><span className="text-muted-foreground">Type:</span> {pair.entry?.type} {pair.entry?.strike}</div>
-                                                      <div><span className="text-muted-foreground">Action:</span> {pair.entry?.buySell} {pair.entry?.quantity}</div>
-                                                      <div><span className="text-muted-foreground">Price:</span> ₹{pair.entry?.entryPrice || 'N/A'}</div>
-                                                      <div><span className="text-muted-foreground">Order:</span> {pair.entry?.orderType}</div>
-                                                      <div><span className="text-muted-foreground">Time:</span> {pair.entry?.timestamp ? new Date(pair.entry.timestamp).toLocaleTimeString() : 'N/A'}</div>
-                                                      <div><span className="text-muted-foreground">Node ID:</span> <span className="font-mono">{pair.entry?.nodeId}</span></div>
-                                                    </div>
-                                                  </div>
-                                                  
-                                                  {/* Exit Details */}
-                                                  <div className="space-y-1">
-                                                    <div className="font-medium text-muted-foreground">Exit:</div>
-                                                    {pair.exit ? (
-                                                      <div className="space-y-1 pl-2">
-                                                        <div><span className="text-muted-foreground">Action:</span> {pair.exit.buySell} {pair.exit.quantity}</div>
-                                                        <div><span className="text-muted-foreground">Price:</span> ₹{pair.exit.exitPrice || 'N/A'}</div>
-                                                        <div><span className="text-muted-foreground">Reason:</span> {pair.exit.exitReason || 'N/A'}</div>
-                                                        <div><span className="text-muted-foreground">Order:</span> {pair.exit.orderType}</div>
-                                                        <div><span className="text-muted-foreground">Time:</span> {pair.exit.timestamp ? new Date(pair.exit.timestamp).toLocaleTimeString() : 'N/A'}</div>
-                                                        <div><span className="text-muted-foreground">Node ID:</span> <span className="font-mono">{pair.exit.nodeId}</span></div>
-                                                      </div>
-                                                    ) : (
-                                                      <div className="pl-2 text-muted-foreground">Not exited</div>
-                                                    )}
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            ))}
-                                          </div>
-                                        </div>
-                                      )}
+                                     <ComprehensiveTradeDetails trade={trade} />
                                   </TableCell>
                                 </TableRow>
                               )}
