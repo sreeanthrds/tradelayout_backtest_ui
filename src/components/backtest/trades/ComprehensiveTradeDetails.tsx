@@ -140,11 +140,11 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       </div>
       <div className="space-y-2.5">
         {data.length > 0 ? data.map(([key, value]) => (
-          <div key={key} className="group flex justify-between items-start text-xs p-2 rounded-md hover:bg-muted/50 transition-colors">
-            <span className="text-muted-foreground min-w-0 flex-1 pr-3 font-medium">
+          <div key={key} className="group flex flex-col gap-1 text-xs p-2 rounded-md hover:bg-muted/50 transition-colors">
+            <span className="text-muted-foreground font-medium">
               {formatLabel(key)}
             </span>
-            <span className={`font-semibold text-right min-w-0 flex-1 ${
+            <span className={`font-semibold break-all ${
               key.includes('pnl') || key.includes('profit') ? 
               (Number(value) >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400') : 
               'text-foreground'
