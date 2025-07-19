@@ -89,7 +89,6 @@ export default {
 					muted: 'hsl(var(--neutral-muted))'
 				}
 			},
-			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
