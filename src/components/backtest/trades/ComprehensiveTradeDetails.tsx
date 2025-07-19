@@ -1,16 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ExternalLink, Info } from "lucide-react";
 
 interface ComprehensiveTradeDetailsProps {
   trade: any;
 }
 
 export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsProps) {
-  const [positionDialogOpen, setPositionDialogOpen] = useState(false);
 
   const formatValue = (key: string, value: any) => {
     if (value === null || value === undefined) return 'N/A';
@@ -109,14 +105,19 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     return exitFields;
   };
 
-  // Summary: Only specific performance/result fields
+  // Summary: Key trade information and performance metrics
   const getSummaryFields = (trade: any) => {
     const summaryFields = [];
-    const summaryKeys = ['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'];
+    const summaryKeys = [
+      'pnl', 'profit', 'loss', 'profitLoss', 'status', 'duration', 'returns', 
+      'commission', 'fee', 'strategy', 'instrument', 'symbol', 'quantity',
+      'entry_price', 'exit_price', 'entryPrice', 'exitPrice', 'close_reason',
+      'trade_side', 'node_id', 'positionId'
+    ];
     
     Object.entries(trade).forEach(([key, value]) => {
-      // Only include specific summary fields, exclude entry/exit/position config
-      if (summaryKeys.includes(key)) {
+      // Include summary fields, exclude entry/exit objects and tradePairs
+      if (summaryKeys.includes(key) && key !== 'entry' && key !== 'exit' && key !== 'tradePairs') {
         summaryFields.push([key, value]);
       }
     });
@@ -127,12 +128,6 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
   const entryData = getEntryFields(trade);
   const exitData = getExitFields(trade);
   const summaryData = getSummaryFields(trade);
-
-  // Position config - all remaining fields for the dialog only
-  const positionConfigData = Object.entries(trade).filter(([key]) => 
-    key !== 'entry' && key !== 'exit' && key !== 'tradePairs' &&
-    !['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'].includes(key)
-  );
 
   const renderDataSection = (data: [string, any][], title: string) => (
     <div className="space-y-2">
@@ -173,50 +168,8 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Entry Details</CardTitle>
           </CardHeader>
-          <CardContent className="pt-0 flex flex-col h-full">
-            <div className="flex-1">
-              {renderDataSection(entryData, "Entry Information")}
-            </div>
-            
-            {/* Position Config Link at bottom */}
-            {positionConfigData.length > 0 && (
-              <div className="mt-4 pt-3 border-t">
-                <Dialog open={positionDialogOpen} onOpenChange={setPositionDialogOpen}>
-                  <DialogTrigger asChild>
-                    <Button 
-                      variant="link" 
-                      size="sm" 
-                      className="h-auto p-0 text-blue-600 hover:text-blue-800 text-xs"
-                    >
-                      <ExternalLink className="h-3 w-3 mr-1" />
-                      Position Config
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle className="flex items-center gap-2">
-                        <Info className="h-4 w-4" />
-                        Position Configuration Details
-                      </DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {positionConfigData.map(([key, value]) => (
-                          <div key={key} className="border rounded-lg p-3">
-                            <div className="font-medium text-sm text-muted-foreground mb-1">
-                              {formatLabel(key)}
-                            </div>
-                            <div className="text-sm font-medium break-all">
-                              {formatValue(key, value)}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-              </div>
-            )}
+          <CardContent className="pt-0">
+            {renderDataSection(entryData, "Entry Information")}
           </CardContent>
         </Card>
 
