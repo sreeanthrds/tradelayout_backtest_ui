@@ -109,13 +109,14 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     return exitFields;
   };
 
-  // Summary: All remaining top-level fields (same level as entry/exit)
+  // Summary: Only specific performance/result fields
   const getSummaryFields = (trade: any) => {
     const summaryFields = [];
+    const summaryKeys = ['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'];
     
     Object.entries(trade).forEach(([key, value]) => {
-      // Skip entry, exit, and position config data
-      if (key !== 'entry' && key !== 'exit' && key !== 'tradePairs') {
+      // Only include specific summary fields, exclude entry/exit/position config
+      if (summaryKeys.includes(key)) {
         summaryFields.push([key, value]);
       }
     });
@@ -127,9 +128,10 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
   const exitData = getExitFields(trade);
   const summaryData = getSummaryFields(trade);
 
-  // Position config - separate from summary for the dialog
+  // Position config - all remaining fields for the dialog only
   const positionConfigData = Object.entries(trade).filter(([key]) => 
-    key !== 'entry' && key !== 'exit' && key !== 'tradePairs'
+    key !== 'entry' && key !== 'exit' && key !== 'tradePairs' &&
+    !['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'].includes(key)
   );
 
   const renderDataSection = (data: [string, any][], title: string) => (
