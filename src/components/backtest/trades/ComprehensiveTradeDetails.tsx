@@ -82,8 +82,8 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     
     if (trade.entry) {
       Object.entries(trade.entry).forEach(([key, value]) => {
-        // Skip redundant fill_time and fill_price
-        if (key !== 'fill_time' && key !== 'fill_price') {
+        // Skip redundant fill_time, fill_price, and position config
+        if (key !== 'fill_time' && key !== 'fill_price' && key !== 'position config') {
           entryFields.push([key, value]);
         }
       });
