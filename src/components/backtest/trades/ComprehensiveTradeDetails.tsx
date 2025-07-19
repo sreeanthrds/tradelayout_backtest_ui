@@ -71,44 +71,72 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       .trim();
   };
 
-  // Separate trade data into categories - show ALL data
-  const entryData = Object.entries(trade).filter(([key]) => 
-    key.includes('entry') || 
-    key.includes('Entry') || 
-    key === 'instrument' ||
-    key === 'strategy' ||
-    key === 'positionId' ||
-    key === 'quantity' ||
-    key.includes('side') ||
-    key === 'entry_time' ||
-    key === 'entry_price'
-  );
+  // Display actual trade data structure - no filtering
+  const getEntryFields = (trade: any) => {
+    const entryFields = [];
+    
+    // Look for entry object first
+    if (trade.entry) {
+      Object.entries(trade.entry).forEach(([key, value]) => {
+        entryFields.push([key, value]);
+      });
+    }
+    
+    // Add other entry-related fields from main trade object
+    const mainEntryFields = ['instrument', 'strategy', 'quantity', 'entry_price', 'entry_time', 'trade_side'];
+    mainEntryFields.forEach(field => {
+      if (trade[field] !== undefined) {
+        entryFields.push([field, trade[field]]);
+      }
+    });
+    
+    return entryFields;
+  };
 
-  const exitData = Object.entries(trade).filter(([key]) => 
-    key.includes('exit') || 
-    key.includes('Exit') || 
-    key.includes('close') ||
-    key.includes('Close') ||
-    key === 'exit_time' ||
-    key === 'exit_price'
-  );
+  const getExitFields = (trade: any) => {
+    const exitFields = [];
+    
+    // Look for exit object first
+    if (trade.exit) {
+      Object.entries(trade.exit).forEach(([key, value]) => {
+        exitFields.push([key, value]);
+      });
+    }
+    
+    // Add other exit-related fields from main trade object
+    const mainExitFields = ['exit_price', 'exit_time'];
+    mainExitFields.forEach(field => {
+      if (trade[field] !== undefined) {
+        exitFields.push([field, trade[field]]);
+      }
+    });
+    
+    return exitFields;
+  };
 
-  const summaryData = Object.entries(trade).filter(([key]) => 
-    key.includes('pnl') || 
-    key.includes('profit') || 
-    key.includes('loss') ||
-    key.includes('status') ||
-    key.includes('duration') ||
-    key.includes('returns') ||
-    key.includes('commission') ||
-    key.includes('fee')
-  );
+  const getSummaryFields = (trade: any) => {
+    const summaryFields = [];
+    const summaryKeys = ['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'];
+    
+    summaryKeys.forEach(field => {
+      if (trade[field] !== undefined) {
+        summaryFields.push([field, trade[field]]);
+      }
+    });
+    
+    return summaryFields;
+  };
 
-  // Show remaining data in Position Config
+  const entryData = getEntryFields(trade);
+  const exitData = getExitFields(trade);
+  const summaryData = getSummaryFields(trade);
+
+  // Everything else goes to position config
   const positionConfigData = Object.entries(trade).filter(([key]) => 
-    !entryData.some(([entryKey]) => entryKey === key) &&
-    !exitData.some(([exitKey]) => exitKey === key) &&
-    !summaryData.some(([summaryKey]) => summaryKey === key)
+    key !== 'entry' && key !== 'exit' && 
+    !['instrument', 'strategy', 'quantity', 'entry_price', 'entry_time', 'trade_side', 
+      'exit_price', 'exit_time', 'pnl', 'profit', 'loss', 'status', 'duration', 
+      'returns', 'commission', 'fee'].includes(key)
   );
 
   const renderDataSection = (data: [string, any][], title: string) => (
@@ -148,15 +176,22 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
         {/* Entry Column */}
         <Card className="min-h-[300px]">
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm flex items-center justify-between">
-              Entry Details
-              {positionConfigData.length > 0 && (
+            <CardTitle className="text-sm">Entry Details</CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0 flex flex-col h-full">
+            <div className="flex-1">
+              {renderDataSection(entryData, "Entry Information")}
+            </div>
+            
+            {/* Position Config Link at bottom */}
+            {positionConfigData.length > 0 && (
+              <div className="mt-4 pt-3 border-t">
                 <Dialog open={positionDialogOpen} onOpenChange={setPositionDialogOpen}>
                   <DialogTrigger asChild>
                     <Button 
-                      variant="ghost" 
+                      variant="link" 
                       size="sm" 
-                      className="h-6 px-2 text-xs"
+                      className="h-auto p-0 text-blue-600 hover:text-blue-800 text-xs"
                     >
                       <ExternalLink className="h-3 w-3 mr-1" />
                       Position Config
@@ -185,11 +220,8 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
                     </div>
                   </DialogContent>
                 </Dialog>
-              )}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            {renderDataSection(entryData, "Entry Information")}
+              </div>
+            )}
           </CardContent>
         </Card>
 
