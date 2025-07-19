@@ -4,12 +4,21 @@ import { Button } from "@/components/ui/button";
 import { ChevronLeft, User } from "lucide-react";
 import { BacktestForm } from "@/components/backtest/settings/BacktestForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useUrlParams, useThemeFromUrl } from "@/hooks/useUrlParams";
 import { Badge } from "@/components/ui/badge";
+import { useEffect } from "react";
 
 export default function BacktestingSettings() {
   const navigate = useNavigate();
   const { userId, strategyId } = useUrlParams();
+  
+  // Apply theme from URL if provided
+  useThemeFromUrl();
+  
+  // Initialize theme sync on page load
+  useEffect(() => {
+    console.log('🚀 Theme sync initialized on backtesting page');
+  }, []);
 
   return (
     <div className="container mx-auto py-6 max-w-4xl">

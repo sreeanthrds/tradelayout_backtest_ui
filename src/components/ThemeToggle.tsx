@@ -20,12 +20,41 @@ export function ThemeToggle() {
     }
   }, [themeContext]);
 
+  // Send theme change via PostMessage
+  const sendThemeMessage = (newTheme: string) => {
+    const message = {
+      type: 'THEME_CHANGE',
+      theme: newTheme,
+      source: 'main-app'
+    };
+    
+    // Send to parent window (if this is in an iframe)
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage(message, '*');
+    }
+    
+    // Send to all iframes in current window
+    const iframes = document.querySelectorAll('iframe');
+    iframes.forEach(iframe => {
+      if (iframe.contentWindow) {
+        // Send multiple times to ensure delivery
+        iframe.contentWindow.postMessage(message, '*');
+        setTimeout(() => iframe.contentWindow?.postMessage(message, '*'), 500);
+        setTimeout(() => iframe.contentWindow?.postMessage(message, '*'), 1500);
+      }
+    });
+    
+    console.log(`🎨 Theme change sent via PostMessage: ${newTheme}`);
+  };
+
   // Handle toggle click
   const handleToggle = () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setThemeState(newTheme);
     if (themeContext && themeContext.setTheme) {
       themeContext.setTheme(newTheme);
+      // Send theme change message
+      sendThemeMessage(newTheme);
     }
   };
 
