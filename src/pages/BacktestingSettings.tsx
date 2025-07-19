@@ -35,21 +35,6 @@ export default function BacktestingSettings() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Backtest Settings</h1>
             <p className="text-muted-foreground">Configure parameters for your options trading backtest</p>
-            {(userId || strategyId) && (
-              <div className="flex items-center gap-2 mt-2">
-                {userId && (
-                  <Badge variant="secondary" className="flex items-center gap-1">
-                    <User className="h-3 w-3" />
-                    User: {userId}
-                  </Badge>
-                )}
-                {strategyId && (
-                  <Badge variant="outline">
-                    Strategy: {strategyId}
-                  </Badge>
-                )}
-              </div>
-            )}
           </div>
         </div>
         <ThemeToggle />
