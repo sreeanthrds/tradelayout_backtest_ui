@@ -81,7 +81,13 @@ export function StrategySection({ control }: StrategySectionProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent 
+                    className="w-auto p-0 z-[100]" 
+                    align="start"
+                    side="bottom"
+                    sideOffset={4}
+                    avoidCollisions={true}
+                  >
                     <Calendar
                       mode="single"
                       selected={field.value}
@@ -124,7 +130,13 @@ export function StrategySection({ control }: StrategySectionProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
+                  <PopoverContent 
+                    className="w-auto p-0 z-[100]" 
+                    align="start"
+                    side="bottom"
+                    sideOffset={4}
+                    avoidCollisions={true}
+                  >
                     <Calendar
                       mode="single"
                       selected={field.value}
