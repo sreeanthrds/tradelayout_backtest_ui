@@ -81,7 +81,7 @@ export function StrategySection({ control }: StrategySectionProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
                       selected={field.value}
@@ -90,7 +90,7 @@ export function StrategySection({ control }: StrategySectionProps) {
                         date > new Date() || date > control._formValues.endDate
                       }
                       initialFocus
-                      className="pointer-events-auto"
+                      className={cn("p-3 pointer-events-auto")}
                     />
                   </PopoverContent>
                 </Popover>
@@ -124,7 +124,7 @@ export function StrategySection({ control }: StrategySectionProps) {
                       </Button>
                     </FormControl>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
+                  <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
                       selected={field.value}
@@ -133,7 +133,7 @@ export function StrategySection({ control }: StrategySectionProps) {
                         date > new Date() || date < control._formValues.startDate
                       }
                       initialFocus
-                      className="pointer-events-auto"
+                      className={cn("p-3 pointer-events-auto")}
                     />
                   </PopoverContent>
                 </Popover>
