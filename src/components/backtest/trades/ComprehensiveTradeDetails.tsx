@@ -44,6 +44,15 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       return value ? 'Yes' : 'No';
     }
     
+    // Special handling for trade side
+    if (key === 'side' || key === 'trade_side') {
+      if (value === 'buy' || value === 'Long') {
+        return 'Long';
+      } else if (value === 'sell' || value === 'Short') {
+        return 'Short';
+      }
+    }
+    
     return String(value);
   };
 
@@ -78,7 +87,10 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     // Look for entry object first
     if (trade.entry) {
       Object.entries(trade.entry).forEach(([key, value]) => {
-        entryFields.push([key, value]);
+        // Skip redundant fill_time and fill_price
+        if (key !== 'fill_time' && key !== 'fill_price') {
+          entryFields.push([key, value]);
+        }
       });
     }
     
