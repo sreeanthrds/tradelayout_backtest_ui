@@ -76,14 +76,20 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       .trim();
   };
 
-  // Entry Details: Only fields from trade.entry object
+  // Entry Details: Only core entry-related fields, exclude config
   const getEntryFields = (trade: any) => {
     const entryFields = [];
     
     if (trade.entry) {
+      // Define core entry fields to include
+      const coreEntryFields = [
+        'time', 'entry_time', 'timestamp', 'price', 'entry_price', 'quantity', 
+        'side', 'trade_side', 'instrument', 'symbol', 'order_id', 'transaction_id'
+      ];
+      
       Object.entries(trade.entry).forEach(([key, value]) => {
-        // Skip redundant fill_time and fill_price
-        if (key !== 'fill_time' && key !== 'fill_price') {
+        // Include only core entry fields, skip fill_time, fill_price, and config fields
+        if (coreEntryFields.includes(key) && key !== 'fill_time' && key !== 'fill_price') {
           entryFields.push([key, value]);
         }
       });
