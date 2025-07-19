@@ -36,10 +36,11 @@ export function TradesTabContent() {
           <h2 className="text-lg font-semibold">Trade History</h2>
           <p className="text-sm text-muted-foreground">Detailed view of all trades and transactions</p>
         </div>
-        <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2">
+        {/* Temporarily hidden - will be used in later stages */}
+        {/* <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2">
           <Download className="h-4 w-4" />
           Export JSON
-        </Button>
+        </Button> */}
       </div>
       <ComprehensiveTradesTable />
     </div>

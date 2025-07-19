@@ -74,10 +74,11 @@ export function BacktestResultsHeader({ backtestData }: BacktestResultsHeaderPro
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button size="sm" onClick={handleExport}>
+        {/* Temporarily hidden - will be used in later stages */}
+        {/* <Button size="sm" onClick={handleExport}>
           <ArrowDownToLine className="mr-2 h-4 w-4" />
           Export JSON
-        </Button>
+        </Button> */}
       </div>
     </div>
   );
