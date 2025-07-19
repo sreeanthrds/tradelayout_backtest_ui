@@ -266,25 +266,59 @@ export function ComprehensiveTradesTable() {
                                        </details>
                                      </div>
                                     
-                                    {/* Basic Trade Info */}
-                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4 pb-4 border-b">
-                                      <div>
-                                        <span className="font-medium text-muted-foreground">Position ID:</span>
-                                        <div className="font-mono text-xs">{trade.positionId || trade.position_id || 'N/A'}</div>
-                                      </div>
-                                      <div>
-                                        <span className="font-medium text-muted-foreground">Trade Index:</span>
-                                        <div>{trade.index || trade.trade_index || 'N/A'}</div>
-                                      </div>
-                                      <div>
-                                        <span className="font-medium text-muted-foreground">VIX Level:</span>
-                                        <div>{trade.vix || trade.vix_level || 'N/A'}</div>
-                                      </div>
-                                      <div>
-                                        <span className="font-medium text-muted-foreground">Trade Duration:</span>
-                                        <div>{trade.tradeDuration || trade.trade_duration || 'N/A'}</div>
-                                      </div>
-                                    </div>
+                                     {/* Basic Trade Info */}
+                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4 pb-4 border-b">
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Instrument:</span>
+                                         <div className="font-medium">{trade.instrument || trade.symbol || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Entry Time:</span>
+                                         <div>{trade.entry_time || (trade.entryDate + " " + trade.entryTime) || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Exit Time:</span>
+                                         <div>{trade.exit_time || (trade.exitDate ? trade.exitDate + " " + trade.exitTime : 'N/A')}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">P&L:</span>
+                                         <div className={`font-medium ${(trade.pnl || trade.profitLoss || 0) >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                           ₹{(trade.pnl || trade.profitLoss || 0).toFixed(2)}
+                                         </div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Entry Price:</span>
+                                         <div>₹{trade.entry_price?.toFixed(2) || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Exit Price:</span>
+                                         <div>₹{trade.exit_price?.toFixed(2) || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Quantity:</span>
+                                         <div>{trade.quantity || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Status:</span>
+                                         <div>{trade.status || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Close Reason:</span>
+                                         <div>{trade.close_reason || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Strategy:</span>
+                                         <div>{trade.strategy || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Trade Side:</span>
+                                         <div>{trade.trade_side || 'N/A'}</div>
+                                       </div>
+                                       <div>
+                                         <span className="font-medium text-muted-foreground">Position ID:</span>
+                                         <div className="font-mono text-xs">{trade.positionId || 'N/A'}</div>
+                                       </div>
+                                     </div>
 
                                     {/* Trade Pairs Details */}
                                     {trade.tradePairs && trade.tradePairs.length > 0 && (
