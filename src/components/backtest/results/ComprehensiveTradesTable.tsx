@@ -249,10 +249,10 @@ export function ComprehensiveTradesTable() {
                                      </div>
                                      
                                      {/* Debug trade data structure */}
-                                     <div className="text-xs bg-gray-100 p-2 rounded mb-4">
+                                     <div className="text-xs bg-gray-100 p-2 rounded mb-4 text-gray-800">
                                        <details open>
-                                         <summary className="cursor-pointer font-mono">Debug: Trade Data Structure</summary>
-                                         <pre className="mt-2 overflow-auto max-h-32 text-xs">
+                                         <summary className="cursor-pointer font-mono text-gray-900">Debug: Trade Data Structure</summary>
+                                         <pre className="mt-2 overflow-auto max-h-32 text-xs text-gray-800 bg-white p-2 rounded">
                                            {JSON.stringify({
                                              hasEntry: !!(trade as any).entry,
                                              hasExit: !!(trade as any).exit,
