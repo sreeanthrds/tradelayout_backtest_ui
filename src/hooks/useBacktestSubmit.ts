@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { FormValues } from "@/components/backtest/settings/formSchema";
 import { backtestApiService } from "@/services/BacktestApiService";
 import { tradeService } from "@/services/TradeDataService";
+import { useUrlParams } from "@/hooks/useUrlParams";
 
 /**
  * Custom hook for handling backtest form submissions
@@ -13,6 +14,7 @@ import { tradeService } from "@/services/TradeDataService";
 export function useBacktestSubmit() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { userId } = useUrlParams();
 
   const submitBacktest = async (data: FormValues) => {
     setIsLoading(true);
@@ -31,12 +33,12 @@ export function useBacktestSubmit() {
         return `${day}-${month}-${year}`;
       };
 
-      // Call the API to run backtest
+      // Call the API to run backtest with userId from URL params
       const result = await backtestApiService.runBacktest({
         strategy_id: data.strategy,
         start_date: formatDate(data.startDate),
         end_date: formatDate(data.endDate),
-      });
+      }, userId);
       
       // Store the raw API result directly for the new data structure
       console.log("Raw API result:", result);

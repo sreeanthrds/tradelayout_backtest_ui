@@ -58,11 +58,13 @@ class BacktestApiService {
     return response.json();
   }
 
-  async getStrategies(): Promise<Strategy[]> {
+  async getStrategies(userId?: string | null): Promise<Strategy[]> {
     try {
+      // Use provided userId or fallback to temp user ID
+      const userIdToUse = userId || TEMP_USER_ID;
       const response = await this.makeRequest<{ strategies: Strategy[] }>('/backtest/strategies/list', {
         method: 'POST',
-        body: JSON.stringify({ user_id: TEMP_USER_ID }),
+        body: JSON.stringify({ user_id: userIdToUse }),
       });
       
       // If API returns empty strategies, use fallback for development
@@ -87,13 +89,15 @@ class BacktestApiService {
     }
   }
 
-  async runBacktest(request: BacktestRequest): Promise<BacktestResult> {
+  async runBacktest(request: BacktestRequest, userId?: string | null): Promise<BacktestResult> {
     try {
+      // Use provided userId or fallback to temp user ID
+      const userIdToUse = userId || TEMP_USER_ID;
       const response = await this.makeRequest<BacktestResult>('/backtest/range/optimized', {
         method: 'POST',
         body: JSON.stringify({
           ...request,
-          user_id: TEMP_USER_ID,
+          user_id: userIdToUse,
         }),
       });
       return response;

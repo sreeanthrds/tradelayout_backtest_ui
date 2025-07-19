@@ -1,6 +1,6 @@
 
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -11,13 +11,29 @@ import { cn } from "@/lib/utils";
 import { Control } from "react-hook-form";
 import { FormValues } from "./formSchema";
 import { useStrategies } from "../hooks/useStrategies";
+import { useUrlParams } from "@/hooks/useUrlParams";
+import { useEffect } from "react";
 
 interface StrategySectionProps {
   control: Control<FormValues>;
+  setValue: (name: keyof FormValues, value: any) => void;
 }
 
-export function StrategySection({ control }: StrategySectionProps) {
-  const { strategies, isLoading, error } = useStrategies();
+export function StrategySection({ control, setValue }: StrategySectionProps) {
+  const { userId, strategyId } = useUrlParams();
+  const { strategies, isLoading, error } = useStrategies(userId);
+
+  // Auto-select strategy if strategyId is provided in URL
+  useEffect(() => {
+    if (strategyId && strategies.length > 0) {
+      const strategy = strategies.find(s => s.id === strategyId);
+      if (strategy) {
+        setValue('strategy', strategyId);
+      }
+    }
+  }, [strategyId, strategies, setValue]);
+
+  const isStrategyDisabled = isLoading || !!strategyId; // Disable if loading or strategyId is provided
   return (
     <Card>
       <CardHeader>
@@ -33,22 +49,39 @@ export function StrategySection({ control }: StrategySectionProps) {
               <FormLabel>Strategy</FormLabel>
               <Select 
                 onValueChange={field.onChange} 
-                defaultValue={field.value}
-                disabled={isLoading}
+                value={field.value}
+                disabled={isStrategyDisabled}
               >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={isLoading ? "Loading strategies..." : "Select a strategy"} />
+                    <SelectValue 
+                      placeholder={
+                        isLoading ? (
+                          <div className="flex items-center">
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Loading strategies...
+                          </div>
+                        ) : strategyId ? 
+                          "Strategy pre-selected" : 
+                          "Select a strategy"
+                      } 
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
                   {strategies.map((strategy) => (
                     <SelectItem key={strategy.id} value={strategy.id}>
                       {strategy.name}
+                      {strategy.id === strategyId && " (Pre-selected)"}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {strategyId && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  Strategy automatically selected from URL parameter
+                </p>
+              )}
               {error && <p className="text-sm text-destructive mt-1">Error: {error}</p>}
               <FormMessage />
             </FormItem>

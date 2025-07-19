@@ -19,7 +19,7 @@ export function BacktestForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(submitBacktest)} className="space-y-8">
-        <StrategySection control={form.control} />
+        <StrategySection control={form.control} setValue={form.setValue} />
 
         <div className="flex justify-center gap-4">
           <SubmitButton isLoading={isLoading} />

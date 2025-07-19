@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { backtestApiService, Strategy } from '@/services/BacktestApiService';
 
-export function useStrategies() {
+export function useStrategies(userId?: string | null) {
   const [strategies, setStrategies] = useState<Strategy[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -11,7 +11,8 @@ export function useStrategies() {
       try {
         setIsLoading(true);
         setError(null);
-        const data = await backtestApiService.getStrategies();
+        // Use userId from URL params if provided, otherwise use default API call
+        const data = await backtestApiService.getStrategies(userId);
         setStrategies(data);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to fetch strategies');
@@ -22,7 +23,7 @@ export function useStrategies() {
     };
 
     fetchStrategies();
-  }, []);
+  }, [userId]);
 
   return { strategies, isLoading, error };
 }

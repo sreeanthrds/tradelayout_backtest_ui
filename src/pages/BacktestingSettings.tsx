@@ -1,12 +1,15 @@
 
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, User } from "lucide-react";
 import { BacktestForm } from "@/components/backtest/settings/BacktestForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useUrlParams } from "@/hooks/useUrlParams";
+import { Badge } from "@/components/ui/badge";
 
 export default function BacktestingSettings() {
   const navigate = useNavigate();
+  const { userId, strategyId } = useUrlParams();
 
   return (
     <div className="container mx-auto py-6 max-w-4xl">
@@ -23,6 +26,21 @@ export default function BacktestingSettings() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Backtest Settings</h1>
             <p className="text-muted-foreground">Configure parameters for your options trading backtest</p>
+            {(userId || strategyId) && (
+              <div className="flex items-center gap-2 mt-2">
+                {userId && (
+                  <Badge variant="secondary" className="flex items-center gap-1">
+                    <User className="h-3 w-3" />
+                    User: {userId}
+                  </Badge>
+                )}
+                {strategyId && (
+                  <Badge variant="outline">
+                    Strategy: {strategyId}
+                  </Badge>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <ThemeToggle />
