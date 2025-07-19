@@ -80,11 +80,10 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       .trim();
   };
 
-  // Display actual trade data structure - no filtering
+  // Entry Details: Only fields from trade.entry object
   const getEntryFields = (trade: any) => {
     const entryFields = [];
     
-    // Look for entry object first
     if (trade.entry) {
       Object.entries(trade.entry).forEach(([key, value]) => {
         // Skip redundant fill_time and fill_price
@@ -94,45 +93,30 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       });
     }
     
-    // Add other entry-related fields from main trade object
-    const mainEntryFields = ['instrument', 'strategy', 'quantity', 'entry_price', 'entry_time', 'trade_side'];
-    mainEntryFields.forEach(field => {
-      if (trade[field] !== undefined) {
-        entryFields.push([field, trade[field]]);
-      }
-    });
-    
     return entryFields;
   };
 
+  // Exit Details: Only fields from trade.exit object
   const getExitFields = (trade: any) => {
     const exitFields = [];
     
-    // Look for exit object first
     if (trade.exit) {
       Object.entries(trade.exit).forEach(([key, value]) => {
         exitFields.push([key, value]);
       });
     }
     
-    // Add other exit-related fields from main trade object
-    const mainExitFields = ['exit_price', 'exit_time'];
-    mainExitFields.forEach(field => {
-      if (trade[field] !== undefined) {
-        exitFields.push([field, trade[field]]);
-      }
-    });
-    
     return exitFields;
   };
 
+  // Summary: All remaining top-level fields (same level as entry/exit)
   const getSummaryFields = (trade: any) => {
     const summaryFields = [];
-    const summaryKeys = ['pnl', 'profit', 'loss', 'status', 'duration', 'returns', 'commission', 'fee'];
     
-    summaryKeys.forEach(field => {
-      if (trade[field] !== undefined) {
-        summaryFields.push([field, trade[field]]);
+    Object.entries(trade).forEach(([key, value]) => {
+      // Skip entry, exit, and position config data
+      if (key !== 'entry' && key !== 'exit' && key !== 'tradePairs') {
+        summaryFields.push([key, value]);
       }
     });
     
@@ -143,12 +127,9 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
   const exitData = getExitFields(trade);
   const summaryData = getSummaryFields(trade);
 
-  // Everything else goes to position config
+  // Position config - separate from summary for the dialog
   const positionConfigData = Object.entries(trade).filter(([key]) => 
-    key !== 'entry' && key !== 'exit' && 
-    !['instrument', 'strategy', 'quantity', 'entry_price', 'entry_time', 'trade_side', 
-      'exit_price', 'exit_time', 'pnl', 'profit', 'loss', 'status', 'duration', 
-      'returns', 'commission', 'fee'].includes(key)
+    key !== 'entry' && key !== 'exit' && key !== 'tradePairs'
   );
 
   const renderDataSection = (data: [string, any][], title: string) => (
