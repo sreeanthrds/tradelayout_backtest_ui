@@ -193,7 +193,7 @@ export function ComprehensiveTradesTable() {
                           const exitDateTime = trade.exit_time ? formatDateTime(trade.exit_time) : null;
                           
                           return (
-                            <React.Fragment key={tradeId}>
+                            <div key={tradeId}>
                               <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => toggleTrade(tradeId)}>
                                 <TableCell>
                                   {isTradeExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -324,8 +324,8 @@ export function ComprehensiveTradesTable() {
                                     )}
                                   </TableCell>
                                 </TableRow>
-                               )}
-                             </React.Fragment>
+                              )}
+                             </div>
                            );
                         })}
                       </TableBody>
