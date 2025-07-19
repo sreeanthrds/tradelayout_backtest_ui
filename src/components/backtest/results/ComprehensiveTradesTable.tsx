@@ -241,12 +241,34 @@ export function ComprehensiveTradesTable() {
                               {isTradeExpanded && (
                                 <TableRow>
                                   <TableCell colSpan={11} className="bg-muted/30 p-4">
-                                    <div className="flex justify-between items-center mb-4">
-                                      <h4 className="font-medium">Comprehensive Trade Details</h4>
-                                      <Badge variant="outline" className="text-xs">
-                                        {(trade.tradePairs || []).length} Trade Pairs
-                                      </Badge>
-                                    </div>
+                                     <div className="flex justify-between items-center mb-4">
+                                       <h4 className="font-medium">Comprehensive Trade Details</h4>
+                                       <Badge variant="outline" className="text-xs">
+                                         {(trade.tradePairs || []).length} Trade Pairs
+                                       </Badge>
+                                     </div>
+                                     
+                                     {/* Debug trade data structure */}
+                                     <div className="text-xs bg-gray-100 p-2 rounded mb-4">
+                                       <details>
+                                         <summary className="cursor-pointer font-mono">Debug: Trade Data Structure</summary>
+                                         <pre className="mt-2 overflow-auto max-h-32">
+                                           {JSON.stringify({
+                                             hasEntry: !!trade.entry,
+                                             hasExit: !!trade.exit,
+                                             hasTradePairs: !!trade.tradePairs,
+                                             tradePairsLength: (trade.tradePairs || []).length,
+                                             tradeKeys: Object.keys(trade),
+                                             sampleData: {
+                                               instrument: trade.instrument,
+                                               entry_time: trade.entry_time,
+                                               exit_time: trade.exit_time,
+                                               pnl: trade.pnl
+                                             }
+                                           }, null, 2)}
+                                         </pre>
+                                       </details>
+                                     </div>
                                     
                                     {/* Basic Trade Info */}
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm mb-4 pb-4 border-b">
