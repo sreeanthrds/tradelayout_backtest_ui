@@ -6,6 +6,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Trade } from "@/models/TradeTypes";
+import { useUrlParams } from "@/hooks/useUrlParams";
+import { useTheme } from "next-themes";
 
 interface TradeChartDialogProps {
   trade: Trade | null;
@@ -14,7 +16,16 @@ interface TradeChartDialogProps {
 }
 
 export function TradeChartDialog({ trade, open, onOpenChange }: TradeChartDialogProps) {
+  const { userId, strategyId } = useUrlParams();
+  const { theme } = useTheme();
+  
   if (!trade) return null;
+
+  // Build iframe URL with proper parameters
+  const iframeUrl = new URL("https://report.unificater.com");
+  if (userId) iframeUrl.searchParams.set("userId", userId);
+  if (strategyId) iframeUrl.searchParams.set("strategyId", strategyId);
+  if (theme) iframeUrl.searchParams.set("theme", theme);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -24,7 +35,7 @@ export function TradeChartDialog({ trade, open, onOpenChange }: TradeChartDialog
         </DialogHeader>
         <div className="flex-1 p-6 pt-0">
           <iframe
-            src="https://tile.unificater.com/"
+            src={iframeUrl.toString()}
             className="w-full h-[80vh] border-0 rounded-lg"
             title={`Chart for Trade ${trade.index}`}
             allow="fullscreen"
