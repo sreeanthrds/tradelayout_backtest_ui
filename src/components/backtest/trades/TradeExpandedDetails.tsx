@@ -19,7 +19,9 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   console.log("Trade keys:", Object.keys(trade));
   console.log("Trade.trades:", trade.trades);
   console.log("Trade.tradePairs:", trade.tradePairs);
-  console.log("=== End Debug ===");
+  console.log("Trade has entry?", !!(trade as any).entry);
+  console.log("Trade has exit?", !!(trade as any).exit);
+  console.log("Full trade structure:", JSON.stringify(trade, null, 2));
   
   // Safeguard against missing trade data
   if (!trade) {
