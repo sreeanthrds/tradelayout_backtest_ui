@@ -27,7 +27,14 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   }
 
   // Check for your backend data structure
-  const backendTrades = trade.trades || [];
+  // If the trade itself has entry/exit structure, use it as a single backend trade
+  let backendTrades = trade.trades || [];
+  
+  // If trade.trades is empty but the trade itself has entry/exit structure, use the trade itself
+  if (backendTrades.length === 0 && (trade as any).entry && (trade as any).exit) {
+    backendTrades = [trade as any]; // Cast trade as BackendTrade
+  }
+  
   const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
   
   // Force show comprehensive details if we have backend trades
