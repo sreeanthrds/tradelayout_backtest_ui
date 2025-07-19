@@ -85,8 +85,9 @@ export function StrategySection({ control }: StrategySectionProps) {
                     className="w-auto p-0 z-[100]" 
                     align="start"
                     side="bottom"
-                    sideOffset={4}
-                    avoidCollisions={true}
+                    sideOffset={8}
+                    avoidCollisions={false}
+                    sticky="always"
                   >
                     <Calendar
                       mode="single"
@@ -134,8 +135,9 @@ export function StrategySection({ control }: StrategySectionProps) {
                     className="w-auto p-0 z-[100]" 
                     align="start"
                     side="bottom"
-                    sideOffset={4}
-                    avoidCollisions={true}
+                    sideOffset={8}
+                    avoidCollisions={false}
+                    sticky="always"
                   >
                     <Calendar
                       mode="single"
