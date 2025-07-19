@@ -16,7 +16,16 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     if (value === null || value === undefined) return 'N/A';
     
     if (typeof value === 'object') {
-      return 'Complex Data';
+      return (
+        <div className="space-y-1">
+          {Object.entries(value).map(([subKey, subValue]) => (
+            <div key={subKey} className="text-xs">
+              <span className="text-muted-foreground">{formatLabel(subKey)}:</span>{' '}
+              <span className="font-medium">{String(subValue || 'N/A')}</span>
+            </div>
+          ))}
+        </div>
+      );
     }
     
     if (key.includes('price') || key.includes('pnl') || key.includes('profit')) {
@@ -62,7 +71,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       .trim();
   };
 
-  // Separate trade data into categories
+  // Separate trade data into categories - show ALL data
   const entryData = Object.entries(trade).filter(([key]) => 
     key.includes('entry') || 
     key.includes('Entry') || 
@@ -70,14 +79,18 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     key === 'strategy' ||
     key === 'positionId' ||
     key === 'quantity' ||
-    key.includes('side')
+    key.includes('side') ||
+    key === 'entry_time' ||
+    key === 'entry_price'
   );
 
   const exitData = Object.entries(trade).filter(([key]) => 
     key.includes('exit') || 
     key.includes('Exit') || 
     key.includes('close') ||
-    key.includes('Close')
+    key.includes('Close') ||
+    key === 'exit_time' ||
+    key === 'exit_price'
   );
 
   const summaryData = Object.entries(trade).filter(([key]) => 
@@ -91,7 +104,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     key.includes('fee')
   );
 
-  // Position config data (for dialog)
+  // Show remaining data in Position Config
   const positionConfigData = Object.entries(trade).filter(([key]) => 
     !entryData.some(([entryKey]) => entryKey === key) &&
     !exitData.some(([exitKey]) => exitKey === key) &&
@@ -130,10 +143,10 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
         </Badge>
       </div>
 
-      {/* 3 Column Layout */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* 3 Column Layout - Equal Height Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
         {/* Entry Column */}
-        <Card className="h-fit">
+        <Card className="min-h-[300px]">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm flex items-center justify-between">
               Entry Details
@@ -181,7 +194,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
         </Card>
 
         {/* Exit Column */}
-        <Card className="h-fit">
+        <Card className="min-h-[300px]">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Exit Details</CardTitle>
           </CardHeader>
@@ -191,7 +204,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
         </Card>
 
         {/* Summary Column */}
-        <Card className="h-fit">
+        <Card className="min-h-[300px]">
           <CardHeader className="pb-3">
             <CardTitle className="text-sm">Summary</CardTitle>
           </CardHeader>
