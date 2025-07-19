@@ -12,6 +12,7 @@ interface DailyPnLData {
   month: string;
   year: string;
   trades: any[]; // Use any[] to handle both formats
+  dayNumber?: number; // Optional day number for calendar display
 }
 
 export function DailyPnLChart() {
@@ -115,21 +116,26 @@ export function DailyPnLChart() {
     // Get first day of month and number of days
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
-    const startingDayOfWeek = firstDayOfMonth.getDay();
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // 0 = Sunday, 1 = Monday, etc.
     const daysInMonth = lastDayOfMonth.getDate();
     
     const calendar = [];
     
     // Add empty cells for days before first day of month
+    // startingDayOfWeek is already correct (0 for Sunday, 1 for Monday, etc.)
     for (let i = 0; i < startingDayOfWeek; i++) {
       calendar.push(null);
     }
     
-    // Add actual days
+    // Add actual days with proper date formatting
     for (let day = 1; day <= daysInMonth; day++) {
       const dateStr = new Date(year, month, day).toISOString().split('T')[0];
       const dayData = monthData.find(d => d.date === dateStr);
-      calendar.push(dayData || { date: dateStr, pnl: 0, trades: [], monthYear: '', month: '', year: '' });
+      
+      // Add day number for display
+      const calendarItem = dayData || { date: dateStr, pnl: 0, trades: [], monthYear: '', month: '', year: '' };
+      calendarItem.dayNumber = day;
+      calendar.push(calendarItem);
     }
     
     return calendar;
@@ -180,16 +186,23 @@ export function DailyPnLChart() {
                       const intensity = getColorIntensity(item.pnl, maxAbsPnL);
                       const isProfit = item.pnl > 0;
                       const isLoss = item.pnl < 0;
+                      const dayNum = item.dayNumber || new Date(item.date).getDate();
                       
                       return (
                         <div
                           key={item.date}
-                          className="group relative w-8 h-8 flex items-center justify-center"
+                          className="group relative w-8 h-8 flex items-center justify-center text-xs"
                           title={`${new Date(item.date).toLocaleDateString()}: ${formatCurrency(item.pnl)}`}
                         >
+                          {/* Day number background */}
+                          <span className="absolute text-muted-foreground/60 text-xs">
+                            {dayNum}
+                          </span>
+                          
+                          {/* P&L indicator dot */}
                           {item.pnl !== 0 ? (
                             <div
-                              className="w-3 h-3 rounded-full cursor-pointer transition-transform hover:scale-125"
+                              className="absolute w-3 h-3 rounded-full cursor-pointer transition-transform hover:scale-125"
                               style={{
                                 backgroundColor: isProfit 
                                   ? `rgba(16, 185, 129, ${intensity})` 
@@ -199,9 +212,7 @@ export function DailyPnLChart() {
                               }}
                               onClick={() => setSelectedDay(item)}
                             />
-                          ) : (
-                            <div className="w-3 h-3"></div>
-                          )}
+                          ) : null}
                           
                           {/* Tooltip */}
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-10">
