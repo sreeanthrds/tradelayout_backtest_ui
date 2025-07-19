@@ -16,7 +16,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
     if (value === null || value === undefined) return 'N/A';
     
     if (typeof value === 'object') {
-      return JSON.stringify(value);
+      return 'Complex Data';
     }
     
     if (key.includes('price') || key.includes('pnl') || key.includes('profit')) {
@@ -31,11 +31,31 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
       }
     }
     
+    if (typeof value === 'boolean') {
+      return value ? 'Yes' : 'No';
+    }
+    
     return String(value);
   };
 
   const formatLabel = (key: string) => {
-    return key
+    const labelMap: { [key: string]: string } = {
+      'positionId': 'Position ID',
+      'entry_time': 'Entry Time',
+      'exit_time': 'Exit Time',
+      'entry_price': 'Entry Price',
+      'exit_price': 'Exit Price',
+      'pnl': 'P&L',
+      'trade_side': 'Trade Side',
+      'instrument': 'Instrument',
+      'quantity': 'Quantity',
+      'strategy': 'Strategy',
+      'status': 'Status',
+      'commission': 'Commission',
+      'fees': 'Fees'
+    };
+    
+    return labelMap[key] || key
       .replace(/([A-Z])/g, ' $1')
       .replace(/_/g, ' ')
       .replace(/^./, str => str.toUpperCase())
