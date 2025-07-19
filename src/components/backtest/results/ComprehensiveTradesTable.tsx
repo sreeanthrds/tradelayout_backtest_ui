@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useBacktestData } from "@/hooks/useBacktestData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -193,8 +193,8 @@ export function ComprehensiveTradesTable() {
                           const exitDateTime = trade.exit_time ? formatDateTime(trade.exit_time) : null;
                           
                           return (
-                            <>
-                              <TableRow key={tradeId} className="cursor-pointer hover:bg-muted/50" onClick={() => toggleTrade(tradeId)}>
+                            <React.Fragment key={tradeId}>
+                              <TableRow className="cursor-pointer hover:bg-muted/50" onClick={() => toggleTrade(tradeId)}>
                                 <TableCell>
                                   {isTradeExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                                 </TableCell>
@@ -324,9 +324,9 @@ export function ComprehensiveTradesTable() {
                                     )}
                                   </TableCell>
                                 </TableRow>
-                              )}
-                            </>
-                          );
+                               )}
+                             </React.Fragment>
+                           );
                         })}
                       </TableBody>
                     </Table>
