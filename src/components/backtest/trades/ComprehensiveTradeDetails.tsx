@@ -153,7 +153,7 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
             label={formatLabel(key)}
             value={formatValue(key, value)}
             className={key.includes('pnl') || key.includes('profit') ? 
-              (Number(value) >= 0 ? 'text-emerald-600' : 'text-red-600') : ''}
+              (Number(value) >= 0 ? 'text-success' : 'text-danger') : 'text-foreground'}
           />
         ))}
       </div>
@@ -163,44 +163,50 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
   return (
     <div className="space-y-4">
       {/* Compact Summary Header */}
-      <Card className="overflow-hidden">
-        <CardContent className="p-4">
+      <Card className="overflow-hidden border-l-4" style={{borderLeftColor: keyMetrics.pnl >= 0 ? 'hsl(var(--success))' : 'hsl(var(--danger))'}}>
+        <CardContent className="p-4 bg-gradient-to-r from-card to-muted/20">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               {keyMetrics.pnl >= 0 ? 
-                <TrendingUp className="h-5 w-5 text-emerald-600" /> : 
-                <TrendingDown className="h-5 w-5 text-red-600" />
+                <div className="p-2 bg-success-muted rounded-full">
+                  <TrendingUp className="h-5 w-5 text-success" />
+                </div> : 
+                <div className="p-2 bg-danger-muted rounded-full">
+                  <TrendingDown className="h-5 w-5 text-danger" />
+                </div>
               }
               <div>
-                <h4 className="font-semibold">Trade Analysis</h4>
-                <p className="text-xs text-muted-foreground">
-                  {trade.id || trade.positionId || 'Unknown ID'}
+                <h4 className="font-semibold text-lg">Trade Analysis</h4>
+                <p className="text-xs text-muted-foreground font-mono">
+                  ID: {trade.id || trade.positionId || 'Unknown'}
                 </p>
               </div>
             </div>
-            <Badge variant={keyMetrics.pnl >= 0 ? "default" : "destructive"} className="text-sm px-3 py-1">
-              <DollarSign className="h-3 w-3 mr-1" />
-              ₹{keyMetrics.pnl.toFixed(2)}
-            </Badge>
+            <div className="text-right">
+              <div className="text-xs text-muted-foreground mb-1">P&L</div>
+              <div className={`text-2xl font-bold ${keyMetrics.pnl >= 0 ? 'text-success' : 'text-danger'}`}>
+                ₹{keyMetrics.pnl.toFixed(2)}
+              </div>
+            </div>
           </div>
 
           {/* Key Metrics Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground">Entry</div>
-              <div className="font-semibold text-sm">₹{keyMetrics.entryPrice.toFixed(2)}</div>
+            <div className="text-center p-3 bg-gradient-to-br from-success-muted to-success-muted/50 border border-success/20 rounded-lg">
+              <div className="text-xs text-success font-medium mb-1">Entry Price</div>
+              <div className="font-bold text-sm text-success">₹{keyMetrics.entryPrice.toFixed(2)}</div>
             </div>
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground">Exit</div>
-              <div className="font-semibold text-sm">₹{keyMetrics.exitPrice.toFixed(2)}</div>
+            <div className="text-center p-3 bg-gradient-to-br from-danger-muted to-danger-muted/50 border border-danger/20 rounded-lg">
+              <div className="text-xs text-danger font-medium mb-1">Exit Price</div>
+              <div className="font-bold text-sm text-danger">₹{keyMetrics.exitPrice.toFixed(2)}</div>
             </div>
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground">Quantity</div>
-              <div className="font-semibold text-sm">{keyMetrics.quantity}</div>
+            <div className="text-center p-3 bg-gradient-to-br from-info-muted to-info-muted/50 border border-info/20 rounded-lg">
+              <div className="text-xs text-info font-medium mb-1">Quantity</div>
+              <div className="font-bold text-sm text-info">{keyMetrics.quantity}</div>
             </div>
-            <div className="text-center p-2 bg-muted/30 rounded-lg">
-              <div className="text-xs text-muted-foreground">Side</div>
-              <div className="font-semibold text-sm">{keyMetrics.tradeSide || 'N/A'}</div>
+            <div className="text-center p-3 bg-gradient-to-br from-neutral-muted to-neutral-muted/50 border border-neutral/20 rounded-lg">
+              <div className="text-xs text-neutral font-medium mb-1">Side</div>
+              <div className="font-bold text-sm text-neutral">{keyMetrics.tradeSide || 'N/A'}</div>
             </div>
           </div>
 
@@ -268,19 +274,25 @@ export function ComprehensiveTradeDetails({ trade }: ComprehensiveTradeDetailsPr
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
-            <div className="space-y-2 max-h-48 overflow-y-auto">
+            <div className="space-y-3 max-h-48 overflow-y-auto">
               {trade.tradePairs.map((pair: any, index: number) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-muted/20 rounded-md text-xs">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs px-2 py-0">#{index + 1}</Badge>
-                    <span>{pair.entry?.type} {pair.entry?.strike}</span>
+                <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-muted/30 to-muted/10 border border-border rounded-lg hover:shadow-sm transition-shadow">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-info-muted rounded-full flex items-center justify-center">
+                      <span className="text-xs font-semibold text-info">{index + 1}</span>
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium">{pair.entry?.type} {pair.entry?.strike}</div>
+                      <div className="text-xs text-muted-foreground">{pair.entry?.buySell} {pair.entry?.quantity}</div>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">{pair.entry?.quantity}</span>
-                    {pair.exit?.profitLoss !== undefined && (
-                      <Badge variant={pair.exit.profitLoss >= 0 ? "default" : "destructive"} className="text-xs">
+                  <div className="text-right">
+                    {pair.exit?.profitLoss !== undefined ? (
+                      <div className={`text-sm font-bold ${pair.exit.profitLoss >= 0 ? 'text-success' : 'text-danger'}`}>
                         ₹{pair.exit.profitLoss.toFixed(2)}
-                      </Badge>
+                      </div>
+                    ) : (
+                      <div className="text-xs text-warning font-medium">Open</div>
                     )}
                   </div>
                 </div>

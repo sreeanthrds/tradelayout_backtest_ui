@@ -34,6 +34,27 @@
 
     --radius: 0.5rem;
 
+    /* Professional Trading Colors */
+    --success: 142 76% 36%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 142 76% 96%;
+    
+    --danger: 0 84% 60%;
+    --danger-foreground: 0 0% 100%;
+    --danger-muted: 0 84% 96%;
+    
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 38 92% 96%;
+    
+    --info: 217 91% 60%;
+    --info-foreground: 0 0% 100%;
+    --info-muted: 217 91% 96%;
+    
+    --neutral: 215 20% 65%;
+    --neutral-foreground: 0 0% 100%;
+    --neutral-muted: 215 20% 96%;
+
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
     --sidebar-primary: 142 76% 36%;
@@ -72,6 +93,27 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 142 76% 40%;
+    
+    /* Professional Trading Colors - Dark Mode */
+    --success: 142 76% 40%;
+    --success-foreground: 0 0% 100%;
+    --success-muted: 142 76% 15%;
+    
+    --danger: 0 84% 65%;
+    --danger-foreground: 0 0% 100%;
+    --danger-muted: 0 84% 15%;
+    
+    --warning: 38 92% 55%;
+    --warning-foreground: 0 0% 100%;
+    --warning-muted: 38 92% 15%;
+    
+    --info: 217 91% 65%;
+    --info-foreground: 0 0% 100%;
+    --info-muted: 217 91% 15%;
+    
+    --neutral: 215 20% 70%;
+    --neutral-foreground: 0 0% 100%;
+    --neutral-muted: 215 20% 15%;
     
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
