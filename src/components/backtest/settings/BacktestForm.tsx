@@ -1,12 +1,14 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect } from "react";
 import { Form } from "@/components/ui/form";
 import { StrategySection } from "./StrategySection";
 
 import { SubmitButton } from "./SubmitButton";
 import { formSchema, FormValues, defaultValues } from "./formSchema";
 import { useBacktestSubmit } from "@/hooks/useBacktestSubmit";
+import { tradeService } from "@/services/TradeDataService";
 
 export function BacktestForm() {
   const { isLoading, submitBacktest } = useBacktestSubmit();
@@ -15,6 +17,14 @@ export function BacktestForm() {
     resolver: zodResolver(formSchema),
     defaultValues,
   });
+
+  // Restore previous parameters on component mount
+  useEffect(() => {
+    const previousParams = tradeService.getBacktestParameters();
+    if (previousParams) {
+      form.reset(previousParams);
+    }
+  }, [form]);
 
   return (
     <Form {...form}>

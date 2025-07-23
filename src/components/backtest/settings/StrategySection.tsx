@@ -7,12 +7,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { Control } from "react-hook-form";
 import { FormValues } from "./formSchema";
 import { useStrategies } from "../hooks/useStrategies";
 import { useUrlParams } from "@/hooks/useUrlParams";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface StrategySectionProps {
   control: Control<FormValues>;
@@ -92,101 +93,148 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
           <FormField
             control={control}
             name="startDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Start Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
+            render={({ field }) => {
+              const [inputValue, setInputValue] = useState(
+                field.value ? format(field.value, "yyyy-MM-dd") : ""
+              );
+
+              const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                setInputValue(value);
+                const date = new Date(value);
+                if (!isNaN(date.getTime())) {
+                  field.onChange(date);
+                }
+              };
+
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>Start Date</FormLabel>
+                  <div className="space-y-2">
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
+                      <Input
+                        type="date"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
+                      />
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent 
-                    className="w-auto p-0 z-[100]" 
-                    align="start"
-                    side="bottom"
-                    sideOffset={8}
-                    avoidCollisions={false}
-                    sticky="always"
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date > control._formValues.endDate
-                      }
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          size="sm"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(field.value, "PP") : "Pick with calendar"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent 
+                        className="w-auto p-0 z-[100]" 
+                        align="start"
+                        side="bottom"
+                        sideOffset={8}
+                        avoidCollisions={false}
+                        sticky="always"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                          }}
+                          disabled={(date) =>
+                            date > new Date() || date > control._formValues.endDate
+                          }
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
 
           <FormField
             control={control}
             name="endDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>End Date</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
+            render={({ field }) => {
+              const [inputValue, setInputValue] = useState(
+                field.value ? format(field.value, "yyyy-MM-dd") : ""
+              );
+
+              const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                const value = e.target.value;
+                setInputValue(value);
+                const date = new Date(value);
+                if (!isNaN(date.getTime())) {
+                  field.onChange(date);
+                }
+              };
+
+              return (
+                <FormItem className="flex flex-col">
+                  <FormLabel>End Date</FormLabel>
+                  <div className="space-y-2">
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "pl-3 text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        {field.value ? (
-                          format(field.value, "PP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                      </Button>
+                      <Input
+                        type="date"
+                        value={inputValue}
+                        onChange={handleInputChange}
+                        min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
+                        max={format(new Date(), "yyyy-MM-dd")}
+                      />
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent 
-                    className="w-auto p-0 z-[100]" 
-                    align="start"
-                    side="bottom"
-                    sideOffset={8}
-                    avoidCollisions={false}
-                    sticky="always"
-                  >
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      disabled={(date) =>
-                        date > new Date() || date < control._formValues.startDate
-                      }
-                      initialFocus
-                      className={cn("p-3 pointer-events-auto")}
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant={"outline"}
+                          size="sm"
+                          className={cn(
+                            "w-full justify-start text-left font-normal",
+                            !field.value && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {field.value ? format(field.value, "PP") : "Pick with calendar"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent 
+                        className="w-auto p-0 z-[100]" 
+                        align="start"
+                        side="bottom"
+                        sideOffset={8}
+                        avoidCollisions={false}
+                        sticky="always"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={(date) => {
+                            field.onChange(date);
+                            setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                          }}
+                          disabled={(date) =>
+                            date > new Date() || date < control._formValues.startDate
+                          }
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <FormMessage />
+                </FormItem>
+              );
+            }}
           />
         </div>
       </CardContent>

@@ -1,10 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ChartBar, LineChart, CandlestickChart, ArrowRight, Play } from "lucide-react";
+import { ChartBar, LineChart, CandlestickChart, ArrowRight, Play, RotateCcw } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { tradeService } from "@/services/TradeDataService";
 
 const Index = () => {
+  const hasBacktestHistory = tradeService.getBacktestParameters() !== null;
+  
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background">
       <div className="absolute top-4 right-4">
@@ -28,6 +31,13 @@ const Index = () => {
               Run New Backtest <Play className="h-4 w-4" />
             </Button>
           </Link>
+          {hasBacktestHistory && (
+            <Link to="/backtest-settings">
+              <Button size="lg" variant="secondary" className="gap-2">
+                Rerun Last Backtest <RotateCcw className="h-4 w-4" />
+              </Button>
+            </Link>
+          )}
           <Link to="/backtest-results">
             <Button size="lg" variant="outline" className="gap-2">
               View Backtest Results <ArrowRight className="h-4 w-4" />
