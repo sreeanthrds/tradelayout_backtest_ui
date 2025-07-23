@@ -110,53 +110,41 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
               return (
                 <FormItem className="flex flex-col">
                   <FormLabel>Start Date</FormLabel>
-                  <div className="space-y-2">
-                    <FormControl>
-                      <Input
-                        type="date"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
-                      />
-                    </FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          size="sm"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? format(field.value, "PP") : "Pick with calendar"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent 
-                        className="w-auto p-0 z-[100]" 
-                        align="start"
-                        side="bottom"
-                        sideOffset={8}
-                        avoidCollisions={false}
-                        sticky="always"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            setInputValue(date ? format(date, "yyyy-MM-dd") : "");
-                          }}
-                          disabled={(date) =>
-                            date > new Date() || date > control._formValues.endDate
-                          }
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
+                          className="cursor-pointer"
                         />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent 
+                      className="w-auto p-0 z-[100]" 
+                      align="start"
+                      side="bottom"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      sticky="always"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                        }}
+                        disabled={(date) =>
+                          date > new Date() || date > control._formValues.endDate
+                        }
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               );
@@ -183,54 +171,42 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
               return (
                 <FormItem className="flex flex-col">
                   <FormLabel>End Date</FormLabel>
-                  <div className="space-y-2">
-                    <FormControl>
-                      <Input
-                        type="date"
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
-                        max={format(new Date(), "yyyy-MM-dd")}
-                      />
-                    </FormControl>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant={"outline"}
-                          size="sm"
-                          className={cn(
-                            "w-full justify-start text-left font-normal",
-                            !field.value && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {field.value ? format(field.value, "PP") : "Pick with calendar"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent 
-                        className="w-auto p-0 z-[100]" 
-                        align="start"
-                        side="bottom"
-                        sideOffset={8}
-                        avoidCollisions={false}
-                        sticky="always"
-                      >
-                        <Calendar
-                          mode="single"
-                          selected={field.value}
-                          onSelect={(date) => {
-                            field.onChange(date);
-                            setInputValue(date ? format(date, "yyyy-MM-dd") : "");
-                          }}
-                          disabled={(date) =>
-                            date > new Date() || date < control._formValues.startDate
-                          }
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Input
+                          type="date"
+                          value={inputValue}
+                          onChange={handleInputChange}
+                          min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
+                          max={format(new Date(), "yyyy-MM-dd")}
+                          className="cursor-pointer"
                         />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent 
+                      className="w-auto p-0 z-[100]" 
+                      align="start"
+                      side="bottom"
+                      sideOffset={8}
+                      avoidCollisions={false}
+                      sticky="always"
+                    >
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={(date) => {
+                          field.onChange(date);
+                          setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                        }}
+                        disabled={(date) =>
+                          date > new Date() || date < control._formValues.startDate
+                        }
+                        initialFocus
+                        className={cn("p-3 pointer-events-auto")}
+                      />
+                    </PopoverContent>
+                  </Popover>
                   <FormMessage />
                 </FormItem>
               );
