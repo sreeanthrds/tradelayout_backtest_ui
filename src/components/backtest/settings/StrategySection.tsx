@@ -140,6 +140,7 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                         disabled={(date) =>
                           date > new Date() || date > control._formValues.endDate
                         }
+                        defaultMonth={control._formValues.endDate || field.value || new Date()}
                         initialFocus
                         className={cn("p-3 pointer-events-auto")}
                       />
@@ -202,6 +203,7 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                         disabled={(date) =>
                           date > new Date() || date < control._formValues.startDate
                         }
+                        defaultMonth={field.value || control._formValues.startDate || new Date()}
                         initialFocus
                         className={cn("p-3 pointer-events-auto")}
                       />
