@@ -98,12 +98,19 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                 field.value ? format(field.value, "yyyy-MM-dd") : ""
               );
 
+              // Sync input value when field value changes
+              useEffect(() => {
+                setInputValue(field.value ? format(field.value, "yyyy-MM-dd") : "");
+              }, [field.value]);
+
               const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 setInputValue(value);
-                const date = new Date(value);
-                if (!isNaN(date.getTime())) {
-                  field.onChange(date);
+                if (value) {
+                  const date = new Date(value);
+                  if (!isNaN(date.getTime())) {
+                    field.onChange(date);
+                  }
                 }
               };
 
@@ -134,8 +141,9 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          field.onChange(date);
-                          setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                          if (date) {
+                            field.onChange(date);
+                          }
                         }}
                         disabled={(date) =>
                           date > new Date() || date > control._formValues.endDate
@@ -160,12 +168,19 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                 field.value ? format(field.value, "yyyy-MM-dd") : ""
               );
 
+              // Sync input value when field value changes
+              useEffect(() => {
+                setInputValue(field.value ? format(field.value, "yyyy-MM-dd") : "");
+              }, [field.value]);
+
               const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
                 const value = e.target.value;
                 setInputValue(value);
-                const date = new Date(value);
-                if (!isNaN(date.getTime())) {
-                  field.onChange(date);
+                if (value) {
+                  const date = new Date(value);
+                  if (!isNaN(date.getTime())) {
+                    field.onChange(date);
+                  }
                 }
               };
 
@@ -197,8 +212,9 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                         mode="single"
                         selected={field.value}
                         onSelect={(date) => {
-                          field.onChange(date);
-                          setInputValue(date ? format(date, "yyyy-MM-dd") : "");
+                          if (date) {
+                            field.onChange(date);
+                          }
                         }}
                         disabled={(date) =>
                           date > new Date() || date < control._formValues.startDate
