@@ -93,142 +93,114 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
           <FormField
             control={control}
             name="startDate"
-            render={({ field }) => {
-              const [inputValue, setInputValue] = useState(
-                field.value ? format(field.value, "yyyy-MM-dd") : ""
-              );
-
-              // Sync input value when field value changes
-              useEffect(() => {
-                setInputValue(field.value ? format(field.value, "yyyy-MM-dd") : "");
-              }, [field.value]);
-
-              const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                setInputValue(value);
-                if (value) {
-                  const date = new Date(value);
-                  if (!isNaN(date.getTime())) {
-                    field.onChange(date);
-                  }
-                }
-              };
-
-              return (
-                <FormItem className="flex flex-col">
-                  <FormLabel>Start Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          value={inputValue}
-                          onChange={handleInputChange}
-                          max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
-                          className="cursor-pointer"
-                        />
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent 
-                      className="w-auto p-0 z-[100]" 
-                      align="start"
-                      side="bottom"
-                      sideOffset={8}
-                      avoidCollisions={false}
-                      sticky="always"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          if (date) {
-                            field.onChange(date);
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>Start Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value) {
+                            const date = new Date(value);
+                            if (!isNaN(date.getTime())) {
+                              field.onChange(date);
+                            }
                           }
                         }}
-                        disabled={(date) =>
-                          date > new Date() || date > control._formValues.endDate
-                        }
-                        defaultMonth={control._formValues.endDate || field.value || new Date()}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
+                        max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
+                        className="cursor-pointer"
                       />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent 
+                    className="w-auto p-0 z-[100]" 
+                    align="start"
+                    side="bottom"
+                    sideOffset={8}
+                    avoidCollisions={false}
+                    sticky="always"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date) => {
+                        if (date) {
+                          field.onChange(date);
+                        }
+                      }}
+                      disabled={(date) =>
+                        date > new Date() || date > control._formValues.endDate
+                      }
+                      defaultMonth={control._formValues.endDate || field.value || new Date()}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
           />
 
           <FormField
             control={control}
             name="endDate"
-            render={({ field }) => {
-              const [inputValue, setInputValue] = useState(
-                field.value ? format(field.value, "yyyy-MM-dd") : ""
-              );
-
-              // Sync input value when field value changes
-              useEffect(() => {
-                setInputValue(field.value ? format(field.value, "yyyy-MM-dd") : "");
-              }, [field.value]);
-
-              const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                const value = e.target.value;
-                setInputValue(value);
-                if (value) {
-                  const date = new Date(value);
-                  if (!isNaN(date.getTime())) {
-                    field.onChange(date);
-                  }
-                }
-              };
-
-              return (
-                <FormItem className="flex flex-col">
-                  <FormLabel>End Date</FormLabel>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <FormControl>
-                        <Input
-                          type="date"
-                          value={inputValue}
-                          onChange={handleInputChange}
-                          min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
-                          max={format(new Date(), "yyyy-MM-dd")}
-                          className="cursor-pointer"
-                        />
-                      </FormControl>
-                    </PopoverTrigger>
-                    <PopoverContent 
-                      className="w-auto p-0 z-[100]" 
-                      align="start"
-                      side="bottom"
-                      sideOffset={8}
-                      avoidCollisions={false}
-                      sticky="always"
-                    >
-                      <Calendar
-                        mode="single"
-                        selected={field.value}
-                        onSelect={(date) => {
-                          if (date) {
-                            field.onChange(date);
+            render={({ field }) => (
+              <FormItem className="flex flex-col">
+                <FormLabel>End Date</FormLabel>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Input
+                        type="date"
+                        value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value) {
+                            const date = new Date(value);
+                            if (!isNaN(date.getTime())) {
+                              field.onChange(date);
+                            }
                           }
                         }}
-                        disabled={(date) =>
-                          date > new Date() || date < control._formValues.startDate
-                        }
-                        defaultMonth={field.value || control._formValues.startDate || new Date()}
-                        initialFocus
-                        className={cn("p-3 pointer-events-auto")}
+                        min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
+                        max={format(new Date(), "yyyy-MM-dd")}
+                        className="cursor-pointer"
                       />
-                    </PopoverContent>
-                  </Popover>
-                  <FormMessage />
-                </FormItem>
-              );
-            }}
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent 
+                    className="w-auto p-0 z-[100]" 
+                    align="start"
+                    side="bottom"
+                    sideOffset={8}
+                    avoidCollisions={false}
+                    sticky="always"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date) => {
+                        if (date) {
+                          field.onChange(date);
+                        }
+                      }}
+                      disabled={(date) =>
+                        date > new Date() || date < control._formValues.startDate
+                      }
+                      defaultMonth={field.value || control._formValues.startDate || new Date()}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
           />
         </div>
       </CardContent>
