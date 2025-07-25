@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { BacktestFilters } from "@/components/backtest/BacktestFilters";
+
 import { OverviewTabContent } from "@/components/backtest/results/OverviewTabContent";
 import { TradesTabContent } from "@/components/backtest/results/TradesTabContent";
 import { BacktestForm } from "@/components/backtest/settings/BacktestForm";
@@ -85,12 +85,6 @@ export default function BacktestResults() {
           </div>
         </div>
 
-        {/* Filters Section */}
-        {hasResults && (
-          <div className="glass rounded-3xl p-6 mb-8 border border-white/10 shadow-lg backdrop-blur-lg">
-            <BacktestFilters />
-          </div>
-        )}
 
         {/* Results Section */}
         {hasResults && (
