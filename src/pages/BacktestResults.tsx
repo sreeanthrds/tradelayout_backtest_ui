@@ -53,9 +53,9 @@ export default function BacktestResults() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/30">
       <div className="container mx-auto py-6 max-w-7xl">
-        {/* Header */}
+        {/* Unified Backtest Analysis & Configuration Section */}
         <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/20 shadow-2xl backdrop-blur-xl">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
                 Backtest Analysis
@@ -78,11 +78,11 @@ export default function BacktestResults() {
               <ThemeToggle />
             </div>
           </div>
-        </div>
-        
-        {/* Strategy Configuration Section */}
-        <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/10 shadow-xl backdrop-blur-xl">
-          <BacktestForm />
+          
+          {/* Strategy Configuration */}
+          <div className="glass rounded-2xl p-6 border border-white/10 shadow-lg backdrop-blur-lg">
+            <BacktestForm />
+          </div>
         </div>
 
         {/* Filters Section */}
