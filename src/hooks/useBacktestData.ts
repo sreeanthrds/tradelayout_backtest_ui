@@ -351,9 +351,9 @@ function calculateMetrics(apiData: any) {
 
 export function useBacktestData() {
   const [backtestData, setBacktestData] = useState<BacktestData>({
-    name: "Iron Condor Strategy",
-    symbol: "NIFTY",
-    period: "Jan 2024 - Dec 2024",
+    name: "",
+    symbol: "",
+    period: "",
     totalReturn: 0,
     winRate: 0,
     maxDrawdown: 0,

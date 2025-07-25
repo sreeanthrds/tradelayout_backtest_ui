@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import NotFound from "./pages/NotFound";
 import BacktestResults from "./pages/BacktestResults";
-import BacktestingSettings from "./pages/BacktestingSettings";
 
 const queryClient = new QueryClient();
 
@@ -17,8 +16,7 @@ const App = () => (
         <Toaster />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<BacktestingSettings />} />
-            <Route path="/backtest-results" element={<BacktestResults />} />
+            <Route path="/" element={<BacktestResults />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

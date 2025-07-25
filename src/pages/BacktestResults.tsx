@@ -16,16 +16,20 @@ export default function BacktestResults() {
   const [hasResults, setHasResults] = useState(false);
   
   useEffect(() => {
-    // Check if there are valid backtest parameters/results
+    // Check if there are valid backtest parameters/results with actual data
     const parameters = tradeService.getBacktestParameters();
     const data = tradeService.getData();
     
-    // If we have either parameters or data, show results
-    if (parameters || (data && Object.keys(data).length > 0)) {
-      setHasResults(true);
-    } else {
-      setHasResults(false);
-    }
+    console.log("Checking for results:", { parameters, dataKeys: data ? Object.keys(data) : 'null' });
+    
+    // Only show results if we have actual API data with trades/positions
+    const hasApiData = data && (
+      (data as any)?.gps_aggregated?.positions_by_date && Object.keys((data as any).gps_aggregated.positions_by_date).length > 0 ||
+      (data as any)?.gps_aggregated?.all_positions && Object.keys((data as any).gps_aggregated.all_positions).length > 0 ||
+      (data as any)?.trades && (data as any).trades.length > 0
+    );
+    
+    setHasResults(!!hasApiData);
   }, []);
 
   const handleReset = () => {
