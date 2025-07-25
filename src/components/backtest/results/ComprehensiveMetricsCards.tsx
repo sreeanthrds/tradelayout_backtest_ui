@@ -84,24 +84,24 @@ export function ComprehensiveMetricsCards() {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
       {metrics.map((metric, index) => {
         const Icon = metric.icon;
         return (
-          <Card key={index} className="bg-background">
+          <Card key={index} variant="neomorph" className="hover:shadow-2xl transition-all duration-300 group">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-muted-foreground">
+                <CardTitle className="text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                   {metric.title}
                 </CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
+                <Icon className="h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className={`text-2xl font-bold ${metric.colorClass}`}>
+              <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-105 transition-transform`}>
                 {metric.value}
               </div>
-              <p className="text-xs text-muted-foreground mt-1">
+              <p className="text-xs text-muted-foreground mt-1 group-hover:text-muted-foreground/80 transition-colors">
                 {metric.subtitle}
               </p>
             </CardContent>

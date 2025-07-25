@@ -11,10 +11,12 @@ export function OverviewTabContent() {
       <ComprehensiveMetricsCards />
       
       {/* New Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <Card variant="glass-intense" className="shadow-xl backdrop-blur-xl">
           <CardHeader>
-            <CardTitle>P&L Overview</CardTitle>
+            <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              P&L Overview
+            </CardTitle>
             <CardDescription>Cumulative profit and loss over trades</CardDescription>
           </CardHeader>
           <CardContent className="h-64">
@@ -22,7 +24,7 @@ export function OverviewTabContent() {
           </CardContent>
         </Card>
         
-        <Card className="lg:col-span-2">
+        <Card variant="glass-intense" className="lg:col-span-2 shadow-xl backdrop-blur-xl">
           <CardContent className="p-0">
             <DailyPnLChart />
           </CardContent>

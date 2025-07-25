@@ -4,15 +4,16 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const cardVariants = cva(
-  "rounded-lg text-card-foreground shadow-sm",
+  "rounded-2xl text-card-foreground shadow-lg transition-all duration-300",
   {
     variants: {
       variant: {
-        default: "border bg-card",
-        glass: "glass",
-        "glass-intense": "glass-intense",
-        neomorph: "neomorph border-0",
-        "neomorph-inset": "neomorph-inset border-0",
+        default: "border bg-card shadow-sm",
+        glass: "glass rounded-2xl border-white/20",
+        "glass-intense": "glass-intense rounded-3xl border-white/10",
+        neomorph: "neomorph border-0 rounded-2xl",
+        "neomorph-inset": "neomorph-inset border-0 rounded-2xl",
+        premium: "glass-intense rounded-3xl border-white/10 shadow-2xl backdrop-blur-xl",
       },
     },
     defaultVariants: {
