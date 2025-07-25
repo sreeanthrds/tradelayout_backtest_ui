@@ -22,7 +22,7 @@ export function TradesList() {
   useEffect(() => {
     // Get trades data from service
     try {
-      const data = tradeService.getSampleData();
+      const data = tradeService.getData();
       if (data && data.trades && Array.isArray(data.trades)) {
         setTrades(data.trades);
       } else {

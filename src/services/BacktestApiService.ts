@@ -80,12 +80,7 @@ class BacktestApiService {
       return response.strategies;
     } catch (error) {
       console.error('Error fetching strategies:', error);
-      // Fallback to mock data for development
-      return [
-        { id: '1', name: 'Strategy 1' },
-        { id: '2', name: 'Strategy 2' },
-        { id: '3', name: 'Strategy 3' },
-      ];
+      return [];
     }
   }
 
@@ -103,53 +98,8 @@ class BacktestApiService {
       return response;
     } catch (error) {
       console.error('Error running backtest:', error);
-      // Return mock data for development
-      return this.getMockBacktestResult();
+      throw error;
     }
-  }
-
-  private getMockBacktestResult(): BacktestResult {
-    return {
-      message: 'Mock backtest completed',
-      processing_method: 'mock',
-      workers_used: 1,
-      gps_aggregated: {
-        all_positions: {
-          'mock-position-1': {
-            entry: {},
-            exit: {},
-            status: 'closed',
-            entry_time: '2024-01-15T09:30:00',
-            exit_time: '2024-01-15T15:30:00',
-            close_reason: 'manual_exit',
-            pnl: 150.00,
-            quantity: 1,
-            entry_price: 6000,
-            exit_price: 6150,
-            instrument: 'AAPL',
-            strategy: 'Mock Strategy',
-            node_id: 'mock-1',
-            date: '15-01-2024',
-          },
-          'mock-position-2': {
-            entry: {},
-            exit: {},
-            status: 'closed',
-            entry_time: '2024-01-22T09:30:00',
-            exit_time: '2024-01-22T15:30:00',
-            close_reason: 'stop_loss',
-            pnl: -75.00,
-            quantity: 1,
-            entry_price: 6200,
-            exit_price: 6125,
-            instrument: 'MSFT',
-            strategy: 'Mock Strategy',
-            node_id: 'mock-2',
-            date: '22-01-2024',
-          },
-        },
-      },
-    };
   }
 }
 

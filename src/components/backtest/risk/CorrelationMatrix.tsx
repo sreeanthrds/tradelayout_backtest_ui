@@ -1,12 +1,12 @@
 
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { CorrelationItem } from "./mockCorrelationData";
+
 import { CorrelationTable } from "./components/CorrelationTable";
 import { CorrelationInterpretation } from "./components/CorrelationInterpretation";
 import { CorrelationInsights } from "./components/CorrelationInsights";
 
-export function CorrelationMatrix({ data }: { data: CorrelationItem[] }) {
+export function CorrelationMatrix({ data }: { data: any[] }) {
   return (
     <div className="space-y-4">
       <div className="mb-4">

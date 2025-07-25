@@ -70,7 +70,7 @@ export default function BacktestResults() {
           </div>
         </div>
         
-        {/* Backtest Parameters - Collapsible Section */}
+        {/* Strategy Configuration Section */}
         <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/10 shadow-xl backdrop-blur-xl">
           <BacktestForm />
         </div>

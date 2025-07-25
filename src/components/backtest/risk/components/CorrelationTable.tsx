@@ -1,13 +1,21 @@
 
 import React from "react";
-import { CorrelationItem } from "../mockCorrelationData";
+
 import { getColorForCorrelation, formatCorrelation } from "../utils/correlationUtils";
 
 interface CorrelationTableProps {
-  data: CorrelationItem[];
+  data: any[];
 }
 
 export function CorrelationTable({ data }: CorrelationTableProps) {
+  if (!data || data.length === 0) {
+    return (
+      <div className="text-center p-4 text-muted-foreground">
+        No correlation data available
+      </div>
+    );
+  }
+  
   // Extract all available column names (excluding 'name')
   const columns = Object.keys(data[0]).filter(key => key !== 'name');
   
