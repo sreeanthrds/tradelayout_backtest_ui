@@ -51,7 +51,7 @@ export default function BacktestResults() {
   };
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-muted/30">
+    <div className="min-h-screen">
       <div className="container mx-auto py-6 max-w-7xl">
         {/* Unified Backtest Analysis & Configuration Section */}
         <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/20 shadow-2xl backdrop-blur-xl">
