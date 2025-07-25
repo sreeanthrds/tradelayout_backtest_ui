@@ -424,14 +424,28 @@ export function useBacktestData() {
           ...metrics
         });
       } else {
-        // If no parameters, just use the calculated metrics with default data
+        // If no parameters, don't set any data - let the component handle empty state
         setBacktestData(prev => ({
           ...prev,
-          name: "Trading Strategy",
-          symbol: "RELIANCE",
-          period: "1 Dec 2024 - 31 Dec 2024",
-          apiData, // Include the raw API data
-          ...metrics
+          name: "",
+          symbol: "",
+          period: "",
+          apiData: null,
+          totalTrades: 0,
+          totalWins: 0,
+          totalLoss: 0,
+          winRate: 0,
+          totalReturn: 0,
+          totalReturnPercent: 0,
+          maxDrawdownAmount: 0,
+          maxDrawdownPercent: 0,
+          maxProfitSingleTrade: 0,
+          maxLossSingleTrade: 0,
+          maxWinStreak: 0,
+          maxLossStreak: 0,
+          sharpeRatio: 0,
+          tradesByDate: {},
+          rawTrades: []
         }));
       }
     };
