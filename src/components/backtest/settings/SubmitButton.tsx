@@ -10,6 +10,7 @@ export function SubmitButton({ isLoading }: SubmitButtonProps) {
   return (
     <Button 
       type="submit" 
+      variant="soft"
       size="lg" 
       disabled={isLoading}
       className="w-64"

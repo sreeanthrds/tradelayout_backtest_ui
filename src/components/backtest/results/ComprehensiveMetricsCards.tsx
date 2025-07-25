@@ -19,8 +19,8 @@ export function ComprehensiveMetricsCards() {
   };
 
   const getColorClass = (value: number) => {
-    if (value > 0) return "text-green-500";
-    if (value < 0) return "text-rose-400";
+    if (value > 0) return "text-success";
+    if (value < 0) return "text-danger";
     return "text-muted-foreground";
   };
 
@@ -37,49 +37,49 @@ export function ComprehensiveMetricsCards() {
       value: formatPercent(backtestData.winRate),
       subtitle: `${backtestData.totalWins} / ${backtestData.totalTrades} trades`,
       icon: Target,
-      colorClass: "text-blue-500"
+      colorClass: "text-info"
     },
     {
       title: "Max Drawdown",
       value: formatCurrency(-Math.abs(backtestData.maxDrawdownAmount)),
       subtitle: `-${backtestData.maxDrawdownPercent.toFixed(2)}%`,
       icon: AlertTriangle,
-      colorClass: "text-rose-400"
+      colorClass: "text-danger"
     },
     {
       title: "Max Profit (Single)",
       value: formatCurrency(backtestData.maxProfitSingleTrade),
       subtitle: "Single trade profit",
       icon: Trophy,
-      colorClass: "text-green-500"
+      colorClass: "text-success"
     },
     {
       title: "Max Loss (Single)",
       value: formatCurrency(backtestData.maxLossSingleTrade),
       subtitle: "Single trade loss",
       icon: TrendingDown,
-      colorClass: "text-rose-400"
+      colorClass: "text-danger"
     },
     {
       title: "Win Streak",
       value: `${backtestData.maxWinStreak}`,
       subtitle: `Max winning streak`,
       icon: TrendingUp,
-      colorClass: "text-green-500"
+      colorClass: "text-success"
     },
     {
       title: "Loss Streak",
       value: `${backtestData.maxLossStreak}`,
       subtitle: `Max losing streak`,
       icon: TrendingDown,
-      colorClass: "text-rose-400"
+      colorClass: "text-danger"
     },
     {
       title: "Sharpe Ratio",
       value: backtestData.sharpeRatio.toFixed(3),
       subtitle: "Risk-adjusted return",
       icon: BarChart,
-      colorClass: backtestData.sharpeRatio >= 1 ? "text-green-500" : backtestData.sharpeRatio >= 0.5 ? "text-yellow-500" : "text-rose-400"
+      colorClass: backtestData.sharpeRatio >= 1 ? "text-success" : backtestData.sharpeRatio >= 0.5 ? "text-warning" : "text-danger"
     }
   ];
 
@@ -103,15 +103,15 @@ export function ComprehensiveMetricsCards() {
           <Card 
             key={index} 
             variant="glass-intense" 
-            className={`hover:shadow-2xl transition-all duration-500 group border-0 ${getCardBackground(metric)} backdrop-blur-xl`}
+            className={`hover:shadow-2xl hover:scale-105 transition-all duration-500 group border-0 ${getCardBackground(metric)} backdrop-blur-xl neomorph`}
           >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-medium text-foreground/70 group-hover:text-foreground transition-colors">
+                <CardTitle className="text-sm font-medium text-foreground/80 group-hover:text-foreground transition-colors">
                   {metric.title}
                 </CardTitle>
-                <div className="p-2 rounded-xl bg-white/20 dark:bg-black/20 backdrop-blur-sm">
-                  <Icon className="h-4 w-4 text-foreground/80 group-hover:text-primary transition-colors" />
+                <div className="p-2 rounded-xl bg-white/30 dark:bg-black/30 backdrop-blur-sm neomorph-inset">
+                  <Icon className="h-4 w-4 text-foreground/90 group-hover:text-primary transition-colors" />
                 </div>
               </div>
             </CardHeader>
@@ -119,7 +119,7 @@ export function ComprehensiveMetricsCards() {
               <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-105 transition-all duration-300`}>
                 {metric.value}
               </div>
-              <p className="text-xs text-foreground/60 mt-1 group-hover:text-foreground/80 transition-colors font-medium">
+              <p className="text-xs text-foreground/70 mt-1 group-hover:text-foreground/90 transition-colors font-medium">
                 {metric.subtitle}
               </p>
             </CardContent>

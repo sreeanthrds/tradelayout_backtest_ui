@@ -34,16 +34,16 @@
 
     --radius: 0.5rem;
 
-    /* Professional Trading Colors - Softer and More Pleasant */
-    --success: 142 69% 58%;
+    /* Professional Trading Colors - Ultra Soft and Pleasant */
+    --success: 142 45% 65%;
     --success-foreground: 0 0% 100%;
-    --success-muted: 142 50% 95%;
-    --success-soft: 142 60% 75%;
+    --success-muted: 142 30% 96%;
+    --success-soft: 142 40% 85%;
     
-    --danger: 0 70% 70%;
+    --danger: 0 45% 75%;
     --danger-foreground: 0 0% 100%;
-    --danger-muted: 0 50% 95%;
-    --danger-soft: 0 60% 85%;
+    --danger-muted: 0 30% 96%;
+    --danger-soft: 0 40% 88%;
     
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
@@ -120,16 +120,16 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 142 76% 40%;
     
-    /* Professional Trading Colors - Dark Mode - Softer */
-    --success: 142 69% 58%;
+    /* Professional Trading Colors - Dark Mode - Ultra Soft */
+    --success: 142 50% 70%;
     --success-foreground: 0 0% 100%;
-    --success-muted: 142 50% 20%;
-    --success-soft: 142 60% 75%;
+    --success-muted: 142 35% 25%;
+    --success-soft: 142 45% 75%;
     
-    --danger: 0 70% 70%;
+    --danger: 0 50% 75%;
     --danger-foreground: 0 0% 100%;
-    --danger-muted: 0 50% 20%;
-    --danger-soft: 0 60% 85%;
+    --danger-muted: 0 35% 25%;
+    --danger-soft: 0 45% 85%;
     
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 100%;
@@ -189,13 +189,16 @@
     min-height: 100vh;
   }
 
-  /* Enhanced Glassmorphism Utilities */
+  /* Enhanced Glassmorphism + Neumorphism Utilities */
   .glass {
     background: var(--gradient-glass);
     border: 1px solid hsl(var(--glass-border));
     backdrop-filter: var(--glass-backdrop);
     -webkit-backdrop-filter: var(--glass-backdrop);
-    box-shadow: var(--glass-shadow), inset 0 1px 0 hsl(var(--glass-border));
+    box-shadow: var(--glass-shadow), 
+                inset 0 1px 0 hsl(var(--glass-border)),
+                4px 4px 12px hsl(var(--neomorph-shadow-dark) / 0.3),
+                -4px -4px 12px hsl(var(--neomorph-shadow-light) / 0.8);
     position: relative;
   }
 
@@ -219,7 +222,9 @@
     -webkit-backdrop-filter: var(--glass-backdrop);
     box-shadow: var(--glass-shadow), 
                 inset 0 1px 0 hsl(var(--glass-border)),
-                0 0 0 1px hsl(var(--glass-border) / 0.3);
+                0 0 0 1px hsl(var(--glass-border) / 0.3),
+                8px 8px 20px hsl(var(--neomorph-shadow-dark) / 0.4),
+                -8px -8px 20px hsl(var(--neomorph-shadow-light) / 0.9);
     position: relative;
   }
 

@@ -62,7 +62,7 @@ export default function BacktestResults() {
             </h2>
             {hasResults && (
               <Button 
-                variant="neomorph" 
+                variant="soft" 
                 onClick={handleReset}
                 className="gap-2"
               >
