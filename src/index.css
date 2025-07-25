@@ -34,14 +34,16 @@
 
     --radius: 0.5rem;
 
-    /* Professional Trading Colors */
-    --success: 142 76% 36%;
+    /* Professional Trading Colors - Softer and More Pleasant */
+    --success: 142 69% 58%;
     --success-foreground: 0 0% 100%;
-    --success-muted: 142 76% 96%;
+    --success-muted: 142 50% 95%;
+    --success-soft: 142 60% 75%;
     
-    --danger: 0 84% 60%;
+    --danger: 0 70% 70%;
     --danger-foreground: 0 0% 100%;
-    --danger-muted: 0 84% 96%;
+    --danger-muted: 0 50% 95%;
+    --danger-soft: 0 60% 85%;
     
     --warning: 38 92% 50%;
     --warning-foreground: 0 0% 100%;
@@ -79,6 +81,14 @@
     /* Enhanced gradient overlays */
     --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg)), hsl(var(--glass-intense-bg)));
     --gradient-neomorph: linear-gradient(145deg, hsl(var(--neomorph-light)), hsl(var(--neomorph-dark)));
+    
+    /* Colorful card backgrounds for metrics */
+    --card-success-bg: linear-gradient(135deg, hsl(142 50% 95%) 0%, hsl(142 40% 92%) 100%);
+    --card-danger-bg: linear-gradient(135deg, hsl(0 50% 95%) 0%, hsl(0 40% 92%) 100%);
+    --card-primary-bg: linear-gradient(135deg, hsl(217 50% 95%) 0%, hsl(217 40% 92%) 100%);
+    --card-accent-bg: linear-gradient(135deg, hsl(160 50% 95%) 0%, hsl(160 40% 92%) 100%);
+    --card-warning-bg: linear-gradient(135deg, hsl(38 50% 95%) 0%, hsl(38 40% 92%) 100%);
+    --card-info-bg: linear-gradient(135deg, hsl(217 50% 95%) 0%, hsl(217 40% 92%) 100%);
   }
 
   .dark {
@@ -110,14 +120,16 @@
     --input: 217.2 32.6% 17.5%;
     --ring: 142 76% 40%;
     
-    /* Professional Trading Colors - Dark Mode */
-    --success: 142 76% 40%;
+    /* Professional Trading Colors - Dark Mode - Softer */
+    --success: 142 69% 58%;
     --success-foreground: 0 0% 100%;
-    --success-muted: 142 76% 15%;
+    --success-muted: 142 50% 20%;
+    --success-soft: 142 60% 75%;
     
-    --danger: 0 84% 65%;
+    --danger: 0 70% 70%;
     --danger-foreground: 0 0% 100%;
-    --danger-muted: 0 84% 15%;
+    --danger-muted: 0 50% 20%;
+    --danger-soft: 0 60% 85%;
     
     --warning: 38 92% 55%;
     --warning-foreground: 0 0% 100%;
@@ -155,6 +167,14 @@
     /* Enhanced gradient overlays - Dark Mode */
     --gradient-glass: linear-gradient(135deg, hsl(var(--glass-bg)), hsl(var(--glass-intense-bg)));
     --gradient-neomorph: linear-gradient(145deg, hsl(var(--neomorph-light)), hsl(var(--neomorph-dark)));
+    
+    /* Colorful card backgrounds for metrics - Dark Mode */
+    --card-success-bg: linear-gradient(135deg, hsl(142 30% 15%) 0%, hsl(142 25% 12%) 100%);
+    --card-danger-bg: linear-gradient(135deg, hsl(0 30% 15%) 0%, hsl(0 25% 12%) 100%);
+    --card-primary-bg: linear-gradient(135deg, hsl(217 30% 15%) 0%, hsl(217 25% 12%) 100%);
+    --card-accent-bg: linear-gradient(135deg, hsl(160 30% 15%) 0%, hsl(160 25% 12%) 100%);
+    --card-warning-bg: linear-gradient(135deg, hsl(38 30% 15%) 0%, hsl(38 25% 12%) 100%);
+    --card-info-bg: linear-gradient(135deg, hsl(217 30% 15%) 0%, hsl(217 25% 12%) 100%);
   }
 }
 
