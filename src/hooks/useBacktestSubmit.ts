@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FormValues } from "@/components/backtest/settings/formSchema";
 import { backtestApiService } from "@/services/BacktestApiService";
@@ -13,7 +12,6 @@ import { useUrlParams } from "@/hooks/useUrlParams";
  */
 export function useBacktestSubmit() {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
   const { userId } = useUrlParams();
 
   const submitBacktest = async (data: FormValues) => {
@@ -50,7 +48,7 @@ export function useBacktestSubmit() {
         description: `Successfully ran backtest`,
       });
 
-      navigate("/backtest-results");
+      // Results will display on the same page
     } catch (error) {
       console.error("Backtest error:", error);
       toast.error("Backtest Failed", {
