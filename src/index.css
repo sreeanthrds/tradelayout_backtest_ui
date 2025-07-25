@@ -63,6 +63,17 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 142 76% 36%;
+
+    /* Glassmorphism & Neumorphism Design Tokens */
+    --glass-bg: 0 0% 100% / 0.15;
+    --glass-border: 0 0% 100% / 0.2;
+    --glass-shadow: 0 8px 32px 0 0 0% 0% / 0.15;
+    --glass-backdrop: blur(12px);
+    
+    --neomorph-light: 0 0% 100%;
+    --neomorph-dark: 214.3 31.8% 91.4%;
+    --neomorph-shadow-light: 0 0% 100% / 0.8;
+    --neomorph-shadow-dark: 0 0% 0% / 0.1;
   }
 
   .dark {
@@ -123,6 +134,17 @@
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 142 76% 40%;
+
+    /* Glassmorphism & Neumorphism Design Tokens - Dark Mode */
+    --glass-bg: 0 0% 0% / 0.25;
+    --glass-border: 0 0% 100% / 0.1;
+    --glass-shadow: 0 8px 32px 0 0 0% 0% / 0.3;
+    --glass-backdrop: blur(12px);
+    
+    --neomorph-light: 240 5.9% 15%;
+    --neomorph-dark: 240 3.7% 8%;
+    --neomorph-shadow-light: 0 0% 100% / 0.02;
+    --neomorph-shadow-dark: 0 0% 0% / 0.4;
   }
 }
 
@@ -133,5 +155,59 @@
 
   body {
     @apply bg-background text-foreground;
+    background: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
+    min-height: 100vh;
+  }
+
+  /* Glassmorphism Utilities */
+  .glass {
+    background: hsl(var(--glass-bg));
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: var(--glass-backdrop);
+    -webkit-backdrop-filter: var(--glass-backdrop);
+    box-shadow: 0 8px 32px 0 hsl(var(--glass-shadow));
+  }
+
+  .glass-intense {
+    background: hsl(var(--card) / 0.8);
+    border: 1px solid hsl(var(--glass-border));
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 12px 40px 0 hsl(var(--glass-shadow));
+  }
+
+  /* Neumorphism Utilities */
+  .neomorph {
+    background: linear-gradient(145deg, hsl(var(--neomorph-light)), hsl(var(--neomorph-dark)));
+    box-shadow: 
+      8px 8px 16px hsl(var(--neomorph-shadow-dark)),
+      -8px -8px 16px hsl(var(--neomorph-shadow-light));
+  }
+
+  .neomorph-inset {
+    background: hsl(var(--background));
+    box-shadow: 
+      inset 6px 6px 12px hsl(var(--neomorph-shadow-dark)),
+      inset -6px -6px 12px hsl(var(--neomorph-shadow-light));
+  }
+
+  .neomorph-button {
+    background: linear-gradient(145deg, hsl(var(--neomorph-light)), hsl(var(--neomorph-dark)));
+    box-shadow: 
+      6px 6px 12px hsl(var(--neomorph-shadow-dark)),
+      -6px -6px 12px hsl(var(--neomorph-shadow-light));
+    transition: all 0.2s ease;
+  }
+
+  .neomorph-button:hover {
+    box-shadow: 
+      4px 4px 8px hsl(var(--neomorph-shadow-dark)),
+      -4px -4px 8px hsl(var(--neomorph-shadow-light));
+  }
+
+  .neomorph-button:active {
+    box-shadow: 
+      inset 2px 2px 4px hsl(var(--neomorph-shadow-dark)),
+      inset -2px -2px 4px hsl(var(--neomorph-shadow-light));
   }
 }

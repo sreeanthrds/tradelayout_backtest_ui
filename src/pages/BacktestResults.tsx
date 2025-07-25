@@ -28,29 +28,45 @@ export default function BacktestResults() {
   }, [navigate]);
   
   return (
-    <div className="container mx-auto py-6 max-w-7xl">
-      <div className="flex justify-end mb-4">
-        <ThemeToggle />
+    <div className="min-h-screen">
+      <div className="container mx-auto py-6 max-w-7xl">
+        <div className="glass-intense rounded-2xl p-6 mb-6">
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+                Backtest Results
+              </h1>
+              <p className="text-muted-foreground mt-1">Comprehensive analysis of your trading strategy</p>
+            </div>
+            <ThemeToggle />
+          </div>
+        </div>
+        
+        <div className="glass-intense rounded-2xl p-6 mb-6">
+          <BacktestResultsHeader backtestData={backtestData} />
+        </div>
+
+        <div className="glass rounded-2xl p-4 mb-6">
+          <BacktestFilters />
+        </div>
+
+        <div className="glass-intense rounded-2xl p-6">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+            <TabsList className="neomorph grid w-full grid-cols-2 lg:w-auto p-1">
+              <TabsTrigger value="overview" className="data-[state=active]:neomorph-inset">Overview</TabsTrigger>
+              <TabsTrigger value="trades" className="data-[state=active]:neomorph-inset">Trades</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="overview" className="space-y-6">
+              <OverviewTabContent />
+            </TabsContent>
+            
+            <TabsContent value="trades" className="space-y-6">
+              <TradesTabContent />
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
-      
-      <BacktestResultsHeader backtestData={backtestData} />
-
-      <BacktestFilters />
-
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 lg:w-auto">
-          <TabsTrigger value="overview">Overview</TabsTrigger>
-          <TabsTrigger value="trades">Trades</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="overview" className="space-y-6">
-          <OverviewTabContent />
-        </TabsContent>
-        
-        <TabsContent value="trades" className="space-y-6">
-          <TradesTabContent />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 }
