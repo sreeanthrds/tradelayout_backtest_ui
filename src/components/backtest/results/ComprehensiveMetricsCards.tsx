@@ -117,10 +117,10 @@ export function ComprehensiveMetricsCards() {
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className={`text-3xl font-bold ${metric.colorClass} group-hover:scale-110 transition-all duration-300 drop-shadow-sm`}>
+              <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-110 transition-all duration-300 drop-shadow-sm break-words`}>
                 {metric.value}
               </div>
-              <p className="text-sm text-foreground/80 mt-2 group-hover:text-foreground transition-colors font-medium">
+              <p className="text-xs text-foreground/80 mt-2 group-hover:text-foreground transition-colors font-medium break-words">
                 {metric.subtitle}
               </p>
             </CardContent>

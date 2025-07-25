@@ -54,30 +54,25 @@ export default function BacktestResults() {
                 Configure parameters and analyze your trading strategy performance
               </p>
             </div>
-            <ThemeToggle />
+            <div className="flex items-center gap-4">
+              {hasResults && (
+                <Button 
+                  variant="soft" 
+                  onClick={handleReset}
+                  className="gap-2"
+                >
+                  <RotateCcw className="h-4 w-4" />
+                  Reset
+                </Button>
+              )}
+              <ThemeToggle />
+            </div>
           </div>
         </div>
         
-        {/* Backtest Parameters Section */}
+        {/* Backtest Parameters - Collapsible Section */}
         <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/10 shadow-xl backdrop-blur-xl">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-semibold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Backtest Parameters
-            </h2>
-            {hasResults && (
-              <Button 
-                variant="soft" 
-                onClick={handleReset}
-                className="gap-2"
-              >
-                <RotateCcw className="h-4 w-4" />
-                Reset
-              </Button>
-            )}
-          </div>
-          <div className="glass rounded-2xl p-6 border border-white/10 shadow-lg backdrop-blur-lg">
-            <BacktestForm />
-          </div>
+          <BacktestForm />
         </div>
 
         {/* Filters Section */}
@@ -91,11 +86,17 @@ export default function BacktestResults() {
         {hasResults && (
           <div className="glass-intense rounded-3xl p-8 border border-white/10 shadow-2xl backdrop-blur-xl">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-              <TabsList className="neomorph-button grid w-full grid-cols-2 lg:w-auto p-2 bg-gradient-to-r from-background/80 to-muted/40 border border-white/20 shadow-xl">
-                <TabsTrigger value="overview" className="data-[state=active]:neomorph-inset data-[state=active]:shadow-inner transition-all duration-300">
+              <TabsList className="grid w-full grid-cols-2 lg:w-auto p-1 glass rounded-xl border border-white/20">
+                <TabsTrigger 
+                  value="overview" 
+                  className="data-[state=active]:bg-white/20 data-[state=active]:text-foreground transition-all duration-300 hover:bg-white/10"
+                >
                   Overview
                 </TabsTrigger>
-                <TabsTrigger value="trades" className="data-[state=active]:neomorph-inset data-[state=active]:shadow-inner transition-all duration-300">
+                <TabsTrigger 
+                  value="trades" 
+                  className="data-[state=active]:bg-white/20 data-[state=active]:text-foreground transition-all duration-300 hover:bg-white/10"
+                >
                   Trades
                 </TabsTrigger>
               </TabsList>
