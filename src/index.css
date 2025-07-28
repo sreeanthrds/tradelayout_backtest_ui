@@ -67,13 +67,13 @@
     --sidebar-ring: 59 130 246;
 
     /* Clean Card Backgrounds */
-    --card-success-bg: hsl(142 76% 97%);
-    --card-danger-bg: hsl(0 93% 97%);
-    --card-primary-bg: hsl(217 91% 97%);
-    --card-accent-bg: hsl(220 14% 98%);
-    --card-warning-bg: hsl(48 96% 97%);
-    --card-info-bg: hsl(217 91% 97%);
-    --card-neutral-bg: hsl(220 14% 98%);
+    --card-success-bg: hsl(var(--card));
+    --card-danger-bg: hsl(var(--card));
+    --card-primary-bg: hsl(var(--card));
+    --card-accent-bg: hsl(var(--card));
+    --card-warning-bg: hsl(var(--card));
+    --card-info-bg: hsl(var(--card));
+    --card-neutral-bg: hsl(var(--card));
     
     /* Clean Professional Background */
     --gradient-bg: hsl(247 247 250);
@@ -141,13 +141,13 @@
     --sidebar-ring: 59 130 246;
 
     /* Clean Card Backgrounds - Dark Mode */
-    --card-success-bg: hsl(142 80% 8%);
-    --card-danger-bg: hsl(0 93% 8%);
-    --card-primary-bg: hsl(217 91% 8%);
-    --card-accent-bg: hsl(240 3.7% 11%);
-    --card-warning-bg: hsl(48 96% 8%);
-    --card-info-bg: hsl(217 91% 8%);
-    --card-neutral-bg: hsl(240 3.7% 11%);
+    --card-success-bg: hsl(var(--card));
+    --card-danger-bg: hsl(var(--card));
+    --card-primary-bg: hsl(var(--card));
+    --card-accent-bg: hsl(var(--card));
+    --card-warning-bg: hsl(var(--card));
+    --card-info-bg: hsl(var(--card));
+    --card-neutral-bg: hsl(var(--card));
     
     /* Clean Professional Background - Dark Mode */
     --gradient-bg: hsl(24 24 27);
