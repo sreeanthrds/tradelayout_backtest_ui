@@ -76,10 +76,7 @@
     --card-neutral-bg: hsl(220 14% 96%);
     
     /* Professional Clean Background */
-    --gradient-bg: linear-gradient(135deg, 
-      hsl(220 14% 98%) 0%, 
-      hsl(220 13% 97%) 50%, 
-      hsl(220 12% 96%) 100%);
+    --gradient-bg: hsl(0 0% 99%);
   }
 
   .dark {
@@ -153,10 +150,7 @@
     --card-neutral-bg: hsl(240 3.7% 15.9%);
     
     /* Professional Clean Background - Dark Mode */
-    --gradient-bg: linear-gradient(135deg, 
-      hsl(240 10% 4%) 0%, 
-      hsl(240 9% 5%) 50%, 
-      hsl(240 8% 6%) 100%);
+    --gradient-bg: hsl(240 10% 3.9%);
   }
 }
 
