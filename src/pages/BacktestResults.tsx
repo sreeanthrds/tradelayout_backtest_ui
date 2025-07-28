@@ -54,7 +54,7 @@ export default function BacktestResults() {
     <div className="min-h-screen">
       <div className="container mx-auto py-6 max-w-7xl">
         {/* Unified Backtest Analysis & Configuration Section */}
-        <div className="glass-intense rounded-3xl p-8 mb-8">
+        <div className="glass-intense rounded-3xl p-8 mb-8 border border-white/20 shadow-2xl backdrop-blur-xl">
           <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
@@ -80,7 +80,7 @@ export default function BacktestResults() {
           </div>
           
           {/* Strategy Configuration */}
-          <div className="glass rounded-2xl p-6">
+          <div className="glass rounded-2xl p-6 border border-white/10 shadow-lg backdrop-blur-lg">
             <BacktestForm />
           </div>
         </div>
@@ -88,9 +88,9 @@ export default function BacktestResults() {
 
         {/* Results Section */}
         {hasResults && (
-          <div className="glass-intense rounded-3xl p-8">
+          <div className="glass-intense rounded-3xl p-8 border border-white/10 shadow-2xl backdrop-blur-xl">
             <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
-              <TabsList className="grid w-full grid-cols-2 lg:w-auto p-1 glass rounded-xl">
+              <TabsList className="grid w-full grid-cols-2 lg:w-auto p-1 glass rounded-xl border border-white/20">
                 <TabsTrigger 
                   value="overview" 
                   className="data-[state=active]:bg-white/20 data-[state=active]:text-foreground transition-all duration-300 hover:bg-white/10"
