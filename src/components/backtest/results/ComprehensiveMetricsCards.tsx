@@ -83,17 +83,17 @@ export function ComprehensiveMetricsCards() {
     }
   ];
 
-  const getCardBackground = (metric: any) => {
+  const getCardClass = (metric: any) => {
     if (metric.title.includes('P&L') || metric.title.includes('Total')) {
       return metric.value.includes('₹') && parseFloat(metric.value.replace(/[₹,\s]/g, '')) >= 0 
-        ? 'from-emerald-200 via-green-100 to-teal-50 dark:from-emerald-900/40 dark:via-green-800/30 dark:to-teal-900/20' 
-        : 'from-rose-200 via-red-100 to-pink-50 dark:from-rose-900/40 dark:via-red-800/30 dark:to-pink-900/20';
+        ? 'border-success/20 bg-success-muted' 
+        : 'border-danger/20 bg-danger-muted';
     }
-    if (metric.title.includes('Win')) return 'from-blue-200 via-cyan-100 to-sky-50 dark:from-blue-900/40 dark:via-cyan-800/30 dark:to-sky-900/20';
-    if (metric.title.includes('Drawdown') || metric.title.includes('Loss')) return 'from-orange-200 via-amber-100 to-yellow-50 dark:from-orange-900/40 dark:via-amber-800/30 dark:to-yellow-900/20';
-    if (metric.title.includes('Profit') || metric.title.includes('Streak')) return 'from-purple-200 via-violet-100 to-indigo-50 dark:from-purple-900/40 dark:via-violet-800/30 dark:to-indigo-900/20';
-    if (metric.title.includes('Sharpe')) return 'from-indigo-200 via-blue-100 to-cyan-50 dark:from-indigo-900/40 dark:via-blue-800/30 dark:to-cyan-900/20';
-    return 'from-slate-200 via-gray-100 to-zinc-50 dark:from-slate-900/40 dark:via-gray-800/30 dark:to-zinc-900/20';
+    if (metric.title.includes('Win')) return 'border-info/20 bg-info-muted';
+    if (metric.title.includes('Drawdown') || metric.title.includes('Loss')) return 'border-warning/20 bg-warning-muted';
+    if (metric.title.includes('Profit') || metric.title.includes('Streak')) return 'border-primary/20 bg-primary/5';
+    if (metric.title.includes('Sharpe')) return 'border-info/20 bg-info-muted';
+    return 'border-border bg-muted/5';
   };
 
   return (
@@ -103,24 +103,23 @@ export function ComprehensiveMetricsCards() {
         return (
           <Card 
             key={index} 
-            variant="glass-intense" 
-            className={`hover:shadow-2xl hover:scale-105 transition-all duration-500 group border-2 border-white/30 dark:border-white/10 bg-gradient-to-br ${getCardBackground(metric)} backdrop-blur-xl shadow-xl hover:shadow-2xl`}
+            className={`hover:shadow-lg hover:scale-105 transition-all duration-300 group border-2 ${getCardClass(metric)} shadow-sm hover:shadow-md`}
           >
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold text-foreground/90 group-hover:text-foreground transition-colors">
+                <CardTitle className="text-sm font-semibold text-foreground group-hover:text-foreground transition-colors">
                   {metric.title}
                 </CardTitle>
-                <div className="p-3 rounded-xl bg-white/40 dark:bg-black/40 backdrop-blur-sm shadow-lg border border-white/30">
-                  <Icon className="h-5 w-5 text-foreground/90 group-hover:text-primary transition-colors" />
+                <div className="p-2 rounded-lg bg-muted border">
+                  <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                 </div>
               </div>
             </CardHeader>
             <CardContent className="pt-0">
-              <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-110 transition-all duration-300 drop-shadow-sm break-words`}>
+              <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-105 transition-all duration-300`}>
                 {metric.value}
               </div>
-              <p className="text-xs text-foreground/80 mt-2 group-hover:text-foreground transition-colors font-medium break-words">
+              <p className="text-xs text-muted-foreground mt-2 group-hover:text-foreground transition-colors">
                 {metric.subtitle}
               </p>
             </CardContent>
