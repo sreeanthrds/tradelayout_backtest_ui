@@ -12,9 +12,9 @@ export function OverviewTabContent() {
       
       {/* New Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card variant="glass-intense" className="shadow-xl backdrop-blur-xl">
+        <Card className="shadow-sm border">
           <CardHeader>
-            <CardTitle className="bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <CardTitle className="text-foreground">
               P&L Overview
             </CardTitle>
             <CardDescription>Cumulative profit and loss over trades</CardDescription>
@@ -24,7 +24,7 @@ export function OverviewTabContent() {
           </CardContent>
         </Card>
         
-        <Card variant="glass-intense" className="lg:col-span-2 shadow-xl backdrop-blur-xl">
+        <Card className="lg:col-span-2 shadow-sm border">
           <CardContent className="p-0">
             <DailyPnLChart />
           </CardContent>
