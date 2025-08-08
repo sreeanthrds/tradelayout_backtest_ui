@@ -112,17 +112,15 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                           }
                         }}
                         max={control._formValues.endDate ? format(control._formValues.endDate, "yyyy-MM-dd") : undefined}
-                        className="cursor-pointer"
+                        className="cursor-pointer h-9 text-sm"
                       />
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent 
-                    className="w-auto p-0 z-[100]" 
+                    className="w-auto p-1 z-[100] max-h-[60vh] overflow-auto" 
                     align="start"
-                    side="bottom"
-                    sideOffset={8}
-                    avoidCollisions={false}
-                    sticky="always"
+                    side="top"
+                    sideOffset={4}
                   >
                     <Calendar
                       mode="single"
@@ -137,7 +135,14 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                       }
                       defaultMonth={control._formValues.endDate || field.value || new Date()}
                       initialFocus
-                      className={cn("p-3 pointer-events-auto")}
+                      className={cn("p-2 pointer-events-auto")}
+                      classNames={{
+                        head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.7rem]",
+                        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+                        cell: "h-8 w-8 text-center text-sm p-0 relative",
+                        caption_label: "text-xs font-medium",
+                        table: "w-full border-collapse space-y-0.5",
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -169,17 +174,15 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                         }}
                         min={control._formValues.startDate ? format(control._formValues.startDate, "yyyy-MM-dd") : undefined}
                         max={format(new Date(), "yyyy-MM-dd")}
-                        className="cursor-pointer"
+                        className="cursor-pointer h-9 text-sm"
                       />
                     </FormControl>
                   </PopoverTrigger>
                   <PopoverContent 
-                    className="w-auto p-0 z-[100]" 
+                    className="w-auto p-1 z-[100] max-h-[60vh] overflow-auto" 
                     align="start"
-                    side="bottom"
-                    sideOffset={8}
-                    avoidCollisions={false}
-                    sticky="always"
+                    side="top"
+                    sideOffset={4}
                   >
                     <Calendar
                       mode="single"
@@ -194,7 +197,14 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                       }
                       defaultMonth={field.value || control._formValues.startDate || new Date()}
                       initialFocus
-                      className={cn("p-3 pointer-events-auto")}
+                      className={cn("p-2 pointer-events-auto")}
+                      classNames={{
+                        head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.7rem]",
+                        day: "h-8 w-8 p-0 font-normal aria-selected:opacity-100",
+                        cell: "h-8 w-8 text-center text-sm p-0 relative",
+                        caption_label: "text-xs font-medium",
+                        table: "w-full border-collapse space-y-0.5",
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
