@@ -10,11 +10,13 @@ import { tradeService } from "@/services/TradeDataService";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { RotateCcw } from "lucide-react";
+import { useApplyApiUrlFromParams } from "@/hooks/useUrlParams";
 
 export default function BacktestResults() {
   const [activeTab, setActiveTab] = useState("overview");
   const [hasResults, setHasResults] = useState(false);
-  
+  useApplyApiUrlFromParams();
+
   useEffect(() => {
     // Check if there are valid backtest parameters/results with actual data
     const checkForResults = () => {
