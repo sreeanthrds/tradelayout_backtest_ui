@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://b3a405ad682a.ngrok-free.app';
+import { ConfigService } from '@/services/ConfigService';
 
 // Temporary user ID for development
 const TEMP_USER_ID = 'user_2yfjTGEKjL7XkklQyBaMP6SN2Lc';
@@ -42,7 +42,8 @@ export interface BacktestResult {
 
 class BacktestApiService {
   private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const baseUrl = ConfigService.getApiBaseUrl();
+    const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers: {
         'Content-Type': 'application/json',
