@@ -20,7 +20,9 @@ export function useBacktestSubmit() {
     try {
       console.log("Running backtest with parameters:", data);
       
-      // Store the backtest parameters
+      // Clear previous results before starting a new backtest
+      tradeService.clearData();
+      // Store the backtest parameters (after clearing)
       tradeService.setBacktestParameters(data);
       
       // Format dates to DD-MM-YYYY format as required by API
