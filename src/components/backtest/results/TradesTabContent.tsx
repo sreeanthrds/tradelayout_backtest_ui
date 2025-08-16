@@ -30,15 +30,15 @@ export function TradesTabContent() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-lg font-semibold">Trade History</h2>
-          <p className="text-sm text-muted-foreground">Detailed view of all trades and transactions</p>
+          <h2 className="text-base font-semibold sm:text-lg">Trade History</h2>
+          <p className="text-xs text-muted-foreground sm:text-sm">Detailed view of all trades and transactions</p>
         </div>
         {/* Temporarily hidden - will be used in later stages */}
-        {/* <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2">
-          <Download className="h-4 w-4" />
+        {/* <Button onClick={handleExportTrades} variant="outline" className="flex items-center gap-2 text-xs sm:text-sm">
+          <Download className="h-3 w-3 sm:h-4 sm:w-4" />
           Export JSON
         </Button> */}
       </div>

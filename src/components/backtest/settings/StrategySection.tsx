@@ -37,11 +37,11 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
   const isStrategyDisabled = isLoading || !!strategyId; // Disable if loading or strategyId is provided
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Strategy Configuration</CardTitle>
-        <CardDescription>Set up the core parameters for your backtest</CardDescription>
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg sm:text-xl">Strategy Configuration</CardTitle>
+        <CardDescription className="text-sm">Set up the core parameters for your backtest</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-4 sm:space-y-6">
         <FormField
           control={control}
           name="strategy"
@@ -89,7 +89,7 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
           )}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
           <FormField
             control={control}
             name="startDate"

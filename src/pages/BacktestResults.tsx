@@ -54,27 +54,28 @@ export default function BacktestResults() {
   
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto py-6 max-w-7xl">
+      <div className="container mx-auto py-3 px-4 max-w-7xl sm:py-6">
         {/* Header Section */}
-        <div className="bg-card rounded-lg border shadow-sm p-8 mb-6">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold tracking-tight text-foreground">
+        <div className="bg-card rounded-lg border shadow-sm p-4 mb-4 sm:p-6 md:p-8 sm:mb-6">
+          <div className="flex flex-col gap-4 mb-6 sm:flex-row sm:justify-between sm:items-center sm:mb-8">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl md:text-4xl">
                 Backtest Analysis
               </h1>
-              <p className="text-muted-foreground mt-2">
+              <p className="text-muted-foreground mt-1 sm:mt-2 text-sm sm:text-base">
                 Configure parameters and analyze your trading strategy performance
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
               {hasResults && (
                 <Button 
                   variant="outline" 
                   onClick={handleReset}
-                  className="gap-2"
+                  className="gap-1 text-xs sm:text-sm sm:gap-2"
+                  size="sm"
                 >
-                  <RotateCcw className="h-4 w-4" />
-                  Reset
+                  <RotateCcw className="h-3 w-3 sm:h-4 sm:w-4" />
+                  <span className="hidden sm:inline">Reset</span>
                 </Button>
               )}
               <ThemeToggle />
@@ -82,25 +83,25 @@ export default function BacktestResults() {
           </div>
           
           {/* Strategy Configuration */}
-          <div className="bg-muted/50 rounded-lg p-6 border">
+          <div className="bg-muted/50 rounded-lg p-3 border sm:p-4 md:p-6">
             <BacktestForm />
           </div>
         </div>
 
         {/* Results Section */}
         {hasResults && (
-          <div className="bg-card rounded-lg border shadow-sm p-8">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-              <TabsList className="grid w-full grid-cols-2 lg:w-auto">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="trades">Trades</TabsTrigger>
+          <div className="bg-card rounded-lg border shadow-sm p-4 sm:p-6 md:p-8">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+              <TabsList className="grid w-full grid-cols-2 h-8 sm:h-10 lg:w-auto">
+                <TabsTrigger value="overview" className="text-xs sm:text-sm">Overview</TabsTrigger>
+                <TabsTrigger value="trades" className="text-xs sm:text-sm">Trades</TabsTrigger>
               </TabsList>
               
-              <TabsContent value="overview" className="space-y-6">
+              <TabsContent value="overview" className="space-y-4 sm:space-y-6">
                 <OverviewTabContent />
               </TabsContent>
               
-              <TabsContent value="trades" className="space-y-6">
+              <TabsContent value="trades" className="space-y-4 sm:space-y-6">
                 <TradesTabContent />
               </TabsContent>
             </Tabs>

@@ -23,10 +23,10 @@ const buttonVariants = cva(
         soft: "bg-primary text-primary-foreground hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 border-0 rounded-xl",
       },
       size: {
-        default: "h-10 px-4 py-2",
-        sm: "h-9 rounded-md px-3",
-        lg: "h-11 rounded-md px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-3 py-2 sm:h-10 sm:px-4 text-sm",
+        sm: "h-8 rounded-md px-2 sm:h-9 sm:px-3 text-xs sm:text-sm",
+        lg: "h-10 rounded-md px-6 sm:h-11 sm:px-8 text-sm sm:text-base",
+        icon: "h-8 w-8 sm:h-10 sm:w-10",
       },
     },
     defaultVariants: {

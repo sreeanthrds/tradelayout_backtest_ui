@@ -97,7 +97,7 @@ export function ComprehensiveMetricsCards() {
   };
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       {metrics.map((metric, index) => {
         const Icon = metric.icon;
         return (
@@ -105,21 +105,21 @@ export function ComprehensiveMetricsCards() {
             key={index} 
             className={`hover:shadow-lg hover:scale-105 transition-all duration-300 group border-2 ${getCardClass(metric)} shadow-sm hover:shadow-md`}
           >
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-2 sm:pb-3 p-3 sm:p-4">
               <div className="flex items-center justify-between">
-                <CardTitle className="text-sm font-semibold text-foreground group-hover:text-foreground transition-colors">
+                <CardTitle className="text-xs font-semibold text-foreground group-hover:text-foreground transition-colors sm:text-sm">
                   {metric.title}
                 </CardTitle>
-                <div className="p-2 rounded-lg bg-muted border">
-                  <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                <div className="p-1.5 rounded-lg bg-muted border sm:p-2">
+                  <Icon className="h-3 w-3 text-muted-foreground group-hover:text-primary transition-colors sm:h-4 sm:w-4" />
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="pt-0">
-              <div className={`text-2xl font-bold ${metric.colorClass} group-hover:scale-105 transition-all duration-300`}>
+            <CardContent className="pt-0 p-3 sm:p-4">
+              <div className={`text-lg font-bold ${metric.colorClass} group-hover:scale-105 transition-all duration-300 sm:text-xl lg:text-2xl`}>
                 {metric.value}
               </div>
-              <p className="text-xs text-muted-foreground mt-2 group-hover:text-foreground transition-colors">
+              <p className="text-[10px] text-muted-foreground mt-1 group-hover:text-foreground transition-colors sm:text-xs sm:mt-2">
                 {metric.subtitle}
               </p>
             </CardContent>
