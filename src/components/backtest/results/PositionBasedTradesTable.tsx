@@ -139,6 +139,17 @@ export function PositionBasedTradesTable() {
             const summary = getPositionSummary(tradesForPosition);
             const isExpanded = expandedPositions.has(positionId);
             
+            // Debug logging
+            console.log("Position data:", {
+              positionId,
+              vpi: tradesForPosition[0]?.vpi,
+              originalPositionId: tradesForPosition[0]?.positionId,
+              sampleTrade: tradesForPosition[0]
+            });
+            
+            // Use VPI as display name, fallback to positionId
+            const displayName = tradesForPosition[0]?.vpi || tradesForPosition[0]?.positionId || positionId;
+            
             return (
               <Collapsible key={positionId} open={isExpanded} onOpenChange={() => togglePosition(positionId)}>
                 <CollapsibleTrigger asChild>
@@ -150,7 +161,7 @@ export function PositionBasedTradesTable() {
                       {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       <div className="text-left">
                         <div className="font-medium flex items-center gap-2">
-                          {tradesForPosition[0]?.vpi || positionId}
+                          {displayName}
                           <Badge variant="outline" className="text-xs">
                             {summary.instrument}
                           </Badge>
