@@ -210,7 +210,7 @@ function calculateMetrics(apiData: any) {
               entryTime: trade.entry_time?.split('T')[1] || '',
               exitDate: trade.exit_time?.split('T')[0] || null,
               exitTime: trade.exit_time?.split('T')[1] || null,
-              transactions: transactionsList,
+              transactions: transactionsList, // Preserve transactions array
               // Preserve original structure
               originalTrade: trade
             };

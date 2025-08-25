@@ -31,6 +31,8 @@ export interface Trade {
   
   // Raw backend trade data structure
   trades?: BackendTrade[];
+  // New transactions array for multiple transactions per trade
+  transactions?: TransactionDetail[];
 }
 
 export interface BackendTrade {
@@ -82,6 +84,56 @@ export interface BackendTrade {
   strategy: string;
   node_id: string;
   trade_side: string;
+  // New transactions array for multiple transactions per trade
+  transactions?: TransactionDetail[];
+}
+
+// New interface for individual transaction details in the transactions array
+export interface TransactionDetail {
+  reEntryNum: number;
+  entry: {
+    node_id: string;
+    instrument: string;
+    quantity: number;
+    price: number;
+    side: string;
+    strategy: string;
+    order_id: string;
+    order_type: string;
+    product_type: string;
+    entry_time: string;
+    fill_time: string;
+    fill_price: number;
+    reEntryNum: number;
+    position_config: {
+      id: string;
+      vpi: string;
+      vpt: string;
+      priority: number;
+      quantity: number;
+      orderType: string;
+      multiplier: number;
+      productType: string;
+      _lastUpdated: number;
+      positionType: string;
+      sourceNodeId?: string;
+    };
+  };
+  exit: {
+    node_id: string;
+    price: number;
+    reason: string;
+    order_id?: string;
+    order_type?: string;
+    exit_time?: string;
+    fill_time?: string;
+    fill_price?: number;
+    reEntryNum: number;
+  };
+  status: string;
+  entry_time: string;
+  exit_time: string;
+  pnl: number;
 }
 
 export interface TradePair {
