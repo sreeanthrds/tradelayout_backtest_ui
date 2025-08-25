@@ -173,42 +173,64 @@ function calculateMetrics(apiData: any) {
   if (Object.keys(positionsByDate).length > 0) {
     console.log("Processing positions_by_date structure");
     Object.keys(positionsByDate).forEach(date => {
-    const positions = positionsByDate[date];
-    const dateTrades: any[] = [];
-    
-    Object.keys(positions).forEach(positionId => {
-      const position = positions[positionId];
+      const positions = positionsByDate[date];
+      const dateTrades: any[] = [];
       
-      // Check if this position has the new trades array structure
-      if (position.trades && Array.isArray(position.trades)) {
-        console.log(`Found ${position.trades.length} trades in position ${positionId} for date ${date}`);
+      Object.keys(positions).forEach(positionId => {
+        const position = positions[positionId];
         
-        // Add position info to each trade for context, but PRESERVE the original trades array
-        const tradesWithPosition = position.trades.map((trade: any) => ({
-          ...trade,
-          positionId,
-          executionDate: date,
-          instrument: position.instrument,
-          strategy: position.strategy,
-          // IMPORTANT: Preserve the original backend trades array for comprehensive details
-          trades: position.trades
-        }));
-        
-        dateTrades.push(...tradesWithPosition);
-        allTrades.push(...tradesWithPosition);
-      } else {
-        // Fallback to old structure for backwards compatibility
-        console.log(`Using old structure for position ${positionId} for date ${date}`);
-        const tradeWithDate = {
-          ...position,
-          positionId,
-          executionDate: date
-        };
-        dateTrades.push(tradeWithDate);
-        allTrades.push(tradeWithDate);
-      }
-    });
-    
+        // Check if this position has the new trades array structure
+        if (position.trades && Array.isArray(position.trades)) {
+          console.log(`Found ${position.trades.length} trades in position ${positionId} for date ${date}`);
+          
+          // Process each trade in the position
+          position.trades.forEach((trade: any) => {
+            // Calculate total PnL from all transactions
+            let totalPnL = 0;
+            let transactionsList: any[] = [];
+            
+            if (trade.transactions && Array.isArray(trade.transactions)) {
+              transactionsList = trade.transactions;
+              totalPnL = trade.transactions.reduce((sum: number, transaction: any) => {
+                return sum + (Number(transaction.pnl) || 0);
+              }, 0);
+            }
+            
+            // Create trade entry with calculated PnL
+            const processedTrade = {
+              ...trade,
+              positionId,
+              executionDate: date,
+              instrument: position.instrument || trade.instrument,
+              strategy: position.strategy || trade.strategy,
+              pnl: totalPnL, // Use calculated total PnL instead of null
+              profitLoss: totalPnL, // For backward compatibility
+              status: trade.status,
+              entryDate: trade.entry_time?.split('T')[0] || date,
+              entryTime: trade.entry_time?.split('T')[1] || '',
+              exitDate: trade.exit_time?.split('T')[0] || null,
+              exitTime: trade.exit_time?.split('T')[1] || null,
+              transactions: transactionsList,
+              // Preserve original structure
+              originalTrade: trade
+            };
+            
+            dateTrades.push(processedTrade);
+            allTrades.push(processedTrade);
+          });
+        } else {
+          // Fallback to old structure for backwards compatibility
+          console.log(`Using old structure for position ${positionId} for date ${date}`);
+          const tradeWithDate = {
+            ...position,
+            positionId,
+            executionDate: date
+          };
+          dateTrades.push(tradeWithDate);
+          allTrades.push(tradeWithDate);
+        }
+      });
+      
       if (dateTrades.length > 0) {
         tradesByDate[date] = dateTrades;
       }
