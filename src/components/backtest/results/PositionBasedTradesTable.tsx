@@ -30,8 +30,25 @@ export function PositionBasedTradesTable() {
     const tradesForDate = tradesByDate[date] || [];
     const tradesByVpi: { [vpi: string]: any[] } = {};
     
+    console.log("Processing trades for date:", date, tradesForDate);
+    
     tradesForDate.forEach(trade => {
-      const vpi = trade.vpi || trade.positionId || 'unknown';
+      // Extract VPI from the trade data - check multiple possible locations
+      const vpi = trade.vpi || 
+                 trade.originalTrade?.vpi || 
+                 trade.originalTransaction?.vpi ||
+                 trade.positionId ||
+                 'unknown-vpi';
+      
+      console.log("Trade VPI extraction:", {
+        tradeVpi: trade.vpi,
+        originalTradeVpi: trade.originalTrade?.vpi,
+        originalTransactionVpi: trade.originalTransaction?.vpi,
+        positionId: trade.positionId,
+        finalVpi: vpi,
+        trade: trade
+      });
+      
       if (!tradesByVpi[vpi]) {
         tradesByVpi[vpi] = [];
       }
@@ -43,6 +60,7 @@ export function PositionBasedTradesTable() {
       tradesByVpi[vpi].sort((a, b) => (a.reEntryNum || 0) - (b.reEntryNum || 0));
     });
     
+    console.log("Final trades by VPI for date:", date, tradesByVpi);
     return tradesByVpi;
   };
 
