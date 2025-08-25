@@ -146,17 +146,33 @@ function calculateMetricsFromTrades(trades: any[]) {
 
 function calculateMetrics(apiData: any) {
   console.log("calculateMetrics called with:", apiData);
+  console.log("API Data structure analysis:", {
+    hasGpsAggregated: !!apiData?.gps_aggregated,
+    hasPositionsByDate: !!apiData?.gps_aggregated?.positions_by_date,
+    hasAllPositions: !!apiData?.gps_aggregated?.all_positions,
+    hasDirectTrades: !!apiData?.trades,
+    topLevelKeys: apiData ? Object.keys(apiData) : []
+  });
   
-  // Handle the new nested trades structure
+  // Handle multiple possible data structures
   const positionsByDate = apiData?.gps_aggregated?.positions_by_date || {};
+  const allPositions = apiData?.gps_aggregated?.all_positions || {};
+  const directTrades = apiData?.trades || [];
   
-  console.log("Looking for gps_aggregated.positions_by_date:", positionsByDate);
+  console.log("Data sources found:", {
+    positionsByDateCount: Object.keys(positionsByDate).length,
+    allPositionsCount: Object.keys(allPositions).length,
+    directTradesCount: directTrades.length
+  });
   
   // Group trades by date and also maintain a flattened array
   const tradesByDate: TradesByDate = {};
   const allTrades: any[] = [];
   
-  Object.keys(positionsByDate).forEach(date => {
+  // Priority 1: Process positions_by_date structure (newest format)
+  if (Object.keys(positionsByDate).length > 0) {
+    console.log("Processing positions_by_date structure");
+    Object.keys(positionsByDate).forEach(date => {
     const positions = positionsByDate[date];
     const dateTrades: any[] = [];
     
@@ -193,50 +209,108 @@ function calculateMetrics(apiData: any) {
       }
     });
     
-    if (dateTrades.length > 0) {
-      tradesByDate[date] = dateTrades;
-    }
+      if (dateTrades.length > 0) {
+        tradesByDate[date] = dateTrades;
+      }
+    });
+  }
+  
+  // Priority 2: Process all_positions structure (legacy format)
+  else if (Object.keys(allPositions).length > 0) {
+    console.log("Processing all_positions structure");
+    Object.values(allPositions).forEach((position: any) => {
+      const tradeWithPosition = {
+        ...position,
+        positionId: position.id || position.position_id || 'unknown',
+        executionDate: position.entry_time?.split('T')[0] || position.date || 'unknown'
+      };
+      allTrades.push(tradeWithPosition);
+      
+      const date = tradeWithPosition.executionDate;
+      if (!tradesByDate[date]) {
+        tradesByDate[date] = [];
+      }
+      tradesByDate[date].push(tradeWithPosition);
+    });
+  }
+  
+  // Priority 3: Process direct trades array (simplest format)
+  else if (directTrades.length > 0) {
+    console.log("Processing direct trades array");
+    directTrades.forEach((trade: any) => {
+      const tradeWithDate = {
+        ...trade,
+        executionDate: trade.entry_time?.split('T')[0] || trade.exit_time?.split('T')[0] || trade.date || 'unknown'
+      };
+      allTrades.push(tradeWithDate);
+      
+      const date = tradeWithDate.executionDate;
+      if (!tradesByDate[date]) {
+        tradesByDate[date] = [];
+      }
+      tradesByDate[date].push(tradeWithDate);
+    });
+  }
+  
+  console.log("Final processing results:", {
+    totalTrades: allTrades.length,
+    tradesByDateKeys: Object.keys(tradesByDate).length,
+    sampleTrade: allTrades[0] || null
   });
   
-  console.log("Total flattened trades:", allTrades.length);
-  console.log("Trades grouped by date:", Object.keys(tradesByDate).length, "dates");
-  
-  // If we still don't have trades data, check for the old all_positions structure
+  // If still no data found, check for any other possible structure
   if (allTrades.length === 0) {
-    const positions = apiData?.gps_aggregated?.all_positions || {};
-    const positionsArray = Object.values(positions);
-    console.log("Falling back to old all_positions structure:", positionsArray.length);
+    console.log("No trades found in any expected structure, checking for alternative formats");
     
-    if (positionsArray.length === 0 && apiData?.trades) {
-      console.log("No positions data found, checking trades structure:", apiData.trades.length);
-      const metrics = calculateMetricsFromTrades(apiData.trades);
+    // Look for any array-like structures in the API response
+    const checkForTradeArrays = (obj: any, path: string = ''): any[] => {
+      if (!obj || typeof obj !== 'object') return [];
+      
+      for (const [key, value] of Object.entries(obj)) {
+        const currentPath = path ? `${path}.${key}` : key;
+        
+        if (Array.isArray(value) && value.length > 0) {
+          console.log(`Found array at ${currentPath} with ${value.length} items`);
+          // Check if this looks like trade data
+          const firstItem = value[0];
+          if (firstItem && typeof firstItem === 'object' && 
+              (firstItem.pnl !== undefined || firstItem.profit_loss !== undefined || 
+               firstItem.entry_time || firstItem.exit_time)) {
+            console.log(`Potential trade data found at ${currentPath}`);
+            return value;
+          }
+        } else if (typeof value === 'object' && value !== null) {
+          const nestedResult = checkForTradeArrays(value, currentPath);
+          if (nestedResult.length > 0) return nestedResult;
+        }
+      }
+      return [];
+    };
+    
+    const foundTrades = checkForTradeArrays(apiData);
+    if (foundTrades.length > 0) {
+      console.log(`Using discovered trade array with ${foundTrades.length} trades`);
+      const processedTrades = foundTrades.map((trade: any) => ({
+        ...trade,
+        executionDate: trade.entry_time?.split('T')[0] || trade.exit_time?.split('T')[0] || trade.date || 'unknown'
+      }));
+      
+      const tradesByDateFromFound: TradesByDate = {};
+      processedTrades.forEach((trade: any) => {
+        const date = trade.executionDate;
+        if (!tradesByDateFromFound[date]) {
+          tradesByDateFromFound[date] = [];
+        }
+        tradesByDateFromFound[date].push(trade);
+      });
+      
+      const metrics = calculateMetricsFromTrades(processedTrades);
       return {
         ...metrics,
-        tradesByDate: {},
-        allTrades: apiData.trades
+        tradesByDate: tradesByDateFromFound,
+        allTrades: processedTrades
       };
     }
-    // Process old structure trades and group by date if possible
-    const oldTrades = positionsArray.length > 0 ? positionsArray : [];
-    const oldTradesByDate: TradesByDate = {};
-    
-    oldTrades.forEach((trade: any) => {
-      const date = trade.entry_time?.split('T')[0] || trade.date || 'unknown';
-      if (!oldTradesByDate[date]) {
-        oldTradesByDate[date] = [];
-      }
-      oldTradesByDate[date].push({
-        ...trade,
-        executionDate: date
-      });
-    });
-    
-    const metrics = calculateMetricsFromTrades(oldTrades);
-    return {
-      ...metrics,
-      tradesByDate: oldTradesByDate,
-      allTrades: oldTrades
-    };
   }
   
   if (allTrades.length === 0) {

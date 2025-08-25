@@ -15,29 +15,41 @@ export interface BacktestRequest {
 }
 
 export interface BacktestResult {
-  message: string;
-  processing_method: string;
-  workers_used: number;
-  gps_aggregated: {
-    all_positions: {
-      [key: string]: {
-        entry: any;
-        exit: any;
-        status: string;
-        entry_time: string;
-        exit_time: string;
-        close_reason: string;
-        pnl: number;
-        quantity: number;
-        entry_price: number;
-        exit_price: number;
-        instrument: string;
-        strategy: string;
-        node_id: string;
-        date: string;
+  message?: string;
+  processing_method?: string;
+  workers_used?: number;
+  // Support both old and new JSON structures
+  gps_aggregated?: {
+    all_positions?: {
+      [key: string]: any;
+    };
+    positions_by_date?: {
+      [date: string]: {
+        [positionId: string]: {
+          trades?: any[];
+          entry?: any;
+          exit?: any;
+          status?: string;
+          entry_time?: string;
+          exit_time?: string;
+          close_reason?: string;
+          pnl?: number;
+          quantity?: number;
+          entry_price?: number;
+          exit_price?: number;
+          instrument?: string;
+          strategy?: string;
+          node_id?: string;
+          trade_side?: string;
+          [key: string]: any; // Allow additional fields
+        };
       };
     };
   };
+  // Direct trades array support
+  trades?: any[];
+  // Support any additional top-level fields
+  [key: string]: any;
 }
 
 class BacktestApiService {

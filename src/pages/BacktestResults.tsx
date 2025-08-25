@@ -25,11 +25,20 @@ export default function BacktestResults() {
       
       console.log("Checking for results:", { parameters, dataKeys: data ? Object.keys(data) : 'null' });
       
-      // Only show results if we have actual API data with trades/positions
+      // Check for any possible data structure that contains trades
       const hasApiData = data && (
+        // Check nested positions_by_date structure
         (data as any)?.gps_aggregated?.positions_by_date && Object.keys((data as any).gps_aggregated.positions_by_date).length > 0 ||
+        // Check legacy all_positions structure  
         (data as any)?.gps_aggregated?.all_positions && Object.keys((data as any).gps_aggregated.all_positions).length > 0 ||
-        (data as any)?.trades && (data as any).trades.length > 0
+        // Check direct trades array
+        (data as any)?.trades && Array.isArray((data as any).trades) && (data as any).trades.length > 0 ||
+        // Check for any array with trade-like objects
+        Object.values(data).some(value => 
+          Array.isArray(value) && value.length > 0 && 
+          value.some(item => item && typeof item === 'object' && 
+            (item.pnl !== undefined || item.profit_loss !== undefined || item.entry_time || item.exit_time))
+        )
       );
       
       setHasResults(!!hasApiData);
