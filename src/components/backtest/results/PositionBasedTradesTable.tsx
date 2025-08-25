@@ -210,13 +210,18 @@ export function PositionBasedTradesTable() {
                         {isDateExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         <div className="text-left">
                            <div className="font-medium">
-                             {new Date(date).toLocaleDateString('en-GB', { 
-                               weekday: 'short',
-                               year: 'numeric', 
-                               month: 'short', 
-                               day: 'numeric' 
-                             })}
-                           </div>
+                              {(() => {
+                                // Parse DD-MM-YYYY format from JSON
+                                const [day, month, year] = date.split('-');
+                                const parsedDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+                                return parsedDate.toLocaleDateString('en-GB', { 
+                                  weekday: 'short',
+                                  year: 'numeric', 
+                                  month: 'short', 
+                                  day: 'numeric' 
+                                });
+                              })()}
+                            </div>
                           <div className="text-sm text-muted-foreground">
                             {dayPositions} positions • {dayTrades.length} trades
                           </div>
