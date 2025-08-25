@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { TradesList } from "@/components/backtest/TradesList";
-import { ComprehensiveTradesTable } from "./ComprehensiveTradesTable";
+import { PositionBasedTradesTable } from "./PositionBasedTradesTable";
 import { tradeService } from "@/services/TradeDataService";
 
 export function TradesTabContent() {
@@ -42,7 +42,7 @@ export function TradesTabContent() {
           Export JSON
         </Button> */}
       </div>
-      <ComprehensiveTradesTable />
+      <PositionBasedTradesTable />
     </div>
   );
 }

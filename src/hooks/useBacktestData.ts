@@ -7,6 +7,10 @@ export interface TradesByDate {
   [date: string]: any[];
 }
 
+export interface TradesByPosition {
+  [positionId: string]: any[];
+}
+
 export interface BacktestData {
   name: string;
   symbol: string;
@@ -19,6 +23,7 @@ export interface BacktestData {
   apiData?: any; // Store the raw API data
   allTrades: any[]; // Array of all individual trades (flattened)
   tradesByDate: TradesByDate; // Trades grouped by execution date
+  tradesByPosition: TradesByPosition; // Trades grouped by position
   // New comprehensive metrics
   totalReturnPercent: number;
   totalWins: number;
@@ -43,6 +48,7 @@ function calculateMetricsFromTrades(trades: any[]) {
       trades: 0,
       allTrades: [],
       tradesByDate: {},
+      tradesByPosition: {},
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -132,6 +138,7 @@ function calculateMetricsFromTrades(trades: any[]) {
     trades: trades.length,
     allTrades: trades,
     tradesByDate: {}, // Will be populated by calling function if needed
+    tradesByPosition: {}, // Will be populated by calling function if needed
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -344,6 +351,7 @@ function calculateMetrics(apiData: any) {
       trades: 0,
       allTrades: [],
       tradesByDate: {},
+      tradesByPosition: {},
       totalReturnPercent: 0,
       totalWins: 0,
       totalTrades: 0,
@@ -425,6 +433,16 @@ function calculateMetrics(apiData: any) {
   const initialCapital = 100000; // Assume 1 lakh initial capital
   const totalReturnPercent = initialCapital > 0 ? (Number(totalPnL) / initialCapital) * 100 : 0;
 
+  // Group trades by position
+  const tradesByPosition: TradesByPosition = {};
+  allTrades.forEach(trade => {
+    const positionId = trade.positionId || 'unknown';
+    if (!tradesByPosition[positionId]) {
+      tradesByPosition[positionId] = [];
+    }
+    tradesByPosition[positionId].push(trade);
+  });
+
   return {
     totalReturn: Math.round(Number(totalPnL) * 100) / 100,
     winRate: Math.round(winRate * 100) / 100,
@@ -433,6 +451,7 @@ function calculateMetrics(apiData: any) {
     trades: allTrades.length,
     allTrades: allTrades, // Include the trades array
     tradesByDate: tradesByDate, // Include the grouped trades
+    tradesByPosition: tradesByPosition, // Include position-grouped trades
     totalReturnPercent: Math.round(totalReturnPercent * 100) / 100,
     totalWins: winningTrades.length,
     totalTrades: closedTrades.length,
@@ -457,6 +476,7 @@ export function useBacktestData() {
     trades: 0,
     allTrades: [],
     tradesByDate: {},
+    tradesByPosition: {},
     totalReturnPercent: 0,
     totalWins: 0,
     totalTrades: 0,
@@ -541,6 +561,7 @@ export function useBacktestData() {
           maxLossStreak: 0,
           sharpeRatio: 0,
           tradesByDate: {},
+          tradesByPosition: {},
           rawTrades: []
         }));
       }
