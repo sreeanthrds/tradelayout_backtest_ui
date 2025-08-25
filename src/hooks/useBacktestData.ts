@@ -192,38 +192,67 @@ function calculateMetrics(apiData: any) {
           
           // Process each trade in the position
           position.trades.forEach((trade: any) => {
-            // Calculate total PnL from all transactions
-            let totalPnL = 0;
-            let transactionsList: any[] = [];
+            // Extract VPI (Virtual Position Identifier) from trade or position
+            const vpi = trade.vpi || position.vpi || positionId;
             
+            // If trade has transactions array, process each transaction as a separate re-entry
             if (trade.transactions && Array.isArray(trade.transactions)) {
-              transactionsList = trade.transactions;
-              totalPnL = trade.transactions.reduce((sum: number, transaction: any) => {
-                return sum + (Number(transaction.pnl) || 0);
-              }, 0);
+              console.log(`Processing ${trade.transactions.length} transactions for VPI ${vpi}`);
+              
+              trade.transactions.forEach((transaction: any, transactionIndex: number) => {
+                const transactionTrade = {
+                  ...trade,
+                  ...transaction, // Merge transaction data
+                  vpi: vpi,
+                  positionId: vpi, // Use VPI as position ID
+                  executionDate: date,
+                  instrument: position.instrument || trade.instrument || transaction.instrument,
+                  strategy: position.strategy || trade.strategy || transaction.strategy,
+                  pnl: Number(transaction.pnl) || 0,
+                  profitLoss: Number(transaction.pnl) || 0,
+                  status: transaction.status || trade.status,
+                  entryDate: transaction.entry_time?.split('T')[0] || trade.entry_time?.split('T')[0] || date,
+                  entryTime: transaction.entry_time?.split('T')[1] || trade.entry_time?.split('T')[1] || '',
+                  exitDate: transaction.exit_time?.split('T')[0] || trade.exit_time?.split('T')[0] || null,
+                  exitTime: transaction.exit_time?.split('T')[1] || trade.exit_time?.split('T')[1] || null,
+                  reEntryNum: transactionIndex, // Track re-entry number
+                  entry_time: transaction.entry_time || trade.entry_time,
+                  exit_time: transaction.exit_time || trade.exit_time,
+                  entry_price: transaction.entry_price || transaction.entry?.price,
+                  exit_price: transaction.exit_price || transaction.exit?.price,
+                  quantity: transaction.quantity || transaction.entry?.quantity || 1,
+                  // Preserve original structures
+                  originalTrade: trade,
+                  originalTransaction: transaction
+                };
+                
+                dateTrades.push(transactionTrade);
+                allTrades.push(transactionTrade);
+              });
+            } else {
+              // Handle trades without transactions array (legacy format)
+              const processedTrade = {
+                ...trade,
+                vpi: vpi,
+                positionId: vpi,
+                executionDate: date,
+                instrument: position.instrument || trade.instrument,
+                strategy: position.strategy || trade.strategy,
+                pnl: Number(trade.pnl) || 0,
+                profitLoss: Number(trade.pnl) || 0,
+                status: trade.status,
+                entryDate: trade.entry_time?.split('T')[0] || date,
+                entryTime: trade.entry_time?.split('T')[1] || '',
+                exitDate: trade.exit_time?.split('T')[0] || null,
+                exitTime: trade.exit_time?.split('T')[1] || null,
+                reEntryNum: 0,
+                // Preserve original structure
+                originalTrade: trade
+              };
+              
+              dateTrades.push(processedTrade);
+              allTrades.push(processedTrade);
             }
-            
-            // Create trade entry with calculated PnL
-            const processedTrade = {
-              ...trade,
-              positionId,
-              executionDate: date,
-              instrument: position.instrument || trade.instrument,
-              strategy: position.strategy || trade.strategy,
-              pnl: totalPnL, // Use calculated total PnL instead of null
-              profitLoss: totalPnL, // For backward compatibility
-              status: trade.status,
-              entryDate: trade.entry_time?.split('T')[0] || date,
-              entryTime: trade.entry_time?.split('T')[1] || '',
-              exitDate: trade.exit_time?.split('T')[0] || null,
-              exitTime: trade.exit_time?.split('T')[1] || null,
-              transactions: transactionsList, // Preserve transactions array
-              // Preserve original structure
-              originalTrade: trade
-            };
-            
-            dateTrades.push(processedTrade);
-            allTrades.push(processedTrade);
           });
         } else {
           // Fallback to old structure for backwards compatibility
@@ -433,14 +462,21 @@ function calculateMetrics(apiData: any) {
   const initialCapital = 100000; // Assume 1 lakh initial capital
   const totalReturnPercent = initialCapital > 0 ? (Number(totalPnL) / initialCapital) * 100 : 0;
 
-  // Group trades by position
+  // Group trades by position using VPI
   const tradesByPosition: TradesByPosition = {};
   allTrades.forEach(trade => {
-    const positionId = trade.positionId || 'unknown';
+    const positionId = trade.vpi || trade.positionId || 'unknown';
     if (!tradesByPosition[positionId]) {
       tradesByPosition[positionId] = [];
     }
     tradesByPosition[positionId].push(trade);
+  });
+  
+  // Sort trades within each position by re-entry number
+  Object.keys(tradesByPosition).forEach(positionId => {
+    tradesByPosition[positionId].sort((a, b) => {
+      return (a.reEntryNum || 0) - (b.reEntryNum || 0);
+    });
   });
 
   return {
