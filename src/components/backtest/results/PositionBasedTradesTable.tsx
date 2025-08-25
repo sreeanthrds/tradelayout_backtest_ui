@@ -150,7 +150,7 @@ export function PositionBasedTradesTable() {
                       {isExpanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       <div className="text-left">
                         <div className="font-medium flex items-center gap-2">
-                          {positionId}
+                          {tradesForPosition[0]?.vpi || positionId}
                           <Badge variant="outline" className="text-xs">
                             {summary.instrument}
                           </Badge>
