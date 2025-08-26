@@ -95,11 +95,11 @@ export function BackendTradeDetails({ trades }: BackendTradeDetailsProps) {
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Entry Price:</span>
-                            <p className="font-medium">₹{transaction.entry.price.toFixed(2)}</p>
+                            <p className="font-medium">₹{transaction.entry.price?.toFixed(2) || 'N/A'}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Fill Price:</span>
-                            <p className="font-medium">₹{transaction.entry.fill_price.toFixed(2)}</p>
+                            <p className="font-medium">₹{transaction.entry.fill_price?.toFixed(2) || 'N/A'}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Entry Time:</span>
@@ -135,11 +135,11 @@ export function BackendTradeDetails({ trades }: BackendTradeDetailsProps) {
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Exit Price:</span>
-                            <p className="font-medium">₹{transaction.exit.price.toFixed(2)}</p>
+                            <p className="font-medium">₹{transaction.exit.price?.toFixed(2) || 'N/A'}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Fill Price:</span>
-                            <p className="font-medium">₹{transaction.exit.fill_price.toFixed(2)}</p>
+                            <p className="font-medium">₹{transaction.exit.fill_price?.toFixed(2) || 'N/A'}</p>
                           </div>
                           <div>
                             <span className="text-muted-foreground block">Exit Time:</span>
@@ -240,11 +240,11 @@ export function BackendTradeDetails({ trades }: BackendTradeDetailsProps) {
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Entry Price:</span>
-                    <p className="font-medium">₹{trade.entry.price.toFixed(2)}</p>
+                    <p className="font-medium">₹{trade.entry.price?.toFixed(2) || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Fill Price:</span>
-                    <p className="font-medium">₹{trade.entry.fill_price.toFixed(2)}</p>
+                    <p className="font-medium">₹{trade.entry.fill_price?.toFixed(2) || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Entry Time:</span>
@@ -348,11 +348,11 @@ export function BackendTradeDetails({ trades }: BackendTradeDetailsProps) {
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Exit Price:</span>
-                    <p className="font-medium">₹{trade.exit.price.toFixed(2)}</p>
+                    <p className="font-medium">₹{trade.exit.price?.toFixed(2) || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Fill Price:</span>
-                    <p className="font-medium">₹{trade.exit.fill_price.toFixed(2)}</p>
+                    <p className="font-medium">₹{trade.exit.fill_price?.toFixed(2) || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground block">Exit Time:</span>
