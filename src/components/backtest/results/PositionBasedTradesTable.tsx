@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { ChevronDown, ChevronRight, Target, TrendingUp, TrendingDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ComprehensiveTradeDetails } from "@/components/backtest/trades/ComprehensiveTradeDetails";
+import { TradeExpandedDetails } from "@/components/backtest/trades/TradeExpandedDetails";
 
 export function PositionBasedTradesTable() {
   const { backtestData } = useBacktestData();
@@ -361,8 +361,8 @@ export function PositionBasedTradesTable() {
                                           
                                            {isTradeExpanded && (
                                              <TableRow key={`${tradeId}-details`}>
-                                               <TableCell colSpan={10} className="bg-muted/30 p-4">
-                                                 <ComprehensiveTradeDetails trade={trade} />
+                                               <TableCell colSpan={10} className="bg-muted/30 p-0">
+                                                 <TradeExpandedDetails trade={trade} />
                                                </TableCell>
                                              </TableRow>
                                            )}
