@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trade } from "@/models/TradeTypes";
 import { TradeSummaryTab } from "./components/TradeSummaryTab";
-import { TransactionsTab } from "./components/TransactionsTab";
 import { BackendTradeDetails } from "./components/BackendTradeDetails";
 
 interface TradeExpandedDetailsProps {
@@ -66,16 +65,11 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="mb-4">
           <TabsTrigger value="summary">Summary</TabsTrigger>
-          <TabsTrigger value="transactions">Transactions</TabsTrigger>
           <TabsTrigger value="details">Comprehensive Details</TabsTrigger>
         </TabsList>
 
         <TabsContent value="summary">
           <TradeSummaryTab trade={trade} />
-        </TabsContent>
-
-        <TabsContent value="transactions">
-          <TransactionsTab tradePairs={tradePairs} />
         </TabsContent>
 
         <TabsContent value="details">
