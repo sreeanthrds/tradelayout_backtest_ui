@@ -17,24 +17,41 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   console.log("=== TradeExpandedDetails Debug ===");
   console.log("Trade object:", trade);
   console.log("Trade keys:", Object.keys(trade));
-  console.log("Trade.trades:", trade.trades);
-  console.log("Trade.tradePairs:", trade.tradePairs);
-  console.log("Trade has entry?", !!(trade as any).entry);
-  console.log("Trade has exit?", !!(trade as any).exit);
-  console.log("Full trade structure:", JSON.stringify(trade, null, 2));
   
   // Safeguard against missing trade data
   if (!trade) {
     return <div className="p-4 text-center text-muted-foreground">No trade details available.</div>;
   }
 
-  // Check for your backend data structure
-  // If the trade itself has entry/exit structure, use it as a single backend trade
-  let backendTrades = trade.trades || [];
+  // Create a single backend trade object from this specific transaction
+  let backendTrades = [];
   
-  // If trade.trades is empty but the trade itself has entry/exit structure, use the trade itself
-  if (backendTrades.length === 0 && (trade as any).entry && (trade as any).exit) {
-    backendTrades = [trade as any]; // Cast trade as BackendTrade
+  // If the trade has originalTransaction (from the new structure), create a backend trade from it
+  if ((trade as any).originalTransaction) {
+    const transaction = (trade as any).originalTransaction;
+    const singleBackendTrade = {
+      entry: transaction.entry,
+      exit: transaction.exit,
+      status: transaction.status,
+      entry_time: transaction.entry_time,
+      exit_time: transaction.exit_time,
+      close_reason: transaction.exit?.reason || transaction.close_reason,
+      pnl: transaction.pnl,
+      quantity: transaction.quantity || transaction.entry?.quantity,
+      entry_price: transaction.entry_price || transaction.entry?.price,
+      exit_price: transaction.exit_price || transaction.exit?.price,
+      instrument: trade.instrument,
+      strategy: trade.strategy,
+      node_id: transaction.entry?.node_id,
+      trade_side: transaction.entry?.side,
+      // Create a transactions array with just this transaction
+      transactions: [transaction]
+    };
+    backendTrades = [singleBackendTrade];
+  }
+  // Fallback: if trade itself has entry/exit structure, use it as a single backend trade
+  else if ((trade as any).entry && (trade as any).exit) {
+    backendTrades = [trade as any];
   }
   
   const tradePairs = trade.tradePairs && Array.isArray(trade.tradePairs) ? trade.tradePairs : [];
@@ -42,7 +59,7 @@ export function TradeExpandedDetails({ trade }: TradeExpandedDetailsProps) {
   // Force show comprehensive details if we have backend trades
   const hasBackendData = backendTrades.length > 0;
   
-  console.log("Backend trades available:", hasBackendData, "Count:", backendTrades.length);
+  console.log("Backend trades created for this specific transaction:", hasBackendData, "Count:", backendTrades.length);
 
   return (
     <div className="px-4 py-2 bg-muted/30 border-t">
