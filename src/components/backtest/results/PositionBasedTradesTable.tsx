@@ -40,13 +40,14 @@ export function PositionBasedTradesTable() {
                  trade.positionId ||
                  'unknown-vpi';
       
-      console.log("Trade VPI extraction:", {
-        tradeVpi: trade.vpi,
-        originalTradeVpi: trade.originalTrade?.vpi,
-        originalTransactionVpi: trade.originalTransaction?.vpi,
-        positionId: trade.positionId,
-        finalVpi: vpi,
-        trade: trade
+      console.log("Trade close_reason analysis:", {
+        tradeCloseReason: trade.close_reason,
+        exitCloseReason: trade.exit?.close_reason,
+        exitReason: trade.exit?.reason,
+        originalTradeCloseReason: trade.originalTrade?.close_reason,
+        originalTransactionExitReason: trade.originalTransaction?.exit?.reason,
+        originalTransactionCloseReason: trade.originalTransaction?.close_reason,
+        fullTrade: trade
       });
       
       if (!tradesByVpi[vpi]) {
@@ -343,11 +344,16 @@ export function PositionBasedTradesTable() {
                                              }`}>
                                                {formatCurrency(trade.pnl || 0)}
                                              </TableCell>
-                                             <TableCell>
-                                               <Badge variant="outline" className="text-xs">
-                                                 {trade.close_reason || trade.exit?.close_reason || '-'}
-                                               </Badge>
-                                             </TableCell>
+                                              <TableCell>
+                                                <Badge variant="outline" className="text-xs">
+                                                  {trade.close_reason || 
+                                                   trade.exit?.reason || 
+                                                   trade.exit?.close_reason || 
+                                                   trade.originalTransaction?.exit?.reason ||
+                                                   trade.originalTrade?.close_reason || 
+                                                   '-'}
+                                                </Badge>
+                                              </TableCell>
                                              <TableCell>
                                                {getStatusBadge(trade)}
                                              </TableCell>
