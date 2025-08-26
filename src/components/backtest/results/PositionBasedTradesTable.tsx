@@ -295,6 +295,7 @@ export function PositionBasedTradesTable() {
                                       <TableHead>Exit Price</TableHead>
                                       <TableHead>Quantity</TableHead>
                                       <TableHead>P&L</TableHead>
+                                      <TableHead>Close Reason</TableHead>
                                       <TableHead>Status</TableHead>
                                     </TableRow>
                                   </TableHeader>
@@ -337,23 +338,28 @@ export function PositionBasedTradesTable() {
                                               {trade.exit_price ? `₹${trade.exit_price.toFixed(2)}` : '-'}
                                             </TableCell>
                                             <TableCell>{trade.quantity || 1}</TableCell>
-                                            <TableCell className={`font-mono font-semibold ${
-                                              (trade.pnl || 0) >= 0 ? 'text-green-600' : 'text-red-600'
-                                            }`}>
-                                              {formatCurrency(trade.pnl || 0)}
-                                            </TableCell>
-                                            <TableCell>
-                                              {getStatusBadge(trade)}
-                                            </TableCell>
+                                             <TableCell className={`font-mono font-semibold ${
+                                               (trade.pnl || 0) >= 0 ? 'text-green-600' : 'text-red-600'
+                                             }`}>
+                                               {formatCurrency(trade.pnl || 0)}
+                                             </TableCell>
+                                             <TableCell>
+                                               <Badge variant="outline" className="text-xs">
+                                                 {trade.close_reason || trade.exit?.close_reason || '-'}
+                                               </Badge>
+                                             </TableCell>
+                                             <TableCell>
+                                               {getStatusBadge(trade)}
+                                             </TableCell>
                                           </TableRow>
                                           
-                                          {isTradeExpanded && (
-                                            <TableRow key={`${tradeId}-details`}>
-                                              <TableCell colSpan={9} className="bg-muted/30 p-4">
-                                                <ComprehensiveTradeDetails trade={trade} />
-                                              </TableCell>
-                                            </TableRow>
-                                          )}
+                                           {isTradeExpanded && (
+                                             <TableRow key={`${tradeId}-details`}>
+                                               <TableCell colSpan={10} className="bg-muted/30 p-4">
+                                                 <ComprehensiveTradeDetails trade={trade} />
+                                               </TableCell>
+                                             </TableRow>
+                                           )}
                                         </>
                                       );
                                     })}
