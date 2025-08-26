@@ -221,10 +221,20 @@ function calculateMetrics(apiData: any) {
                   entry_price: transaction.entry_price || transaction.entry?.price,
                   exit_price: transaction.exit_price || transaction.exit?.price,
                   quantity: transaction.quantity || transaction.entry?.quantity || 1,
+                  close_reason: transaction.exit?.reason || transaction.close_reason || trade.close_reason,
                   // Preserve original structures
                   originalTrade: trade,
                   originalTransaction: transaction
                 };
+                
+                console.log("Transaction processing - close reason mapping:", {
+                  transactionExitReason: transaction.exit?.reason,
+                  transactionCloseReason: transaction.close_reason,
+                  tradeCloseReason: trade.close_reason,
+                  finalCloseReason: transactionTrade.close_reason,
+                  transactionIndex,
+                  vpi
+                });
                 
                 dateTrades.push(transactionTrade);
                 allTrades.push(transactionTrade);
