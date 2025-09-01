@@ -23,7 +23,11 @@ export default function BacktestResults() {
       const parameters = tradeService.getBacktestParameters();
       const data = tradeService.getData();
       
-      console.log("Checking for results:", { parameters, dataKeys: data ? Object.keys(data) : 'null' });
+      console.log("Checking for results:", { 
+        parameters: !!parameters, 
+        dataKeys: data ? Object.keys(data) : 'null',
+        fullData: data
+      });
       
       // Check for any possible data structure that contains trades
       const hasApiData = data && (
@@ -38,8 +42,16 @@ export default function BacktestResults() {
           Array.isArray(value) && value.length > 0 && 
           value.some(item => item && typeof item === 'object' && 
             (item.pnl !== undefined || item.profit_loss !== undefined || item.entry_time || item.exit_time))
-        )
+        ) ||
+        // Check for any non-empty object data (more permissive)
+        Object.keys(data).length > 0 && typeof data === 'object'
       );
+      
+      console.log("Data check results:", {
+        hasApiData,
+        dataType: typeof data,
+        dataKeysLength: data ? Object.keys(data).length : 0
+      });
       
       setHasResults(!!hasApiData);
     };

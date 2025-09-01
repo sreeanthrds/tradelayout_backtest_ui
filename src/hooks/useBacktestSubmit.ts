@@ -46,8 +46,15 @@ export function useBacktestSubmit() {
       // Store the complete API response - the useBacktestData hook will process it
       tradeService.setApiData(result);
       
+      // Add debug logging
+      console.log("API result stored successfully:", {
+        hasData: !!result,
+        resultKeys: result ? Object.keys(result) : [],
+        dataStored: !!tradeService.getData()
+      });
+      
       toast.success("Backtest Completed", {
-        description: `Successfully ran backtest`,
+        description: `Successfully ran backtest for strategy ${data.strategy}`,
       });
 
       // Results will display on the same page
