@@ -75,24 +75,26 @@ class BacktestApiService {
     try {
       // Use provided userId or fallback to temp user ID
       const userIdToUse = userId || TEMP_USER_ID;
+      console.log("Fetching strategies for userId:", userIdToUse);
+      
       const response = await this.makeRequest<{ strategies: Strategy[] }>('/backtest/strategies/list', {
         method: 'POST',
         body: JSON.stringify({ user_id: userIdToUse }),
       });
       
-      // If API returns empty strategies, use fallback for development
+      console.log("API strategies response:", response);
+      
+      // Return actual API response - don't use fallback anymore
       if (!response.strategies || response.strategies.length === 0) {
-        console.warn('No strategies found from API, using fallback data');
-        return [
-          { id: '1', name: 'Strategy 1' },
-          { id: '2', name: 'Strategy 2' },
-          { id: '3', name: 'Strategy 3' },
-        ];
+        console.warn('No strategies found from API for user:', userIdToUse);
+        // Show the actual empty state instead of fallback
+        return [];
       }
       
       return response.strategies;
     } catch (error) {
       console.error('Error fetching strategies:', error);
+      // On error, still return empty array instead of fallback
       return [];
     }
   }

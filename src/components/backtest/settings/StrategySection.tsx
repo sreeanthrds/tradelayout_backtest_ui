@@ -70,12 +70,18 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {strategies.map((strategy) => (
-                    <SelectItem key={strategy.id} value={strategy.id}>
-                      {strategy.name}
-                      {strategy.id === strategyId && " (Pre-selected)"}
+                  {strategies.length === 0 && !isLoading ? (
+                    <SelectItem value="no-strategies" disabled>
+                      No strategies found - check API
                     </SelectItem>
-                  ))}
+                  ) : (
+                    strategies.map((strategy) => (
+                      <SelectItem key={strategy.id} value={strategy.id}>
+                        {strategy.name}
+                        {strategy.id === strategyId && " (Pre-selected)"}
+                      </SelectItem>
+                    ))
+                  )}
                 </SelectContent>
               </Select>
               {strategyId && (
