@@ -6,7 +6,7 @@ export class ConfigService {
   private static STORAGE_KEY = 'app_config';
   private static DEFAULTS: AppConfig = {
     // Default can be updated anytime from the UI; used as a safe fallback
-    apiBaseUrl: 'https://e76aaa700be9.ngrok-free.app',
+    apiBaseUrl: 'https://ac95ceefa7db.ngrok-free.app',
   };
 
   static getConfig(): AppConfig {
