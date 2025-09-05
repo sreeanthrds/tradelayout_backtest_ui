@@ -23,16 +23,27 @@ interface StrategySectionProps {
 export function StrategySection({ control, setValue }: StrategySectionProps) {
   const { userId, strategyId } = useUrlParams();
   const { strategies, isLoading, error } = useStrategies(userId);
+  const [hasSetInitialStrategy, setHasSetInitialStrategy] = useState(false);
+
+  // Debug logging
+  useEffect(() => {
+    console.log('StrategySection render - strategyId:', strategyId, 'strategies:', strategies.length, 'isLoading:', isLoading);
+  }, [strategyId, strategies, isLoading]);
 
   // Auto-select strategy if strategyId is provided in URL
   useEffect(() => {
-    if (strategyId && strategies.length > 0) {
+    if (strategyId && strategies.length > 0 && !hasSetInitialStrategy) {
       const strategy = strategies.find(s => s.id === strategyId);
       if (strategy) {
+        console.log('Setting strategy from URL:', strategyId, 'Strategy found:', strategy.name);
         setValue('strategy', strategyId);
+        setHasSetInitialStrategy(true);
+      } else {
+        console.warn('Strategy ID from URL not found in available strategies:', strategyId);
+        console.log('Available strategies:', strategies.map(s => ({ id: s.id, name: s.name })));
       }
     }
-  }, [strategyId, strategies, setValue]);
+  }, [strategyId, strategies, setValue, hasSetInitialStrategy]);
 
   const isStrategyDisabled = isLoading || !!strategyId; // Disable if loading or strategyId is provided
   return (
