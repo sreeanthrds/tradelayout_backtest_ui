@@ -21,8 +21,11 @@ export function ApiConfig() {
       toast.error('Please enter a valid URL');
       return;
     }
+    console.log('ApiConfig - Saving URL:', value);
     ConfigService.setApiBaseUrl(value);
     const saved = ConfigService.getApiBaseUrl();
+    console.log('ApiConfig - Saved URL:', saved);
+    console.log('ApiConfig - localStorage content:', localStorage.getItem('app_config'));
     setCurrent(saved);
     toast.success('API base URL updated', { description: saved });
   };

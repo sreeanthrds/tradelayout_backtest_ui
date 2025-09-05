@@ -55,6 +55,8 @@ export interface BacktestResult {
 class BacktestApiService {
   private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const baseUrl = ConfigService.getApiBaseUrl();
+    console.log('BacktestApiService - Using API base URL:', baseUrl);
+    console.log('BacktestApiService - Full URL:', `${baseUrl}${endpoint}`);
     const response = await fetch(`${baseUrl}${endpoint}`, {
       ...options,
       headers: {
