@@ -83,7 +83,7 @@ export function StrategySection({ control, setValue }: StrategySectionProps) {
                 <SelectContent>
                   {strategies.length === 0 && !isLoading ? (
                     <SelectItem value="no-strategies" disabled>
-                      No strategies found - check API
+                      {error ? "API connection failed - check settings" : "No strategies found"}
                     </SelectItem>
                   ) : (
                     strategies.map((strategy) => (

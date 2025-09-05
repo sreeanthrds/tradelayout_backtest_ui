@@ -57,20 +57,33 @@ class BacktestApiService {
     const baseUrl = ConfigService.getApiBaseUrl();
     console.log('BacktestApiService - Using API base URL:', baseUrl);
     console.log('BacktestApiService - Full URL:', `${baseUrl}${endpoint}`);
-    const response = await fetch(`${baseUrl}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        'ngrok-skip-browser-warning': 'true',
-        ...options.headers,
-      },
-    });
+    
+    try {
+      const response = await fetch(`${baseUrl}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          'ngrok-skip-browser-warning': 'true',
+          ...options.headers,
+        },
+      });
 
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.statusText}`);
+      if (!response.ok) {
+        throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('BacktestApiService - Request failed:', error);
+      
+      // Check if it's a CORS or network error
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error(`Unable to connect to API server at ${baseUrl}. This may be due to CORS restrictions or the server being unavailable. Please check your API configuration in the Admin panel.`);
+      }
+      
+      // Re-throw other errors
+      throw error;
     }
-
-    return response.json();
   }
 
   async getStrategies(userId?: string | null): Promise<Strategy[]> {
