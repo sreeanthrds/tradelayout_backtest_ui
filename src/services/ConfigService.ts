@@ -13,10 +13,23 @@ export class ConfigService {
     if (typeof window === 'undefined') return this.DEFAULTS;
     try {
       const raw = localStorage.getItem(this.STORAGE_KEY);
-      if (!raw) return this.DEFAULTS;
+      console.log('🔍 ConfigService.getConfig() - localStorage raw value:', raw);
+      console.log('🔍 ConfigService.getConfig() - DEFAULTS:', this.DEFAULTS);
+      
+      if (!raw) {
+        console.log('🔍 ConfigService.getConfig() - No localStorage value, returning DEFAULTS');
+        return this.DEFAULTS;
+      }
+      
       const parsed = JSON.parse(raw) as Partial<AppConfig>;
-      return { ...this.DEFAULTS, ...parsed } as AppConfig;
-    } catch {
+      console.log('🔍 ConfigService.getConfig() - Parsed localStorage:', parsed);
+      
+      const merged = { ...this.DEFAULTS, ...parsed } as AppConfig;
+      console.log('🔍 ConfigService.getConfig() - Final merged config:', merged);
+      
+      return merged;
+    } catch (error) {
+      console.log('🔍 ConfigService.getConfig() - Error parsing localStorage:', error);
       return this.DEFAULTS;
     }
   }
