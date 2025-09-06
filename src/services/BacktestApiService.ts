@@ -55,11 +55,19 @@ export interface BacktestResult {
 class BacktestApiService {
   private async makeRequest<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
     const baseUrl = ConfigService.getApiBaseUrl();
-    console.log('BacktestApiService - Using API base URL:', baseUrl);
-    console.log('BacktestApiService - Full URL:', `${baseUrl}${endpoint}`);
+    const fullUrl = `${baseUrl}${endpoint}`;
+    
+    console.log('=== API REQUEST DEBUG ===');
+    console.log('Current timestamp:', new Date().toISOString());
+    console.log('ConfigService baseUrl:', baseUrl);
+    console.log('Full URL:', fullUrl);
+    console.log('Request options:', JSON.stringify(options, null, 2));
+    console.log('localStorage app_config:', localStorage.getItem('app_config'));
+    console.log('Window location:', window.location.href);
+    console.log('==========================');
     
     try {
-      const response = await fetch(`${baseUrl}${endpoint}`, {
+      const response = await fetch(fullUrl, {
         ...options,
         headers: {
           'Content-Type': 'application/json',
@@ -68,13 +76,29 @@ class BacktestApiService {
         },
       });
 
+      console.log('=== API RESPONSE DEBUG ===');
+      console.log('Response status:', response.status);
+      console.log('Response statusText:', response.statusText);
+      console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+      console.log('===========================');
+
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status} ${response.statusText}`);
       }
 
-      return response.json();
+      const data = await response.json();
+      console.log('=== API SUCCESS ===');
+      console.log('Response data:', data);
+      console.log('===================');
+      return data;
     } catch (error) {
-      console.error('BacktestApiService - Request failed:', error);
+      console.log('=== API ERROR DEBUG ===');
+      console.error('Error details:', error);
+      console.log('Error type:', typeof error);
+      console.log('Error constructor:', error?.constructor?.name);
+      console.log('Error message:', error?.message);
+      console.log('Error stack:', error?.stack);
+      console.log('========================');
       
       // Check if it's a CORS or network error
       if (error instanceof TypeError && error.message.includes('fetch')) {
